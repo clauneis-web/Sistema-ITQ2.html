@@ -1,0 +1,2728 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Acadêmico - ITQ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      aside, button, select, input, .no-print, modal, #tela-login {
+        display: none !important;
+      }
+      main {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+      }
+      @page {
+        size: A4 landscape;
+        margin: 1cm;
+      }
+      table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        font-size: 11px !important;
+      }
+      th, td {
+        border: 1px solid #000 !important;
+        padding: 6px !important;
+        color: #000 !important;
+      }
+      body {
+        background-color: #fff !important;
+        color: #000 !important;
+      }
+      .cabecalho-impressao, .rodape-impressao {
+        display: block !important;
+      }
+    }
+    .cabecalho-impressao, .rodape-impressao {
+      display: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen">
+
+  <!-- Tela de Login -->
+  <div id="tela-login" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl p-6 sm:p-8 w-full max-w-md shadow-2xl space-y-6 border border-slate-700">
+      <div class="text-center space-y-2">
+        <div class="w-16 h-16 bg-amber-400 rounded-xl mx-auto flex items-center justify-center shadow-md p-1">
+          <img id="img-logo-login" src="https://lh3.googleusercontent.com/d/1qUc3ZADEnXvlFV_NxmYzDflv_YaNzAEA" alt="ITQ Logo" class="w-full h-full object-contain">
+        </div>
+        <h2 class="text-2xl font-black text-slate-800">ITQ - Gestão Acadêmica</h2>
+        <p class="text-xs font-bold text-amber-600">Alagoas – Brasil</p>
+        <p class="text-[11px] text-slate-500">Instituto Teológico Quadrangular</p>
+      </div>
+
+      <div id="status-conexao" class="hidden text-center p-2 rounded text-xs font-bold bg-amber-100 text-amber-800">
+        ⏳ Conectando à nuvem...
+      </div>
+
+      <form id="form-login-element" onsubmit="efetuarLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Perfil de Acesso</label>
+          <select id="login-perfil" onchange="alternarCamposLogin(this.value)" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-bold">
+            <option value="diretor">Diretor(a)</option>
+            <option value="secretario">Secretário(a)</option>
+            <option value="coordenador">Coordenador(a)</option>
+            <option value="admin_it">Administrador IT</option>
+            <option value="professor">Docente / Professor</option>
+            <option value="aluno">Aluno / Estudante</option>
+          </select>
+        </div>
+        <div id="campo-usuario-container">
+          <label id="label-login-usuario" class="block text-xs font-bold text-slate-600 mb-1">E-mail de Acesso</label>
+          <input type="text" id="login-usuario" required placeholder="Seu e-mail cadastrado" value="" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50">
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="block text-xs font-bold text-slate-600">Senha</label>
+            <button type="button" onclick="abrirModalEsqueciSenha()" class="text-[11px] font-bold text-blue-600 hover:underline">Esqueceu a senha?</button>
+          </div>
+          <input type="password" id="login-senha" required placeholder="Digite sua senha" value="" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50">
+        </div>
+
+        <button type="submit" id="btn-entrar" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold rounded-lg shadow-md transition">
+          🔓 Entrar no Sistema
+        </button>
+
+        <div id="container-primeiro-acesso-aluno" class="hidden text-center pt-2 border-t">
+          <button type="button" onclick="abrirModalPrimeiroAcessoAluno()" class="text-xs font-bold text-amber-700 hover:underline">
+            🎓 Primeiro acesso como Aluno? Cadastre sua Senha
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Interface Principal -->
+  <div id="interface-sistema" class="hidden flex flex-col md:flex-row min-h-screen">
+
+    <!-- Sidebar -->
+    <aside id="sidebar-principal" class="w-full md:w-64 bg-slate-900 text-slate-100 flex flex-col shrink-0 no-print">
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div id="logo-container" class="w-12 h-12 bg-white rounded-lg p-1 shadow flex items-center justify-center overflow-hidden shrink-0">
+            <img id="img-logo-sidebar" src="https://lh3.googleusercontent.com/d/1qUc3ZADEnXvlFV_NxmYzDflv_YaNzAEA" alt="ITQ Logo" class="w-full h-full object-contain">
+          </div>
+          <div>
+            <h1 class="font-bold text-base text-amber-400 leading-tight">ITQ - Gestão</h1>
+            <p class="text-xs text-slate-300 font-bold">Alagoas – Brasil</p>
+            <p class="text-[10px] text-slate-400">Inst. Teológico Quadrangular</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Perfil do Usuário Logado -->
+      <div class="p-4 border-b border-slate-800 bg-slate-950 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-amber-500 text-slate-900 font-bold flex items-center justify-center text-xs shrink-0 shadow" id="avatar-user">
+            CN
+          </div>
+          <div class="overflow-hidden">
+            <p class="text-xs font-bold text-slate-100 truncate" id="nome-user-logged">Clauneis Nazário</p>
+            <div id="perfil-user-logged" class="text-[11px] text-amber-400 font-semibold leading-tight">Diretor(a)</div>
+          </div>
+        </div>
+        <button id="btn-config-perfil" onclick="abrirModalPerfil()" class="text-xs text-slate-400 hover:text-white p-1" title="Editar Perfil">⚙️</button>
+      </div>
+
+      <!-- Configurações Rápidas (Apenas Administração) -->
+      <div id="painel-config-admin" class="px-4 pt-3 space-y-2">
+        <button onclick="alterarLogo()" class="w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-lg text-xs font-bold border border-slate-700 flex items-center justify-center gap-2">
+          🖼️ Alterar Logo
+        </button>
+
+        <button onclick="configurarUrlSistema()" class="w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-lg text-xs font-bold border border-slate-700 flex items-center justify-center gap-2" title="Definir link do Vercel/Netlify">
+          🔗 Configurar Link Vercel
+        </button>
+
+        <div class="bg-slate-800 p-2 rounded-lg border border-slate-700">
+          <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Curso / Modalidade</label>
+          <select id="select-curso-sidebar" onchange="alterarCurso(this.value)" class="w-full bg-slate-900 text-amber-400 font-bold border border-slate-700 rounded px-2 py-1 text-xs focus:outline-none">
+            <option value="1º Ano EAD">1º Ano EAD</option>
+            <option value="1º Ano Presencial">1º Ano Presencial</option>
+            <option value="2º Ano EAD">2º Ano EAD</option>
+            <option value="2º Ano Presencial">2º Ano Presencial</option>
+            <option value="3º Ano EAD">3º Ano EAD</option>
+            <option value="3º Ano Presencial">3º Ano Presencial</option>
+          </select>
+        </div>
+
+        <div class="bg-slate-800 p-2 rounded-lg border border-slate-700">
+          <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Ano Letivo</label>
+          <div class="flex items-center gap-2">
+            <select id="select-ano-letivo" onchange="alterarAnoLetivo(this.value)" class="w-full bg-slate-900 text-amber-400 font-bold border border-slate-700 rounded px-2 py-1 text-xs focus:outline-none">
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+              <option value="2029">2029</option>
+            </select>
+            <button onclick="adicionarNovoAno()" class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs rounded">+Ano</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Indicador de Curso do Professor -->
+      <div id="painel-info-professor" class="hidden px-4 pt-3">
+        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 text-xs">
+          <p class="text-[10px] text-slate-400 font-bold uppercase">Curso Selecionado</p>
+          <p id="prof-curso-fixo" class="text-amber-400 font-bold mt-1">1º Ano EAD - 2026</p>
+        </div>
+      </div>
+
+      <!-- Menu de Navegação -->
+      <nav id="menu-navegacao" class="p-4 space-y-1 flex-1 overflow-y-auto">
+        <!-- Preenchido via JavaScript -->
+      </nav>
+
+      <div class="p-4 border-t border-slate-800">
+        <button onclick="efetuarLogout()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg transition">
+          🚪 Sair do Sistema
+        </button>
+      </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+
+      <!-- Cabeçalho Oficial de Impressão (PDF) -->
+      <div class="cabecalho-impressao mb-6 border-b pb-4 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+          <img id="img-logo-print" src="https://lh3.googleusercontent.com/d/1qUc3ZADEnXvlFV_NxmYzDflv_YaNzAEA" class="w-16 h-16 object-contain">
+          <div>
+            <h1 class="text-xl font-bold">INSTITUTO TEOLÓGICO QUADRANGULAR</h1>
+            <p class="text-xs font-bold text-amber-700">Alagoas – Brasil</p>
+          </div>
+        </div>
+        <div class="text-right text-xs">
+          <p class="font-bold" id="print-curso-ano">1º Ano EAD - 2026</p>
+          <p class="text-slate-500">Emissão: <span id="print-data-emissao"></span></p>
+        </div>
+      </div>
+
+      <!-- Dashboard -->
+      <section id="aba-dashboard" class="space-y-6">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+          <div class="flex items-center gap-5">
+            <div class="w-20 h-20 bg-slate-50 border border-slate-100 rounded-xl p-2 shadow-inner flex items-center justify-center">
+              <img id="img-logo-dash" src="https://lh3.googleusercontent.com/d/1qUc3ZADEnXvlFV_NxmYzDflv_YaNzAEA" alt="Logo ITQ" class="w-full h-full object-contain">
+            </div>
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <h2 class="text-2xl font-black text-slate-800">Instituto Teológico Quadrangular</h2>
+                <span id="badge-curso-dash" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-blue-100 text-blue-800 border border-blue-300">1º Ano EAD</span>
+                <span id="badge-ano-dash" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-300">2026</span>
+              </div>
+              <p class="text-xs font-bold text-amber-600 mt-0.5">Alagoas – Brasil</p>
+            </div>
+          </div>
+
+          <div class="flex gap-2">
+            <button onclick="sincronizarNuvem(true)" class="px-3 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow flex items-center gap-1.5">
+              ☁️ Sincronizar Nuvem
+            </button>
+            <button onclick="exportarRelatorioExcel()" class="px-3 py-2 text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white rounded-lg shadow flex items-center gap-1.5">
+              📊 Exportar CSV
+            </button>
+          </div>
+        </div>
+
+        <div id="cards-dashboard-admin" class="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase font-bold">Alunos Ativos</p>
+            <p id="dash-total-alunos" class="text-3xl font-extrabold text-slate-800 mt-2">0</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase font-bold">Professores Ativos</p>
+            <p id="dash-total-professores" class="text-3xl font-extrabold text-amber-600 mt-2">0</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase font-bold">Adimplentes (Em dia)</p>
+            <p id="dash-adimplentes" class="text-3xl font-extrabold text-emerald-600 mt-2">0</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase font-bold">Inadimplentes</p>
+            <p id="dash-inadimplentes" class="text-3xl font-extrabold text-rose-600 mt-2">0</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <p class="text-xs text-slate-500 uppercase font-bold">Aulas Computadas</p>
+            <p id="dash-aulas-computadas" class="text-3xl font-extrabold text-blue-600 mt-2">0</p>
+          </div>
+        </div>
+
+        <!-- Painel Exclusivo de Disciplinas para o Professor no Dashboard -->
+        <div id="painel-dashboard-professor" class="hidden space-y-4">
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+              📚 Suas Disciplinas Atribuídas para Lecionar
+            </h3>
+            <div id="container-disciplinas-professor-dash" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Alunos Ativos & Diário -->
+      <section id="aba-alunos" class="space-y-6 hidden">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h2 class="text-2xl font-bold">Alunos Ativos - Diário & Boletim</h2>
+            <p class="text-sm text-slate-500">Aulas Realizadas, Frequências e Notas</p>
+          </div>
+          <div class="flex flex-wrap gap-2 no-print">
+            <button id="btn-novo-aluno" onclick="abrirModalNovoAluno()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded-lg shadow">
+              + Novo Aluno
+            </button>
+            <button id="btn-reset-ano" onclick="limparAlunosDoAno()" class="px-3 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium text-sm rounded-lg shadow" title="Resetar lista desta turma">
+              🧹 Resetar Turma
+            </button>
+            <button onclick="imprimirRelatorio()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg shadow">
+              🖨️ Imprimir / PDF
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-wrap gap-4 items-center no-print">
+          <div class="w-full md:w-1/4">
+            <label class="block text-xs font-semibold text-slate-500 mb-1">Módulo</label>
+            <select id="filtro-modulo" onchange="atualizarFiltroDisciplinas(); renderizarAlunos();" class="w-full border rounded-lg p-2 text-sm bg-slate-50"></select>
+          </div>
+          <div class="w-full md:w-1/3">
+            <label class="block text-xs font-semibold text-slate-500 mb-1">Disciplina</label>
+            <select id="filtro-disciplina" onchange="renderizarAlunos()" class="w-full border rounded-lg p-2 text-sm bg-slate-50"></select>
+          </div>
+          <div class="w-full md:w-1/3">
+            <label class="block text-xs font-semibold text-slate-500 mb-1">Buscar Aluno</label>
+            <input type="text" id="filtro-busca" oninput="renderizarAlunos()" placeholder="Nome ou matrícula..." class="w-full border rounded-lg p-2 text-sm bg-slate-50">
+          </div>
+        </div>
+
+        <div class="bg-amber-50 p-3 rounded-lg border border-amber-200 flex items-center justify-between text-xs font-bold text-amber-900">
+          <span>📅 Total de Aulas Realizadas Nesta Disciplina: <span id="contador-aulas-realizadas" class="text-sm text-blue-700 font-extrabold">0</span></span>
+          <span class="text-[11px] text-amber-700 font-semibold">*Aulas computadas automaticamente pelas datas lançadas na chamada</span>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-700">
+            <thead class="bg-slate-50 text-slate-900 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3">Matrícula / Aluno</th>
+                <th class="p-3">Pres. (P)</th>
+                <th class="p-3">Faltas (F)</th>
+                <th class="p-3">F. Just. (J)</th>
+                <th class="p-3">% Freq.</th>
+                <th class="p-3">Autoativ.</th>
+                <th class="p-3">Somativa</th>
+                <th class="p-3">Conclusiva</th>
+                <th class="p-3">Média</th>
+                <th class="p-3">Recup.</th>
+                <th class="p-3">Nota Final</th>
+                <th class="p-3">Situação</th>
+                <th class="p-3 text-center no-print">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-alunos" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Situação Financeira (Mês a Mês) -->
+      <section id="aba-financeiro" class="space-y-6 hidden">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-bold">Situação Financeira dos Alunos</h2>
+            <p class="text-sm text-slate-500">Controle Mês a Mês de Mensalidades (Janeiro a Dezembro)</p>
+          </div>
+          <button onclick="imprimirRelatorio()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg shadow no-print">
+            🖨️ Imprimir PDF Financeiro
+          </button>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-wrap gap-4 items-center no-print">
+          <div class="w-full md:w-1/3">
+            <label class="block text-xs font-semibold text-slate-500 mb-1">Filtrar por Situação Geral</label>
+            <select id="filtro-status-financeiro" onchange="renderizarFinanceiro()" class="w-full border rounded-lg p-2 text-sm bg-slate-50 font-bold">
+              <option value="todos">Todos os Alunos</option>
+              <option value="adimplente">Somente Adimplentes (Em dia)</option>
+              <option value="inadimplente">Somente Inadimplentes (Pendente)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-700">
+            <thead class="bg-slate-50 text-slate-900 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-4">Matrícula / Nome</th>
+                <th class="p-4">Status Geral</th>
+                <th class="p-4">Meses Pagos / Pendentes (Jan a Dez)</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-financeiro" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Resumo das Aulas -->
+      <section id="aba-resumo-aulas" class="space-y-6 hidden">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h2 class="text-2xl font-bold">Resumo das Aulas Ministradas</h2>
+            <p class="text-sm text-slate-500">Registro de conteúdo e diário de classe por data</p>
+          </div>
+          <div class="flex gap-2 no-print">
+            <button onclick="abrirModalNovoResumo()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded-lg shadow">
+              + Registrar Novo Resumo
+            </button>
+            <button onclick="imprimirRelatorio()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg shadow">
+              🖨️ Imprimir PDF dos Resumos
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm space-y-4">
+          <div id="container-resumo-aulas" class="space-y-4"></div>
+        </div>
+      </section>
+
+      <!-- Alunos Desistentes -->
+      <section id="aba-desistentes" class="space-y-6 hidden">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-bold text-rose-700">Alunos Desistentes e Trancados</h2>
+            <p class="text-sm text-slate-500">Relatório de matrículas inativas ou trancadas no período</p>
+          </div>
+          <button onclick="imprimirRelatorio()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg shadow no-print">
+            🖨️ Imprimir PDF Desistentes
+          </button>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-700">
+            <thead class="bg-slate-50 text-slate-900 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-4">Matrícula</th>
+                <th class="p-4">Nome do Aluno</th>
+                <th class="p-4">Status</th>
+                <th class="p-4 text-center no-print">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-desistentes" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Relatórios de Aulas -->
+      <section id="aba-relatorios-aulas" class="space-y-6 hidden">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-bold">Relatório Consolidado de Aulas Realizadas</h2>
+            <p class="text-sm text-slate-500">Histórico de chamadas registradas por data (Gerenciar e Deletar Aulas)</p>
+          </div>
+          <button onclick="imprimirRelatorio()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg shadow no-print">
+            🖨️ Imprimir PDF Aulas
+          </button>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+          <div id="container-relatorios-aulas" class="space-y-3"></div>
+        </div>
+      </section>
+
+      <!-- Chamada por Data -->
+      <section id="aba-chamada" class="space-y-6 hidden">
+        <div>
+          <h2 class="text-2xl font-bold">Chamada Diária por Aula</h2>
+          <p class="text-sm text-slate-500">Lançamento de presença, falta e falta justificada (Computa aula automaticamente)</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1">Data da Aula</label>
+            <input type="date" id="chamada-data" onchange="renderizarListaChamada()" class="w-full border rounded-lg p-2 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1">Módulo</label>
+            <select id="chamada-modulo" onchange="atualizarFiltroDisciplinasChamada(); renderizarListaChamada();" class="w-full border rounded-lg p-2 text-sm bg-slate-50"></select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1">Disciplina</label>
+            <select id="chamada-disciplina" onchange="renderizarListaChamada()" class="w-full border rounded-lg p-2 text-sm bg-slate-50"></select>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-4">
+          <div id="lista-chamada" class="space-y-3"></div>
+        </div>
+      </section>
+
+      <!-- ABA DE DISCIPLINAS E CARDS -->
+      <section id="aba-disciplinas" class="space-y-6 hidden">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h2 class="text-2xl font-bold">Disciplinas do Ano Selecionado</h2>
+            <p class="text-sm text-slate-500">Gerenciamento completo da grade curricular e dos módulos</p>
+          </div>
+          <div class="flex gap-2 no-print">
+            <button id="btn-gerenciar-modulos" onclick="abrirModalGerenciarModulos()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm rounded-lg shadow">
+              ⚙️ Gerenciar / Editar Módulos
+            </button>
+            <button id="btn-nova-disciplina" onclick="abrirModalNovaDisciplina()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded-lg shadow">
+              + Nova Disciplina
+            </button>
+          </div>
+        </div>
+
+        <!-- Cards com as Disciplinas por Módulo -->
+        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+          <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Visualização em Cards por Módulo</h3>
+          <div id="container-cards-disciplinas-modulo" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+          <table class="w-full text-left text-sm text-slate-700">
+            <thead class="bg-slate-50 font-bold border-b">
+              <tr>
+                <th class="p-4">#</th>
+                <th class="p-4">Disciplina</th>
+                <th class="p-4">Ano / Curso</th>
+                <th class="p-4">Módulo</th>
+                <th class="p-4 text-center no-print">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-disciplinas" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Professores -->
+      <section id="aba-professores" class="space-y-6 hidden">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-bold">Corpo Docente</h2>
+            <p class="text-sm text-slate-500">Gestão dos professores, atribuição e envio de disciplinas</p>
+          </div>
+          <button id="btn-novo-professor" onclick="abrirModalNovoProfessor()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded-lg shadow no-print">
+            + Novo Professor
+          </button>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+          <table class="w-full text-left text-sm text-slate-700">
+            <thead class="bg-slate-50 font-bold border-b">
+              <tr>
+                <th class="p-4">#</th>
+                <th class="p-4">Nome do Professor</th>
+                <th class="p-4">E-mail / Contacto</th>
+                <th class="p-4">Módulo Principal</th>
+                <th class="p-4">Disciplinas Atribuídas e Envio</th>
+                <th class="p-4 text-center no-print">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-professores" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ABA EXCLUSIVA DE CONSULTA DE NOTAS DO ALUNO -->
+      <section id="aba-consulta-aluno" class="space-y-6 hidden">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 gap-2">
+            <div>
+              <h2 class="text-2xl font-black text-slate-800">📖 Painel do Aluno — Notas e Desempenho</h2>
+              <p class="text-xs text-slate-500">Acompanhe seu rendimento acadêmico e os docentes do curso</p>
+            </div>
+            <div class="text-right">
+              <span id="aluno-consulta-matricula" class="px-3 py-1 bg-amber-100 text-amber-800 font-bold text-xs rounded-full"></span>
+            </div>
+          </div>
+
+          <!-- Cards Exclusivos do Aluno (Professores Ativos e Notas) -->
+          <div id="container-cards-aluno-dashboard" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+              <div>
+                <p class="text-xs text-slate-500 uppercase font-bold">Professores Ativos na Turma</p>
+                <p id="aluno-dash-total-professores" class="text-3xl font-extrabold text-amber-600 mt-1">0</p>
+              </div>
+              <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center text-xl">👨‍🏫</div>
+            </div>
+            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+              <div>
+                <p class="text-xs text-slate-500 uppercase font-bold">Média Geral nas Disciplinas</p>
+                <p id="aluno-dash-media-geral" class="text-3xl font-extrabold text-blue-600 mt-1">0.0</p>
+              </div>
+              <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-xl">📊</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Selecione o Módulo</label>
+              <select id="aluno-select-modulo" onchange="atualizarDisciplinasConsultaAluno()" class="w-full p-2.5 border rounded-lg text-sm bg-white font-bold"></select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Selecione a Disciplina</label>
+              <select id="aluno-select-disciplina" onchange="renderizarNotasConsultaAluno()" class="w-full p-2.5 border rounded-lg text-sm bg-white font-bold"></select>
+            </div>
+          </div>
+
+          <div id="container-boletim-aluno" class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+            <!-- Renderizado dinamicamente -->
+          </div>
+
+          <!-- Cards das Disciplinas do Aluno Organizados por Módulo -->
+          <div class="pt-4 border-t space-y-3">
+            <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">📚 Suas Disciplinas e Módulos</h3>
+            <div id="aluno-container-cards-disciplinas" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+          </div>
+
+          <div class="flex justify-end pt-4 no-print">
+            <button onclick="imprimirRelatorio()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg shadow">
+              🖨️ Imprimir Meu Boletim
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Rodapé Oficial de Impressão (PDF) -->
+      <div class="rodape-impressao mt-12 pt-8 border-t border-slate-400 text-center">
+        <div class="flex justify-around items-end pt-8">
+          <div class="text-center w-64">
+            <div class="border-b border-black mb-1"></div>
+            <p class="font-bold text-xs" id="print-prof-nome">Prof. CLAUNEIS NAZARIO</p>
+            <p class="text-xs text-slate-600">Docente Responsável</p>
+          </div>
+          <div class="text-center w-64">
+            <div class="border-b border-black mb-1"></div>
+            <p class="font-bold text-xs">Secretaria / Direção</p>
+            <p class="text-xs text-slate-600">Visto do Centro de Ensino</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Modal Gerenciar / Editar Módulos -->
+  <div id="modal-gerenciar-modulos" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4 no-print">
+    <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl space-y-4">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="text-lg font-bold text-slate-800">⚙️ Edição de Módulos</h3>
+        <button onclick="fecharModalGerenciarModulos()" class="text-slate-400 hover:text-slate-700 font-bold">✕</button>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Ano Referência</label>
+        <select id="modulos-ano-select" onchange="carregarListaModulosParaEdicao()" class="w-full p-2 border rounded-md text-sm bg-slate-50 font-bold">
+          <option value="1º Ano">1º Ano</option>
+          <option value="2º Ano">2º Ano</option>
+          <option value="3º Ano">3º Ano</option>
+        </select>
+      </div>
+
+      <div class="space-y-2">
+        <label class="block text-xs font-semibold text-slate-600">Módulos Cadastrados:</label>
+        <div id="lista-modulos-editaveis" class="space-y-2 max-h-60 overflow-y-auto p-2 bg-slate-50 border rounded-lg"></div>
+      </div>
+
+      <div class="pt-2 flex gap-2 border-t">
+        <input type="text" id="novo-nome-modulo-input" placeholder="ex: MÓDULO 7" class="flex-1 p-2 border rounded-md text-sm uppercase">
+        <button onclick="adicionarNovoModuloPersonalizado()" class="px-3 py-2 bg-emerald-600 text-white font-bold text-xs rounded-lg hover:bg-emerald-700">+ Adicionar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Cadastrar/Editar Disciplina -->
+  <div id="modal-disciplina" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4 no-print">
+    <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+      <h3 class="text-lg font-bold mb-4 text-slate-800" id="modal-disciplina-titulo">Nova Disciplina</h3>
+      <form onsubmit="salvarDisciplina(event)" class="space-y-4">
+        <input type="hidden" id="edit-disciplina-id">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nome da Disciplina</label>
+          <input type="text" id="disc-nome" required placeholder="ex: TEOLOGIA PASTORAL" class="w-full p-2 border rounded-md text-sm uppercase">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Ano / Série</label>
+          <select id="disc-ano" class="w-full p-2 border rounded-md text-sm bg-slate-50 font-bold" onchange="atualizarModulosModalDisciplina(this.value)">
+            <option value="1º Ano">1º Ano</option>
+            <option value="2º Ano">2º Ano</option>
+            <option value="3º Ano">3º Ano</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Módulo</label>
+          <select id="disc-modulo" class="w-full p-2 border rounded-md text-sm bg-slate-50 font-bold"></select>
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" onclick="fecharModalDisciplina()" class="px-4 py-2 text-sm text-slate-600">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium">Salvar Disciplina</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Esqueci Minha Senha -->
+  <div id="modal-esqueci-senha" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4 no-print">
+    <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl space-y-4">
+      <h3 class="text-lg font-bold text-slate-800">🔑 Redefinir Senha</h3>
+      <p class="text-xs text-slate-500">Informe sua chave de acesso (E-mail ou Matrícula) para criar uma nova senha.</p>
+      
+      <form onsubmit="salvarRedefinicaoSenha(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Seu E-mail ou Matrícula</label>
+          <input type="text" id="esqueci-chave" required placeholder="Digite seu e-mail ou matrícula" class="w-full p-2.5 border rounded-md text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nova Senha</label>
+          <input type="password" id="esqueci-nova-senha" required placeholder="Digite a nova senha" class="w-full p-2.5 border rounded-md text-sm">
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" onclick="fecharModalEsqueciSenha()" class="px-4 py-2 text-sm text-slate-600">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-lg text-sm">Redefinir Senha</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Primeiro Acesso do Aluno -->
+  <div id="modal-primeiro-acesso-aluno" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4 no-print">
+    <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl space-y-4">
+      <h3 class="text-lg font-bold text-slate-800">🎓 Criar Senha de Aluno</h3>
+      <p class="text-xs text-slate-500">Informe sua matrícula cadastrada no ITQ para definir sua senha de acesso ao boletim.</p>
+
+      <form onsubmit="salvarPrimeiraSenhaAluno(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Matrícula do Aluno</label>
+          <input type="text" id="primeiro-aluno-matricula" required placeholder="ex: 47967" class="w-full p-2.5 border rounded-md text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Crie sua Senha</label>
+          <input type="password" id="primeiro-aluno-senha" required placeholder="Digite uma senha segura" class="w-full p-2.5 border rounded-md text-sm">
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" onclick="fecharModalPrimeiroAcessoAluno()" class="px-4 py-2 text-sm text-slate-600">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-slate-900 text-white font-bold rounded-lg text-sm">Cadastrar Senha</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Resumo de Aula -->
+  <div id="modal-resumo-aula" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4 no-print">
+    <div class="bg-white rounded-xl p-6 w-full max-w-lg shadow-xl">
+      <h3 class="text-lg font-bold mb-4 text-slate-800">Registrar Resumo da Aula</h3>
+      <form onsubmit="salvarResumoAula(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Data da Aula</label>
+          <input type="date" id="resumo-data" required class="w-full p-2 border rounded-md text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Disciplina</label>
+          <select id="resumo-disciplina-select" class="w-full p-2 border rounded-md text-sm bg-slate-50 font-medium"></select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Conteúdo Ministrado / Resumo da Aula</label>
+          <textarea id="resumo-texto" rows="4" required placeholder="Digite aqui os tópicos explicados e atividades aplicadas..." class="w-full p-2 border rounded-md text-sm"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" onclick="fecharModalResumo()" class="px-4 py-2 text-sm text-slate-600">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium">Salvar Resumo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Perfil Gestão -->
+  <div id="modal-perfil" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+      <h3 class="text-lg font-bold mb-4 text-slate-800">Perfil da Gestão (Direção, Secretaria, Coordenação, IT)</h3>
+      <form onsubmit="salvarPerfilUsuario(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Seu Nome Pessoal</label>
+          <input type="text" id="perfil-nome" required placeholder="ex: Clauneis Nazário" class="w-full p-2 border rounded-md text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Seu Cargo / Função</label>
+          <select id="perfil-cargo" class="w-full p-2 border rounded-md text-sm bg-slate-50 font-bold">
+            <option value="Diretor(a)">Diretor(a)</option>
+            <option value="Secretário(a)">Secretário(a)</option>
+            <option value="Coordenador(a)">Coordenador(a)</option>
+            <option value="Administrador IT">Administrador IT</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail de Login Admin</label>
+          <input type="email" id="perfil-email" required class="w-full p-2 border rounded-md text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nova Senha Admin</label>
+          <input type="password" id="perfil-senha" placeholder="Deixe em branco para manter a atual" class="w-full p-2 border rounded-md text-sm">
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" onclick="fecharModalPerfil()" class="px-4 py-2 text-sm text-slate-600">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium">Salvar Perfil</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Cadastrar Novo Aluno com Gerador de Matrícula -->
+  <div id="modal-aluno" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4 no-print">
+    <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl space-y-4">
+      <h3 class="text-lg font-bold text-slate-800">Cadastrar Novo Aluno</h3>
+      <form onsubmit="salvarNovoAluno(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Matrícula (Login do Aluno)</label>
+          <div class="flex gap-2">
+            <input type="text" id="novo-aluno-matricula" required class="w-full p-2 border rounded-md text-sm bg-slate-50 font-bold" placeholder="Clique em Gerar">
+            <button type="button" onclick="gerarMatriculaAutomatica()" class="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs rounded-lg whitespace-nowrap shadow" title="Gerar Matrícula Automática por Ano">
+              🎲 Gerar
+            </button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo</label>
+          <input type="text" id="novo-aluno-nome" required class="w-full p-2 border rounded-md text-sm uppercase">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Senha de Acesso (Obrigatória para o Aluno)</label>
+          <input type="password" id="novo-aluno-senha" placeholder="Defina a senha do aluno ou crie no 1º acesso" class="w-full p-2 border rounded-md text-sm">
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" onclick="fecharModalAluno()" class="px-4 py-2 text-sm text-slate-600">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium">Salvar Aluno</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-professor" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4 no-print">
+    <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+      <h3 class="text-lg font-bold mb-4 text-slate-800" id="modal-prof-titulo">Cadastrar Professor</h3>
+      <form onsubmit="salvarProfessor(event)" class="space-y-4">
+        <input type="hidden" id="edit-prof-id">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo</label>
+          <input type="text" id="novo-prof-nome" required class="w-full p-2 border rounded-md text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail Pessoal / Login</label>
+          <input type="email" id="novo-prof-email" required placeholder="ex: professor@gmail.com" class="w-full p-2 border rounded-md text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Telefone / WhatsApp (Opcional)</label>
+          <input type="text" id="novo-prof-telefone" placeholder="ex: 5582999999999" class="w-full p-2 border rounded-md text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Senha de Acesso Docente</label>
+          <input type="password" id="novo-prof-senha" required placeholder="Senha do professor" class="w-full p-2 border rounded-md text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Módulo Principal</label>
+          <select id="novo-prof-modulo" class="w-full p-2 border rounded-md text-sm bg-slate-50"></select>
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" onclick="fecharModalProfessor()" class="px-4 py-2 text-sm text-slate-600">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium">Salvar Professor</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-atribuir-disciplina" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4 no-print">
+    <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+      <h3 class="text-lg font-bold mb-1 text-slate-800">Enviar / Atribuir Disciplina</h3>
+      <p class="text-xs text-slate-500 mb-4" id="atribuir-prof-nome"></p>
+
+      <form onsubmit="salvarAtribuicaoDisciplina(event)" class="space-y-4">
+        <input type="hidden" id="atribuir-prof-id">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Selecione a Disciplina</label>
+          <select id="atribuir-disciplina-select" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium"></select>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" onclick="fecharModalAtribuirDisciplina()" class="px-4 py-2 text-sm text-slate-600">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium">Atribuir Disciplina</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-nota" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4 no-print">
+    <div class="bg-white rounded-xl p-6 w-full max-w-lg shadow-xl">
+      <h3 class="text-lg font-bold mb-1 text-slate-800" id="modal-titulo-aluno">Lançar Notas e Frequência</h3>
+      <p class="text-xs text-slate-500 mb-4" id="modal-subtitulo-disc"></p>
+
+      <form onsubmit="salvarNotasAluno(event)" class="space-y-4">
+        <input type="hidden" id="edit-aluno-id">
+        <input type="hidden" id="edit-disc-id">
+
+        <div class="grid grid-cols-3 gap-3 bg-slate-50 p-3 rounded-lg">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Presenças</label>
+            <input type="number" min="0" id="inp-presenca" required class="w-full p-2 border rounded-md text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Faltas</label>
+            <input type="number" min="0" id="inp-faltas" required class="w-full p-2 border rounded-md text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">F. Justificada</label>
+            <input type="number" min="0" id="inp-justificada" required class="w-full p-2 border rounded-md text-sm">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Autoatividade</label>
+            <input type="number" step="0.1" min="0" max="10" id="inp-auto" required class="w-full p-2 border rounded-md text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">AV. Somativa</label>
+            <input type="number" step="0.1" min="0" max="10" id="inp-soma" required class="w-full p-2 border rounded-md text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">AV. Conclusiva</label>
+            <input type="number" step="0.1" min="0" max="10" id="inp-conc" required class="w-full p-2 border rounded-md text-sm">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Exame de Recuperação</label>
+          <input type="number" step="0.1" min="0" max="10" id="inp-recup" value="0" class="w-full p-2 border rounded-md text-sm">
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" onclick="fecharModalNota()" class="px-4 py-2 text-sm text-slate-600">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium">Salvar Registros</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API_URL_NUVEM = "https://script.google.com/macros/s/AKfycbxFXSboXKgcZ8szM-zhSh8AXatrapJHKv1USEaQYR-saomjkTH0qysb41MxJVxmURot/exec";
+
+    const MESES_ANO = [
+      { id: 1, nome: "Jan" }, { id: 2, nome: "Fev" }, { id: 3, nome: "Mar" },
+      { id: 4, nome: "Abr" }, { id: 5, nome: "Mai" }, { id: 6, nome: "Jun" },
+      { id: 7, nome: "Jul" }, { id: 8, nome: "Ago" }, { id: 9, nome: "Set" },
+      { id: 10, nome: "Out" }, { id: 11, nome: "Nov" }, { id: 12, nome: "Dez" }
+    ];
+
+    const MODULOS_PADRAO = {
+      "1º Ano": ["1º MÓDULO", "2º MÓDULO", "3º MÓDULO", "4º MÓDULO", "5º MÓDULO", "6º MÓDULO"],
+      "2º Ano": ["1º MÓDULO", "2º MÓDULO", "3º MÓDULO", "4º MÓDULO", "5º MÓDULO", "6º MÓDULO"],
+      "3º Ano": ["1º MÓDULO", "2º MÓDULO", "3º MÓDULO", "4º MÓDULO", "5º MÓDULO", "6º MÓDULO"]
+    };
+
+    function obterModulosAno(ano) {
+      const custom = JSON.parse(localStorage.getItem('itq_modulos_custom')) || MODULOS_PADRAO;
+      return custom[ano] || MODULOS_PADRAO[ano] || ["1º MÓDULO", "2º MÓDULO", "3º MÓDULO", "4º MÓDULO", "5º MÓDULO", "6º MÓDULO"];
+    }
+
+    const DISCIPLINAS_INICIAIS = [
+      // 1º ANO
+      { id: 1, nome: "METODOLOGIA DO TRABALHO ACADÊMICO", modulo: "1º MÓDULO", ano: "1º Ano" },
+      { id: 2, nome: "BIBLIOLOGIA", modulo: "1º MÓDULO", ano: "1º Ano" },
+      { id: 3, nome: "INTRODUÇÃO À TEOLOGIA", modulo: "1º MÓDULO", ano: "1º Ano" },
+      { id: 4, nome: "VIVÊNCIA CRISTÃ", modulo: "1º MÓDULO", ano: "1º Ano" },
+
+      { id: 5, nome: "VIDA DE CRISTO E ESPIRITUALIDADE", modulo: "2º MÓDULO", ano: "1º Ano" },
+      { id: 6, nome: "DONS E MINISTÉRIOS", modulo: "2º MÓDULO", ano: "1º Ano" },
+      { id: 7, nome: "PASTORAL URBANA", modulo: "2º MÓDULO", ano: "1º Ano" },
+
+      { id: 8, nome: "EVANGELHO QUADRANGULAR", modulo: "3º MÓDULO", ano: "1º Ano" },
+      { id: 9, nome: "EVANGELIZAÇÃO", modulo: "3º MÓDULO", ano: "1º Ano" },
+      { id: 10, nome: "DISCIPULADO", modulo: "3º MÓDULO", ano: "1º Ano" },
+      { id: 11, nome: "CIDADANIA", modulo: "3º MÓDULO", ano: "1º Ano" },
+
+      { id: 12, nome: "INTRODUÇÃO À EDUCAÇÃO CRISTÃ", modulo: "4º MÓDULO", ano: "1º Ano" },
+      { id: 13, nome: "HERMENÊUTICA", modulo: "4º MÓDULO", ano: "1º Ano" },
+      { id: 14, nome: "ADMINISTRAÇÃO ECLESIÁSTICA", modulo: "4º MÓDULO", ano: "1º Ano" },
+
+      { id: 15, nome: "ACONSELHAMENTO E ORIENTAÇÃO FAMILIAR", modulo: "5º MÓDULO", ano: "1º Ano" },
+      { id: 16, nome: "HOMILÉTICA", modulo: "5º MÓDULO", ano: "1º Ano" },
+      { id: 17, nome: "MÉTODOS DE ESTUDO BÍBLICO", modulo: "5º MÓDULO", ano: "1º Ano" },
+
+      { id: 18, nome: "TEOLOGIA PASTORAL", modulo: "6º MÓDULO", ano: "1º Ano" },
+      { id: 19, nome: "TEOLOGIA DO CULTO", modulo: "6º MÓDULO", ano: "1º Ano" },
+      { id: 20, nome: "LIDERANÇA 1 – GESTÃO DE PESSOAS", modulo: "6º MÓDULO", ano: "1º Ano" },
+
+      // 2º ANO
+      { id: 21, nome: "TEOLOGIA DO ANTIGO TESTAMENTO", modulo: "1º MÓDULO", ano: "2º Ano" },
+      { id: 22, nome: "CULTURA BÍBLICA", modulo: "1º MÓDULO", ano: "2º Ano" },
+      { id: 23, nome: "PENTATEUCO", modulo: "1º MÓDULO", ano: "2º Ano" },
+
+      { id: 24, nome: "TEOLOGIA DO NOVO TESTAMENTO", modulo: "2º MÓDULO", ano: "2º Ano" },
+      { id: 25, nome: "HEBREUS", modulo: "2º MÓDULO", ano: "2º Ano" },
+
+      { id: 26, nome: "EVANGELHOS", modulo: "3º MÓDULO", ano: "2º Ano" },
+      { id: 27, nome: "ATOS DOS APÓSTOLOS", modulo: "3º MÓDULO", ano: "2º Ano" },
+      { id: 28, nome: "HISTÓRIA DE ISRAEL", modulo: "3º MÓDULO", ano: "2º Ano" },
+
+      { id: 29, nome: "EPÍSTOLAS PAULINAS", modulo: "4º MÓDULO", ano: "2º Ano" },
+
+      { id: 30, nome: "EPÍSTOLAS GERAIS", modulo: "5º MÓDULO", ano: "2º Ano" },
+
+      { id: 31, nome: "LIVROS POÉTICOS", modulo: "6º MÓDULO", ano: "2º Ano" },
+      { id: 32, nome: "TEOLOGIA SISTEMÁTICA 1", modulo: "6º MÓDULO", ano: "2º Ano" },
+      { id: 33, nome: "MISSÃO INTEGRAL DA IGREJA", modulo: "6º MÓDULO", ano: "2º Ano" },
+
+      // 3º ANO
+      { id: 34, nome: "TCC – TRABALHO DE CONCLUSÃO DE CURSO", modulo: "1º MÓDULO", ano: "3º Ano" },
+      { id: 35, nome: "TEOLOGIA SISTEMÁTICA 2", modulo: "1º MÓDULO", ano: "3º Ano" },
+      { id: 36, nome: "ESTÁGIO SUPERVISIONADO", modulo: "1º MÓDULO", ano: "3º Ano" },
+
+      { id: 37, nome: "HISTÓRIA DA IGREJA", modulo: "2º MÓDULO", ano: "3º Ano" },
+      { id: 38, nome: "ACONSELHAMENTO PASTORAL", modulo: "2º MÓDULO", ano: "3º Ano" },
+
+      { id: 39, nome: "TEOLOGIA SISTEMÁTICA 3", modulo: "3º MÓDULO", ano: "3º Ano" },
+      { id: 40, nome: "ESCATOLOGIA BÍBLICA", modulo: "3º MÓDULO", ano: "3º Ano" },
+
+      { id: 41, nome: "LIDERANÇA 2", modulo: "4º MÓDULO", ano: "3º Ano" },
+
+      { id: 42, nome: "INTRODUÇÃO À MISSIOLOGIA", modulo: "5º MÓDULO", ano: "3º Ano" },
+      { id: 43, nome: "MOVIMENTOS RELIGIOSOS CONTEMPORÂNEOS", modulo: "5º MÓDULO", ano: "3º Ano" },
+      { id: 44, nome: "LIDERANÇA 3", modulo: "5º MÓDULO", ano: "3º Ano" },
+
+      { id: 45, nome: "TEOLOGIA CONTEMPORÂNEA", modulo: "6º MÓDULO", ano: "3º Ano" },
+      { id: 46, nome: "COMUNICAÇÃO SOCIAL", modulo: "6º MÓDULO", ano: "3º Ano" },
+      { id: 47, nome: "ÉTICA", modulo: "6º MÓDULO", ano: "3º Ano" }
+    ];
+
+    const ALUNOS_PLANILHA_INICIAL = [
+      { id: 1, matricula: "47967", nome: "ANA LUISA DA SILVA FERRIRA", senha: "", status: "ativo", anoLetivo: "2026", curso: "1º Ano EAD", financeiro: "adimplente", pagamentosMeses: {1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true,9:true,10:true,11:true,12:true} },
+      { id: 2, matricula: "96136", nome: "CRISTIANE SANTOS SILVA", senha: "", status: "ativo", anoLetivo: "2026", curso: "1º Ano EAD", financeiro: "adimplente", pagamentosMeses: {1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true,9:true,10:true,11:true,12:true} },
+      { id: 3, matricula: "102085", nome: "LUIZ EUGÊNIO CALHEIROS SANTOS", senha: "", status: "ativo", anoLetivo: "2026", curso: "1º Ano EAD", financeiro: "adimplente", pagamentosMeses: {1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true,9:true,10:true,11:true,12:true} }
+    ];
+
+    const PROFESSORES_INICIAIS = [
+      { id: 1, nome: "CLAUNEIS NAZARIO", email: "clauneis@itq.edu.br", telefone: "", senha: "123", modulo: "4º MÓDULO", disciplinas: ["ADMINISTRAÇÃO ECLESIÁSTICA"], anoLetivo: "2026", curso: "1º Ano EAD" }
+    ];
+
+    function alternarCamposLogin(perfil) {
+      const label = document.getElementById('label-login-usuario');
+      const input = document.getElementById('login-usuario');
+      const containerPrimeiroAcesso = document.getElementById('container-primeiro-acesso-aluno');
+
+      if (perfil === 'aluno') {
+        label.innerText = 'Matrícula do Aluno';
+        input.placeholder = 'Digite sua matrícula';
+        input.type = 'text';
+        if (containerPrimeiroAcesso) containerPrimeiroAcesso.classList.remove('hidden');
+      } else {
+        label.innerText = 'E-mail de Acesso';
+        input.placeholder = 'Seu e-mail cadastrado';
+        input.type = 'email';
+        if (containerPrimeiroAcesso) containerPrimeiroAcesso.classList.add('hidden');
+      }
+    }
+
+    async function sincronizarNuvem(mostrarAlerta = false) {
+      const st = document.getElementById('status-conexao');
+      if (st) st.classList.remove('hidden');
+
+      try {
+        const res = await fetch(API_URL_NUVEM + "?action=lerTudo");
+        const dados = await res.json();
+        
+        if (dados.alunos && dados.alunos.length > 0) localStorage.setItem('itq_alunos', JSON.stringify(dados.alunos));
+        if (dados.professores && dados.professores.length > 0) localStorage.setItem('itq_professores', JSON.stringify(dados.professores));
+        if (dados.disciplinas && dados.disciplinas.length > 0) localStorage.setItem('itq_disciplinas', JSON.stringify(dados.disciplinas));
+        if (dados.modulosCustom) localStorage.setItem('itq_modulos_custom', JSON.stringify(dados.modulosCustom));
+        if (dados.boletim) localStorage.setItem('itq_boletim', JSON.stringify(dados.boletim));
+        if (dados.diarioDatas) localStorage.setItem('itq_diario_datas', JSON.stringify(dados.diarioDatas));
+        if (dados.resumosAulas) localStorage.setItem('itq_resumos_aulas', JSON.stringify(dados.resumosAulas));
+        if (dados.adminConfig) localStorage.setItem('itq_admin_config', JSON.stringify(dados.adminConfig));
+        if (dados.urlSistema) localStorage.setItem('itq_url_sistema', dados.urlSistema);
+        
+        renderizarTudo();
+        if (st) st.classList.add('hidden');
+        if (mostrarAlerta) alert("✅ Dados sincronizados com sucesso da nuvem!");
+      } catch (err) {
+        console.warn("Nuvem indisponível ou primeiro acesso offline.", err);
+        if (st) st.classList.add('hidden');
+      }
+    }
+
+    async function enviarParaNuvem() {
+      try {
+        const payload = {
+          action: 'salvarTudo',
+          alunos: JSON.parse(localStorage.getItem('itq_alunos')) || [],
+          professores: JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS,
+          disciplinas: JSON.parse(localStorage.getItem('itq_disciplinas')) || DISCIPLINAS_INICIAIS,
+          modulosCustom: JSON.parse(localStorage.getItem('itq_modulos_custom')) || MODULOS_PADRAO,
+          boletim: JSON.parse(localStorage.getItem('itq_boletim')) || {},
+          diarioDatas: JSON.parse(localStorage.getItem('itq_diario_datas')) || {},
+          resumosAulas: JSON.parse(localStorage.getItem('itq_resumos_aulas')) || [],
+          adminConfig: JSON.parse(localStorage.getItem('itq_admin_config')) || { email: 'admin@itq.edu.br', senha: '123456', nome: 'Clauneis Nazário', cargo: 'Diretor(a)' },
+          urlSistema: localStorage.getItem('itq_url_sistema') || window.location.href
+        };
+        await fetch(API_URL_NUVEM, { method: 'POST', body: JSON.stringify(payload) });
+      } catch(err) {
+        console.error("Erro ao enviar para a nuvem:", err);
+      }
+    }
+
+    function aplicarRestricoesPerfil() {
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || { perfil: 'diretor' };
+      const ehProf = user.perfil === 'professor';
+      const ehAluno = user.perfil === 'aluno';
+      const ehAdmin = ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(user.perfil);
+
+      const painelAdmin = document.getElementById('painel-config-admin');
+      const painelProf = document.getElementById('painel-info-professor');
+      const cardsAdmin = document.getElementById('cards-dashboard-admin');
+      const painelProfDash = document.getElementById('painel-dashboard-professor');
+
+      const btnNovoProf = document.getElementById('btn-novo-professor');
+      const btnNovoAluno = document.getElementById('btn-novo-aluno');
+      const btnNovaDisc = document.getElementById('btn-nova-disciplina');
+      const btnGerenciarMod = document.getElementById('btn-gerenciar-modulos');
+      const btnResetAno = document.getElementById('btn-reset-ano');
+      const btnPerfilConfig = document.getElementById('btn-config-perfil');
+      
+      const perfSubtext = document.getElementById('perfil-user-logged');
+      const navMenuContainer = document.getElementById('menu-navegacao');
+
+      if (ehAluno) {
+        if (painelAdmin) painelAdmin.classList.add('hidden');
+        if (painelProf) painelProf.classList.add('hidden');
+        if (cardsAdmin) cardsAdmin.classList.add('hidden');
+        if (painelProfDash) painelProfDash.classList.add('hidden');
+        if (btnPerfilConfig) btnPerfilConfig.classList.add('hidden');
+
+        const todosAlunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+        const dadosAluno = todosAlunos.find(a => a.id === user.id || a.matricula === user.matricula);
+        const mesAtual = new Date().getMonth() + 1;
+        const pagamentos = (dadosAluno && dadosAluno.pagamentosMeses) ? dadosAluno.pagamentosMeses : {};
+        const estaAdimplente = pagamentos[mesAtual] !== false && (dadosAluno?.financeiro !== 'inadimplente');
+
+        if (perfSubtext) {
+          perfSubtext.innerHTML = estaAdimplente 
+            ? `<span class="inline-flex items-center gap-1 text-emerald-400 font-bold"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> ADIMPLENTE</span>`
+            : `<span class="inline-flex items-center gap-1 text-rose-400 font-bold"><span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span> INADIMPLENTE</span>`;
+        }
+
+        if (navMenuContainer) {
+          navMenuContainer.innerHTML = `
+            <button onclick="navegar('consulta-aluno')" id="nav-consulta-aluno" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-slate-800 text-white">
+              📖 Notas e Desempenho
+            </button>
+          `;
+        }
+
+        navegar('consulta-aluno');
+        return;
+      }
+
+      if (navMenuContainer) {
+        navMenuContainer.innerHTML = `
+          <button onclick="navegar('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-slate-800 text-white">
+            📊 Dashboard
+          </button>
+          <button onclick="navegar('alunos')" id="nav-alunos" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            🎓 Alunos Ativos
+          </button>
+          <button onclick="navegar('chamada')" id="nav-chamada" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            📅 Chamada por Data
+          </button>
+          <button onclick="navegar('resumo-aulas')" id="nav-resumo-aulas" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            📝 Resumo das Aulas
+          </button>
+          <button onclick="navegar('relatorios-aulas')" id="nav-relatorios-aulas" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            📑 Relatórios de Aulas
+          </button>
+          <button onclick="navegar('desistentes')" id="nav-desistentes" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            🛑 Alunos Desistentes
+          </button>
+          <button onclick="navegar('disciplinas')" id="nav-disciplinas" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            📚 Disciplinas do Ano
+          </button>
+          <button onclick="navegar('professores')" id="nav-professores" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            👨‍🏫 Professores
+          </button>
+        `;
+      }
+
+      if (ehProf) {
+        if (painelAdmin) painelAdmin.classList.add('hidden');
+        if (painelProf) painelProf.classList.remove('hidden');
+        if (cardsAdmin) cardsAdmin.classList.add('hidden'); 
+        if (painelProfDash) painelProfDash.classList.remove('hidden'); 
+        if (btnNovoProf) btnNovoProf.classList.add('hidden');
+        if (btnNovoAluno) btnNovoAluno.classList.add('hidden');
+        if (btnNovaDisc) btnNovaDisc.classList.add('hidden');
+        if (btnGerenciarMod) btnGerenciarMod.classList.add('hidden');
+        if (btnResetAno) btnResetAno.classList.add('hidden');
+        if (btnPerfilConfig) btnPerfilConfig.classList.add('hidden');
+        
+        if (perfSubtext) perfSubtext.innerText = 'Docente';
+
+        const curso = localStorage.getItem('itq_curso') || '1º Ano EAD';
+        const ano = localStorage.getItem('itq_ano_letivo') || '2026';
+        document.getElementById('prof-curso-fixo').innerText = `${curso} - ${ano}`;
+
+        const selectModFiltro = document.getElementById('filtro-modulo');
+        const selectModChamada = document.getElementById('chamada-modulo');
+        
+        const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
+        const prof = professores.find(p => p.email === user.email);
+        
+        if (prof) {
+          renderizarDisciplinasProfessorDashboard(prof);
+          if (prof.disciplinas && prof.disciplinas.length > 0) {
+            const disciplinasGerais = JSON.parse(localStorage.getItem('itq_disciplinas')) || DISCIPLINAS_INICIAIS;
+            const meusModulos = disciplinasGerais.filter(d => prof.disciplinas.includes(d.nome)).map(d => d.modulo);
+            const modulosUnicos = Array.from(new Set(meusModulos));
+            
+            if (modulosUnicos.length > 0) {
+              selectModFiltro.innerHTML = modulosUnicos.map(m => `<option value="${m}">${m}</option>`).join('');
+              selectModChamada.innerHTML = modulosUnicos.map(m => `<option value="${m}">${m}</option>`).join('');
+            }
+          }
+        }
+      } else if (ehAdmin) {
+        if (painelAdmin) painelAdmin.classList.remove('hidden');
+        if (painelProf) painelProf.classList.add('hidden');
+        if (cardsAdmin) cardsAdmin.classList.remove('hidden');
+        if (painelProfDash) painelProfDash.classList.add('hidden');
+        if (btnNovoProf) btnNovoProf.classList.remove('hidden');
+        if (btnNovoAluno) btnNovoAluno.classList.remove('hidden');
+        if (btnNovaDisc) btnNovaDisc.classList.remove('hidden');
+        if (btnGerenciarMod) btnGerenciarMod.classList.remove('hidden');
+        if (btnResetAno) btnResetAno.classList.remove('hidden');
+        if (btnPerfilConfig) btnPerfilConfig.classList.remove('hidden');
+        if (perfSubtext) perfSubtext.innerText = user.cargo || 'Administração ITQ';
+      }
+    }
+
+    function renderizarDisciplinasProfessorDashboard(prof) {
+      const container = document.getElementById('container-disciplinas-professor-dash');
+      if (!container) return;
+
+      const disciplinasGerais = JSON.parse(localStorage.getItem('itq_disciplinas')) || DISCIPLINAS_INICIAIS;
+      const minhasDiscNomes = prof.disciplinas || [];
+      const minhasDiscObj = disciplinasGerais.filter(d => minhasDiscNomes.includes(d.nome));
+
+      if (minhasDiscObj.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 italic col-span-3">Nenhuma disciplina atribuída a você no momento.</p>`;
+        return;
+      }
+
+      container.innerHTML = minhasDiscObj.map(d => `
+        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5 shadow-sm">
+          <span class="font-extrabold text-[11px] text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">${d.modulo}</span>
+          <p class="font-bold text-slate-800 text-xs mt-1">📘 ${d.nome}</p>
+          <p class="text-[10px] text-slate-500 font-semibold">Série/Ano: ${d.ano}</p>
+        </div>
+      `).join('');
+    }
+
+    function configurarUrlSistema() {
+      const urlAtual = localStorage.getItem('itq_url_sistema') || window.location.href;
+      const novaUrl = prompt("Cole a URL do seu site no Vercel/Netlify:", urlAtual);
+      if (novaUrl) {
+        localStorage.setItem('itq_url_sistema', novaUrl.trim());
+        enviarParaNuvem();
+        alert("Link do sistema salvo com sucesso!");
+      }
+    }
+
+    async function efetuarLogin(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const u = (document.getElementById('login-usuario').value || '').trim().toLowerCase();
+      const s = (document.getElementById('login-senha').value || '').trim();
+      const perfil = document.getElementById('login-perfil').value;
+
+      if (!u || !s) {
+        alert('Por favor, preencha todos os campos.');
+        return;
+      }
+
+      await sincronizarNuvem(false);
+
+      if (['diretor', 'secretario', 'coordenador', 'admin_it'].includes(perfil)) {
+        const adminConfig = JSON.parse(localStorage.getItem('itq_admin_config')) || { email: 'admin@itq.edu.br', senha: '123456', nome: 'Clauneis Nazário', cargo: 'Diretor(a)' };
+        
+        let perfilRotulo = "Diretor(a)";
+        if (perfil === 'secretario') perfilRotulo = "Secretário(a)";
+        if (perfil === 'coordenador') perfilRotulo = "Coordenador(a)";
+        if (perfil === 'admin_it') perfilRotulo = "Administrador IT";
+
+        if (u === adminConfig.email.toLowerCase() && s === adminConfig.senha) {
+          localStorage.setItem('itq_user_logged', JSON.stringify({ nome: adminConfig.nome, email: u, perfil: perfil, cargo: perfilRotulo }));
+          entrarNoSistema();
+        } else {
+          alert(`Credenciais de ${perfilRotulo} incorretas.`);
+        }
+      } else if (perfil === 'professor') {
+        const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
+        const prof = professores.find(p => (p.email || '').trim().toLowerCase() === u && (p.senha || '').trim() === s);
+        if (prof) {
+          localStorage.setItem('itq_user_logged', JSON.stringify({ nome: prof.nome, email: prof.email, perfil: 'professor' }));
+          entrarNoSistema();
+        } else {
+          alert('E-mail ou senha docente incorretos.');
+        }
+      } else if (perfil === 'aluno') {
+        const alunos = JSON.parse(localStorage.getItem('itq_alunos')) || ALUNOS_PLANILHA_INICIAL;
+        const aluno = alunos.find(a => (a.matricula || '').trim() === u);
+
+        if (!aluno) {
+          alert('Matrícula de aluno não encontrada no sistema.');
+          return;
+        }
+
+        if (!aluno.senha || aluno.senha.trim() === '') {
+          alert('Sua conta ainda não possui uma senha cadastrada. Por favor, clique em "Primeiro acesso como Aluno" para registrar sua senha.');
+          return;
+        }
+
+        if (aluno.senha.trim() === s) {
+          localStorage.setItem('itq_user_logged', JSON.stringify({ nome: aluno.nome, matricula: aluno.matricula, id: aluno.id, perfil: 'aluno' }));
+          entrarNoSistema();
+        } else {
+          alert('Senha do aluno incorreta.');
+        }
+      }
+    }
+
+    function entrarNoSistema() {
+      document.getElementById('tela-login').classList.add('hidden');
+      document.getElementById('interface-sistema').classList.remove('hidden');
+      inicializar();
+    }
+
+    function efetuarLogout() {
+      localStorage.removeItem('itq_user_logged');
+      document.getElementById('login-usuario').value = '';
+      document.getElementById('login-senha').value = '';
+      document.getElementById('tela-login').classList.remove('hidden');
+      document.getElementById('interface-sistema').classList.add('hidden');
+    }
+
+    function inicializar() {
+      try {
+        if (!localStorage.getItem('itq_disciplinas')) localStorage.setItem('itq_disciplinas', JSON.stringify(DISCIPLINAS_INICIAIS));
+        if (!localStorage.getItem('itq_alunos')) localStorage.setItem('itq_alunos', JSON.stringify(ALUNOS_PLANILHA_INICIAL));
+        if (!localStorage.getItem('itq_professores')) localStorage.setItem('itq_professores', JSON.stringify(PROFESSORES_INICIAIS));
+
+        const cursoSalvo = localStorage.getItem('itq_curso') || '1º Ano EAD';
+        const anoSalvo = localStorage.getItem('itq_ano_letivo') || '2026';
+
+        document.getElementById('select-curso-sidebar').value = cursoSalvo;
+        document.getElementById('badge-curso-dash').innerText = cursoSalvo;
+        document.getElementById('print-curso-ano').innerText = `${cursoSalvo} - ${anoSalvo}`;
+
+        document.getElementById('select-ano-letivo').value = anoSalvo;
+        document.getElementById('badge-ano-dash').innerText = anoSalvo;
+
+        const user = JSON.parse(localStorage.getItem('itq_user_logged')) || { nome: 'Clauneis Nazário', perfil: 'diretor', cargo: 'Diretor(a)' };
+        document.getElementById('nome-user-logged').innerText = user.nome;
+
+        const iniciais = user.nome.split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase();
+        document.getElementById('avatar-user').innerText = iniciais || 'CN';
+
+        const logoSalvo = localStorage.getItem('itq_logo_url');
+        const srcLogo = logoSalvo || 'https://lh3.googleusercontent.com/d/1qUc3ZADEnXvlFV_NxmYzDflv_YaNzAEA';
+        document.getElementById('img-logo-sidebar').src = srcLogo;
+        document.getElementById('img-logo-dash').src = srcLogo;
+        document.getElementById('img-logo-print').src = srcLogo;
+
+        document.getElementById('print-data-emissao').innerText = new Date().toLocaleDateString('pt-BR');
+        document.getElementById('chamada-data').value = new Date().toISOString().split('T')[0];
+
+        aplicarRestricoesPerfil();
+        carregarModulos();
+        renderizarTudo();
+
+        if (user.perfil === 'aluno') {
+          carregarConsultaAluno();
+        }
+      } catch(err) {
+        console.error("Erro na inicialização:", err);
+      }
+    }
+
+    function alterarCurso(novoCurso) {
+      localStorage.setItem('itq_curso', novoCurso);
+      const anoSalvo = localStorage.getItem('itq_ano_letivo') || '2026';
+      
+      // Atualiza os selos visuais em tempo real
+      document.getElementById('badge-curso-dash').innerText = novoCurso;
+      document.getElementById('print-curso-ano').innerText = `${novoCurso} - ${anoSalvo}`;
+      
+      carregarModulos();
+      renderizarTudo();
+    }
+
+    function alterarAnoLetivo(novoAno) {
+      const anoAnterior = localStorage.getItem('itq_ano_letivo') || '2026';
+      if (novoAno !== anoAnterior) {
+        localStorage.setItem('itq_ano_letivo', novoAno);
+        const cursoSalvo = localStorage.getItem('itq_curso') || '1º Ano EAD';
+
+        document.getElementById('badge-ano-dash').innerText = novoAno;
+        document.getElementById('print-curso-ano').innerText = `${cursoSalvo} - ${novoAno}`;
+        
+        renderizarTudo();
+      }
+    }
+
+    function adicionarNovoAno() {
+      const novoAno = prompt("Digite o novo Ano Letivo (ex: 2027):");
+      if (novoAno && novoAno.trim() !== '') {
+        const select = document.getElementById('select-ano-letivo');
+        const opt = document.createElement('option');
+        opt.value = novoAno.trim();
+        opt.innerText = novoAno.trim();
+        select.appendChild(opt);
+        select.value = novoAno.trim();
+        alterarAnoLetivo(novoAno.trim());
+      }
+    }
+
+    function obterAnoAtualSelecionado() {
+      const c = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      if (c.includes("2º Ano")) return "2º Ano";
+      if (c.includes("3º Ano")) return "3º Ano";
+      return "1º Ano";
+    }
+
+    function atualizarFiltroDisciplinas() {
+      const anoSel = obterAnoAtualSelecionado();
+      const mod = document.getElementById('filtro-modulo').value;
+      const disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || [];
+      const filtradas = disciplinas.filter(d => (d.ano === anoSel || !d.ano) && d.modulo === mod);
+      const selectDisc = document.getElementById('filtro-disciplina');
+      selectDisc.innerHTML = filtradas.map(d => `<option value="${d.nome}">${d.nome}</option>`).join('');
+    }
+
+    function atualizarFiltroDisciplinasChamada() {
+      const anoSel = obterAnoAtualSelecionado();
+      const mod = document.getElementById('chamada-modulo').value;
+      const disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || [];
+      const filtradas = disciplinas.filter(d => (d.ano === anoSel || !d.ano) && d.modulo === mod);
+      const selectDisc = document.getElementById('chamada-disciplina');
+      selectDisc.innerHTML = filtradas.map(d => `<option value="${d.nome}">${d.nome}</option>`).join('');
+    }
+
+    function calcularAulasRealizadasDisciplina(disciplina) {
+      const diarioDatas = JSON.parse(localStorage.getItem('itq_diario_datas')) || {};
+      const datasUnicas = new Set();
+      Object.keys(diarioDatas).forEach(chave => {
+        const partes = chave.split('_');
+        if (partes.length >= 3 && partes[1] === disciplina) {
+          datasUnicas.add(partes[2]);
+        }
+      });
+      return datasUnicas.size;
+    }
+
+    function abrirModalGerenciarModulos() {
+      const anoSel = obterAnoAtualSelecionado();
+      document.getElementById('modulos-ano-select').value = anoSel;
+      carregarListaModulosParaEdicao();
+      document.getElementById('modal-gerenciar-modulos').classList.remove('hidden');
+      document.getElementById('modal-gerenciar-modulos').classList.add('flex');
+    }
+
+    function fecharModalGerenciarModulos() {
+      document.getElementById('modal-gerenciar-modulos').classList.add('hidden');
+      document.getElementById('modal-gerenciar-modulos').classList.remove('flex');
+    }
+
+    function carregarListaModulosParaEdicao() {
+      const ano = document.getElementById('modulos-ano-select').value;
+      const modulos = obterModulosAno(ano);
+      const container = document.getElementById('lista-modulos-editaveis');
+
+      container.innerHTML = modulos.map((m, index) => `
+        <div class="flex items-center gap-2">
+          <input type="text" value="${m}" id="mod-edit-inp-${index}" class="flex-1 p-1.5 border rounded text-xs font-bold uppercase bg-white">
+          <button onclick="salvarItemModuloEditado('${ano}', ${index})" class="px-2 py-1 bg-slate-800 text-white font-bold text-xs rounded hover:bg-slate-700">💾 Salvar</button>
+          <button onclick="removerItemModulo('${ano}', ${index})" class="px-2 py-1 bg-rose-600 text-white font-bold text-xs rounded hover:bg-rose-700">🗑️</button>
+        </div>
+      `).join('');
+    }
+
+    function salvarItemModuloEditado(ano, index) {
+      const novoNome = document.getElementById(`mod-edit-inp-${index}`).value.trim().toUpperCase();
+      if (!novoNome) return;
+      let custom = JSON.parse(localStorage.getItem('itq_modulos_custom')) || JSON.parse(JSON.stringify(MODULOS_PADRAO));
+      if (!custom[ano]) custom[ano] = obterModulosAno(ano);
+      custom[ano][index] = novoNome;
+
+      localStorage.setItem('itq_modulos_custom', JSON.stringify(custom));
+      carregarListaModulosParaEdicao();
+      carregarModulos();
+      renderizarTudo();
+      enviarParaNuvem();
+      alert("Módulo atualizado com sucesso!");
+    }
+
+    function removerItemModulo(ano, index) {
+      if (confirm("Tem certeza que deseja remover este módulo?")) {
+        let custom = JSON.parse(localStorage.getItem('itq_modulos_custom')) || JSON.parse(JSON.stringify(MODULOS_PADRAO));
+        if (!custom[ano]) custom[ano] = obterModulosAno(ano);
+        custom[ano].splice(index, 1);
+
+        localStorage.setItem('itq_modulos_custom', JSON.stringify(custom));
+        carregarListaModulosParaEdicao();
+        carregarModulos();
+        renderizarTudo();
+        enviarParaNuvem();
+      }
+    }
+
+    function adicionarNovoModuloPersonalizado() {
+      const ano = document.getElementById('modulos-ano-select').value;
+      const inp = document.getElementById('novo-nome-modulo-input');
+      const nome = inp.value.trim().toUpperCase();
+      if (!nome) return;
+
+      let custom = JSON.parse(localStorage.getItem('itq_modulos_custom')) || JSON.parse(JSON.stringify(MODULOS_PADRAO));
+      if (!custom[ano]) custom[ano] = obterModulosAno(ano);
+      custom[ano].push(nome);
+
+      localStorage.setItem('itq_modulos_custom', JSON.stringify(custom));
+      inp.value = '';
+      carregarListaModulosParaEdicao();
+      carregarModulos();
+      renderizarTudo();
+      enviarParaNuvem();
+    }
+
+    function renderizarDisciplinas() {
+      const anoSel = obterAnoAtualSelecionado();
+      const disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || DISCIPLINAS_INICIAIS;
+      const filtradas = disciplinas.filter(d => d.ano === anoSel);
+      const userLogged = JSON.parse(localStorage.getItem('itq_user_logged')) || { perfil: 'diretor' };
+      const ehAdmin = ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(userLogged.perfil);
+
+      const tbody = document.getElementById('tabela-disciplinas');
+      if (tbody) {
+        if (filtradas.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400 font-semibold">Nenhuma disciplina cadastrada para ${anoSel}.</td></tr>`;
+        } else {
+          tbody.innerHTML = filtradas.map((d, i) => {
+            const acoes = ehAdmin
+              ? `<button onclick="editarDisciplina(${d.id})" class="px-2.5 py-1 text-xs bg-slate-800 text-white rounded hover:bg-slate-700">✏️ Editar</button>
+                 <button onclick="excluirDisciplina(${d.id})" class="px-2.5 py-1 text-xs bg-rose-600 text-white rounded hover:bg-rose-700">🗑️ Excluir</button>`
+              : `<span class="text-xs text-slate-400 italic">Somente Leitura</span>`;
+
+            return `
+              <tr class="hover:bg-slate-50">
+                <td class="p-4 font-bold text-slate-400">${i + 1}</td>
+                <td class="p-4 font-semibold text-slate-800">${d.nome}</td>
+                <td class="p-4"><span class="px-2 py-1 bg-amber-100 text-amber-800 rounded font-bold text-xs">${d.ano}</span></td>
+                <td class="p-4 font-bold text-blue-600">${d.modulo}</td>
+                <td class="p-4 text-center no-print flex gap-1 justify-center">${acoes}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      const containerCards = document.getElementById('container-cards-disciplinas-modulo');
+      if (containerCards) {
+        const modulosDoAno = obterModulosAno(anoSel);
+        containerCards.innerHTML = modulosDoAno.map(mod => {
+          const discDoMod = filtradas.filter(d => d.modulo === mod);
+          const listaItens = discDoMod.length > 0 
+            ? discDoMod.map(d => `<li class="text-xs font-semibold text-slate-700 flex items-center gap-1.5"><span class="text-amber-500">📘</span> ${d.nome}</li>`).join('')
+            : `<li class="text-xs text-slate-400 italic">Nenhuma disciplina cadastrada</li>`;
+
+          return `
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 shadow-sm">
+              <div class="flex items-center justify-between border-b pb-2">
+                <span class="font-extrabold text-xs text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded-full">${mod}</span>
+                <span class="text-[10px] text-slate-400 font-bold">${discDoMod.length} Matérias</span>
+              </div>
+              <ul class="space-y-1.5 pt-1">
+                ${listaItens}
+              </ul>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function abrirModalNovaDisciplina() {
+      document.getElementById('edit-disciplina-id').value = '';
+      document.getElementById('modal-disciplina-titulo').innerText = 'Nova Disciplina';
+      document.getElementById('disc-nome').value = '';
+      const anoSel = obterAnoAtualSelecionado();
+      document.getElementById('disc-ano').value = anoSel;
+      atualizarModulosModalDisciplina(anoSel);
+
+      document.getElementById('modal-disciplina').classList.remove('hidden');
+      document.getElementById('modal-disciplina').classList.add('flex');
+    }
+
+    function editarDisciplina(id) {
+      const disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || DISCIPLINAS_INICIAIS;
+      const d = disciplinas.find(item => item.id === id);
+      if (d) {
+        document.getElementById('edit-disciplina-id').value = d.id;
+        document.getElementById('modal-disciplina-titulo').innerText = 'Editar Disciplina';
+        document.getElementById('disc-nome').value = d.nome;
+        document.getElementById('disc-ano').value = d.ano;
+        atualizarModulosModalDisciplina(d.ano);
+        document.getElementById('disc-modulo').value = d.modulo;
+
+        document.getElementById('modal-disciplina').classList.remove('hidden');
+        document.getElementById('modal-disciplina').classList.add('flex');
+      }
+    }
+
+    function atualizarModulosModalDisciplina(ano) {
+      const modulos = obterModulosAno(ano);
+      const select = document.getElementById('disc-modulo');
+      select.innerHTML = modulos.map(m => `<option value="${m}">${m}</option>`).join('');
+    }
+
+    function fecharModalDisciplina() {
+      document.getElementById('modal-disciplina').classList.add('hidden');
+      document.getElementById('modal-disciplina').classList.remove('flex');
+    }
+
+    function salvarDisciplina(e) {
+      e.preventDefault();
+      const disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || DISCIPLINAS_INICIAIS;
+      const editId = document.getElementById('edit-disciplina-id').value;
+      const nome = document.getElementById('disc-nome').value.trim().toUpperCase();
+      const ano = document.getElementById('disc-ano').value;
+      const modulo = document.getElementById('disc-modulo').value;
+
+      if (editId) {
+        const index = disciplinas.findIndex(d => d.id == editId);
+        if (index !== -1) {
+          disciplinas[index] = { id: parseInt(editId), nome, ano, modulo };
+        }
+      } else {
+        disciplinas.push({ id: Date.now(), nome, ano, modulo });
+      }
+
+      localStorage.setItem('itq_disciplinas', JSON.stringify(disciplinas));
+      fecharModalDisciplina();
+      renderizarTudo();
+      enviarParaNuvem();
+    }
+
+    function excluirDisciplina(id) {
+      if (confirm("Tem certeza que deseja excluir esta disciplina da grade curricular?")) {
+        let disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || DISCIPLINAS_INICIAIS;
+        disciplinas = disciplinas.filter(d => d.id !== id);
+        localStorage.setItem('itq_disciplinas', JSON.stringify(disciplinas));
+        renderizarTudo();
+        enviarParaNuvem();
+      }
+    }
+
+    function abrirModalEsqueciSenha() {
+      document.getElementById('esqueci-chave').value = '';
+      document.getElementById('esqueci-nova-senha').value = '';
+      document.getElementById('modal-esqueci-senha').classList.remove('hidden');
+      document.getElementById('modal-esqueci-senha').classList.add('flex');
+    }
+
+    function fecharModalEsqueciSenha() {
+      document.getElementById('modal-esqueci-senha').classList.add('hidden');
+      document.getElementById('modal-esqueci-senha').classList.remove('flex');
+    }
+
+    function salvarRedefinicaoSenha(e) {
+      e.preventDefault();
+      const chave = document.getElementById('esqueci-chave').value.trim().toLowerCase();
+      const novaSenha = document.getElementById('esqueci-nova-senha').value.trim();
+
+      if (!novaSenha) { alert("Por favor, digite uma nova senha."); return; }
+
+      let alterado = false;
+
+      const adminConfig = JSON.parse(localStorage.getItem('itq_admin_config')) || { email: 'admin@itq.edu.br', senha: '123' };
+      if (adminConfig.email.toLowerCase() === chave) {
+        adminConfig.senha = novaSenha;
+        localStorage.setItem('itq_admin_config', JSON.stringify(adminConfig));
+        alterado = true;
+      }
+
+      let professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
+      const idxProf = professores.findIndex(p => (p.email || '').toLowerCase() === chave);
+      if (idxProf !== -1) {
+        professores[idxProf].senha = novaSenha;
+        localStorage.setItem('itq_professores', JSON.stringify(professores));
+        alterado = true;
+      }
+
+      let alunos = JSON.parse(localStorage.getItem('itq_alunos')) || ALUNOS_PLANILHA_INICIAL;
+      const idxAluno = alunos.findIndex(a => (a.matricula || '').trim().toLowerCase() === chave);
+      if (idxAluno !== -1) {
+        alunos[idxAluno].senha = novaSenha;
+        localStorage.setItem('itq_alunos', JSON.stringify(alunos));
+        alterado = true;
+      }
+
+      if (alterado) {
+        enviarParaNuvem();
+        fecharModalEsqueciSenha();
+        alert("✅ Senha redefinida com sucesso! Você já pode efetuar o login.");
+      } else {
+        alert("⚠️ E-mail ou Matrícula não encontrados no sistema.");
+      }
+    }
+
+    function abrirModalPrimeiroAcessoAluno() {
+      document.getElementById('primeiro-aluno-matricula').value = '';
+      document.getElementById('primeiro-aluno-senha').value = '';
+      document.getElementById('modal-primeiro-acesso-aluno').classList.remove('hidden');
+      document.getElementById('modal-primeiro-acesso-aluno').classList.add('flex');
+    }
+
+    function fecharModalPrimeiroAcessoAluno() {
+      document.getElementById('modal-primeiro-acesso-aluno').classList.add('hidden');
+      document.getElementById('modal-primeiro-acesso-aluno').classList.remove('flex');
+    }
+
+    function salvarPrimeiraSenhaAluno(e) {
+      e.preventDefault();
+      const mat = document.getElementById('primeiro-aluno-matricula').value.trim();
+      const senha = document.getElementById('primeiro-aluno-senha').value.trim();
+
+      let alunos = JSON.parse(localStorage.getItem('itq_alunos')) || ALUNOS_PLANILHA_INICIAL;
+      const index = alunos.findIndex(a => a.matricula === mat);
+
+      if (index !== -1) {
+        alunos[index].senha = senha;
+        localStorage.setItem('itq_alunos', JSON.stringify(alunos));
+        enviarParaNuvem();
+        fecharModalPrimeiroAcessoAluno();
+        alert("✅ Senha criada com sucesso! Faça login usando sua Matrícula e a nova Senha.");
+      } else {
+        alert("⚠️ Matrícula não encontrada. Entre em contato com a Secretaria do ITQ.");
+      }
+    }
+
+    function renderizarAlunos() {
+      const anoLetivoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
+      const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const todosAlunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+      const userLogged = JSON.parse(localStorage.getItem('itq_user_logged')) || { perfil: 'diretor' };
+
+      const alunos = todosAlunos.filter(a => a.status !== 'desistente' && a.anoLetivo === anoLetivoAtual && (a.curso === cursoAtual || (!a.curso && cursoAtual === '1º Ano EAD')));
+      const boletim = JSON.parse(localStorage.getItem('itq_boletim')) || {};
+      const discElem = document.getElementById('filtro-disciplina');
+      if (!discElem) return;
+      const disc = discElem.value;
+      const busca = (document.getElementById('filtro-busca').value || '').toLowerCase();
+      const tbody = document.getElementById('tabela-alunos');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const aulasRealizadas = calcularAulasRealizadasDisciplina(disc);
+      document.getElementById('contador-aulas-realizadas').innerText = aulasRealizadas;
+
+      if (alunos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="13" class="p-6 text-center text-slate-400 font-semibold">Nenhum aluno cadastrado para ${cursoAtual} em ${anoLetivoAtual}.</td></tr>`;
+        return;
+      }
+
+      const ehAdmin = ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(userLogged.perfil);
+
+      alunos.filter(a => a.nome.toLowerCase().includes(busca) || a.matricula.includes(busca)).forEach(aluno => {
+        const b = boletim[`${aluno.id}_${disc}`] || { presenca: 0, faltas: 0, justificada: 0, autoatividade: 0, somativa: 0, conclusiva: 0, recuperacao: 0 };
+        const totalAulasComputadas = aulasRealizadas > 0 ? aulasRealizadas : ((b.presenca || 0) + (b.faltas || 0) + (b.justificada || 0));
+        const pct = totalAulasComputadas > 0 ? ((b.presenca / totalAulasComputadas) * 100).toFixed(1) : "100.0";
+        const media = ((parseFloat(b.autoatividade || 0) + parseFloat(b.somativa || 0) + parseFloat(b.conclusiva || 0)) / 3).toFixed(2);
+        const finalNote = parseFloat(b.recuperacao || 0) > 0 ? parseFloat(b.recuperacao).toFixed(2) : media;
+        const aprov = finalNote >= 7.0 && pct >= 75.0;
+
+        const acoesAdmin = ehAdmin
+          ? `<button onclick="mudarStatusAluno(${aluno.id}, 'desistente')" class="px-2 py-1 text-xs bg-amber-500 text-white rounded font-bold" title="Trancar Matrícula">🛑 Trancar</button>
+             <button onclick="excluirAluno(${aluno.id})" class="px-2 py-1 text-xs bg-rose-600 text-white rounded hover:bg-rose-700" title="Excluir Aluno">🗑️</button>`
+          : '';
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50">
+            <td class="p-3 font-semibold">${aluno.matricula} - ${aluno.nome}</td>
+            <td class="p-3 font-bold text-emerald-600">${b.presenca}</td>
+            <td class="p-3 font-bold text-rose-600">${b.faltas}</td>
+            <td class="p-3 font-bold text-amber-600">${b.justificada}</td>
+            <td class="p-3 font-bold">${pct}%</td>
+            <td class="p-3">${b.autoatividade}</td>
+            <td class="p-3">${b.somativa}</td>
+            <td class="p-3">${b.conclusiva}</td>
+            <td class="p-3 font-bold">${media}</td>
+            <td class="p-3">${b.recuperacao || '-'}</td>
+            <td class="p-3 font-extrabold text-blue-700">${finalNote}</td>
+            <td class="p-3"><span class="px-2 py-1 rounded-full text-xs font-bold ${aprov ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${aprov ? 'APROVADO' : 'RECUP/REPROV'}</span></td>
+            <td class="p-3 text-center flex gap-1 justify-center no-print">
+              <button onclick="abrirModalNota(${aluno.id}, '${disc}')" class="px-2 py-1 text-xs bg-slate-900 text-white rounded hover:bg-slate-700">✏️ Notas</button>
+              ${acoesAdmin}
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function renderizarFinanceiro() {
+      const anoLetivoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
+      const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const todosAlunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+      const userLogged = JSON.parse(localStorage.getItem('itq_user_logged')) || { perfil: 'diretor' };
+      const filtro = document.getElementById('filtro-status-financeiro').value;
+
+      let alunos = todosAlunos.filter(a => a.status !== 'desistente' && a.anoLetivo === anoLetivoAtual && (a.curso === cursoAtual || (!a.curso && cursoAtual === '1º Ano EAD')));
+
+      if (filtro === 'adimplente') alunos = alunos.filter(a => (a.financeiro || 'adimplente') === 'adimplente');
+      if (filtro === 'inadimplente') alunos = alunos.filter(a => a.financeiro === 'inadimplente');
+
+      const tbody = document.getElementById('tabela-financeiro');
+      if (!tbody) return;
+
+      if (alunos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-400 font-semibold">Nenhum aluno encontrado para ${cursoAtual} em ${anoLetivoAtual}.</td></tr>`;
+        return;
+      }
+
+      const ehAdmin = ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(userLogged.perfil);
+
+      tbody.innerHTML = alunos.map(a => {
+        const pag = a.pagamentosMeses || {};
+        const mesAtual = new Date().getMonth() + 1;
+        const estaEmDia = pag[mesAtual] !== false && (a.financeiro !== 'inadimplente');
+
+        const botoesMeses = MESES_ANO.map(m => {
+          const pago = pag[m.id] !== false;
+          return `
+            <button ${ehAdmin ? `onclick="alternarPagamentoMes(${a.id}, ${m.id})"` : 'disabled'} class="px-2 py-1 rounded text-[10px] font-bold ${pago ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white hover:bg-rose-600'}" title="${m.nome}: ${pago ? 'Pago' : 'Pendente'}">
+              ${m.nome} ${pago ? '✓' : '✕'}
+            </button>
+          `;
+        }).join('');
+
+        return `
+          <tr class="hover:bg-slate-50">
+            <td class="p-4 font-bold text-slate-800">${a.matricula} - ${a.nome}</td>
+            <td class="p-4">
+              <span class="px-2.5 py-1 rounded-full text-xs font-extrabold ${estaEmDia ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                ${estaEmDia ? '🟢 ADIMPLENTE' : '🔴 INADIMPLENTE'}
+              </span>
+            </td>
+            <td class="p-4 no-print flex flex-wrap gap-1">${botoesMeses}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function alternarPagamentoMes(alunoId, mesId) {
+      let alunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+      const idx = alunos.findIndex(a => a.id === alunoId);
+      if (idx !== -1) {
+        if (!alunos[idx].pagamentosMeses) alunos[idx].pagamentosMeses = {};
+        const situacaoAtual = alunos[idx].pagamentosMeses[mesId] !== false;
+        alunos[idx].pagamentosMeses[mesId] = !situacaoAtual;
+
+        const possuiPendencia = Object.values(alunos[idx].pagamentosMeses).some(v => v === false);
+        alunos[idx].financeiro = possuiPendencia ? 'inadimplente' : 'adimplente';
+
+        localStorage.setItem('itq_alunos', JSON.stringify(alunos));
+        renderizarFinanceiro();
+        atualizarDashboard();
+        enviarParaNuvem();
+      }
+    }
+
+    function renderizarResumoAulas() {
+      const resumos = JSON.parse(localStorage.getItem('itq_resumos_aulas')) || [];
+      const container = document.getElementById('container-resumo-aulas');
+      if (!container) return;
+
+      if (resumos.length === 0) {
+        container.innerHTML = '<p class="text-slate-400 text-sm text-center py-6">Nenhum resumo de aula registrado até o momento.</p>';
+        return;
+      }
+
+      container.innerHTML = resumos.sort((a,b) => new Date(b.data) - new Date(a.data)).map((r, i) => `
+        <div class="p-4 bg-slate-50 border rounded-xl space-y-2 shadow-sm">
+          <div class="flex justify-between items-center border-b pb-2">
+            <div>
+              <span class="font-extrabold text-slate-900 text-sm">📅 Data: ${r.data}</span>
+              <span class="ml-2 px-2 py-0.5 bg-blue-100 text-blue-800 rounded text-xs font-bold">📘 Disciplina: ${r.disciplina}</span>
+            </div>
+            <span class="text-xs text-slate-500 font-semibold">Professor: ${r.autor || 'Docente'}</span>
+          </div>
+          <div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed pt-1">
+            <strong class="text-slate-900 font-bold block mb-1">Conteúdo Ministrado:</strong>
+            ${r.texto}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function abrirModalNovoResumo() {
+      const anoSel = obterAnoAtualSelecionado();
+      const disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || [];
+      const filtradas = disciplinas.filter(d => d.ano === anoSel);
+      
+      const select = document.getElementById('resumo-disciplina-select');
+      select.innerHTML = filtradas.map(d => `<option value="${d.nome}">${d.nome} (${d.modulo})</option>`).join('');
+      document.getElementById('resumo-data').value = new Date().toISOString().split('T')[0];
+      document.getElementById('resumo-texto').value = '';
+
+      document.getElementById('modal-resumo-aula').classList.remove('hidden');
+      document.getElementById('modal-resumo-aula').classList.add('flex');
+    }
+
+    function fecharModalResumo() {
+      document.getElementById('modal-resumo-aula').classList.add('hidden');
+      document.getElementById('modal-resumo-aula').classList.remove('flex');
+    }
+
+    function salvarResumoAula(e) {
+      e.preventDefault();
+      const resumos = JSON.parse(localStorage.getItem('itq_resumos_aulas')) || [];
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || { nome: 'Docente' };
+
+      resumos.push({
+        id: Date.now(),
+        data: document.getElementById('resumo-data').value,
+        disciplina: document.getElementById('resumo-disciplina-select').value,
+        texto: document.getElementById('resumo-texto').value,
+        autor: user.nome
+      });
+
+      localStorage.setItem('itq_resumos_aulas', JSON.stringify(resumos));
+      fecharModalResumo();
+      renderizarResumoAulas();
+      enviarParaNuvem();
+    }
+
+    function renderizarDesistentes() {
+      const anoLetivoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
+      const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const desistentes = (JSON.parse(localStorage.getItem('itq_alunos')) || []).filter(a => a.status === 'desistente' && a.anoLetivo === anoLetivoAtual && (a.curso === cursoAtual || (!a.curso && cursoAtual === '1º Ano EAD')));
+      const userLogged = JSON.parse(localStorage.getItem('itq_user_logged')) || { perfil: 'diretor' };
+      const tbody = document.getElementById('tabela-desistentes');
+      if (!tbody) return;
+      
+      if (desistentes.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400 font-semibold">Nenhum aluno trancado/desistente em ${cursoAtual} (${anoLetivoAtual}).</td></tr>`;
+        return;
+      }
+
+      const ehAdmin = ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(userLogged.perfil);
+
+      tbody.innerHTML = desistentes.map(a => {
+        const acao = ehAdmin
+          ? `<button onclick="mudarStatusAluno(${a.id}, 'ativo')" class="px-3 py-1 bg-emerald-600 text-white rounded text-xs font-bold">❇️ Reativar Aluno</button>`
+          : `<span class="text-xs text-slate-400 italic">Inativo</span>`;
+
+        return `
+          <tr class="hover:bg-slate-50">
+            <td class="p-4 font-bold">${a.matricula}</td>
+            <td class="p-4 font-semibold">${a.nome}</td>
+            <td class="p-4"><span class="px-2.5 py-1 bg-rose-100 text-rose-700 rounded-full font-bold text-xs">DESISTENTE / TRANCADO</span></td>
+            <td class="p-4 text-center no-print">${acao}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function mudarStatusAluno(id, novoStatus) {
+      let alunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+      const index = alunos.findIndex(a => a.id === id);
+      if (index !== -1) {
+        alunos[index].status = novoStatus;
+        localStorage.setItem('itq_alunos', JSON.stringify(alunos));
+        renderizarTudo();
+        enviarParaNuvem();
+      }
+    }
+
+    function limparAlunosDoAno() {
+      const anoLetivoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
+      const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      if (confirm(`Tem certeza que deseja resetar/limpar a lista de alunos da turma ${cursoAtual} (${anoLetivoAtual})?`)) {
+        let todosAlunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+        todosAlunos = todosAlunos.filter(a => !(a.anoLetivo === anoLetivoAtual && (a.curso === cursoAtual || (!a.curso && cursoAtual === '1º Ano EAD'))));
+        localStorage.setItem('itq_alunos', JSON.stringify(todosAlunos));
+        renderizarTudo();
+        enviarParaNuvem();
+      }
+    }
+
+    function renderizarProfessores() {
+      const anoLetivoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
+      const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const professores = (JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS).filter(p => (p.anoLetivo || '2026') === anoLetivoAtual && (p.curso === cursoAtual || (!p.curso && cursoAtual === '1º Ano EAD')));
+      const userLogged = JSON.parse(localStorage.getItem('itq_user_logged')) || { perfil: 'diretor' };
+      const tbody = document.getElementById('tabela-professores');
+      if (!tbody) return;
+
+      if (professores.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 font-semibold">Nenhum professor cadastrado para ${cursoAtual} (${anoLetivoAtual}).</td></tr>`;
+        return;
+      }
+
+      const ehAdmin = ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(userLogged.perfil);
+
+      tbody.innerHTML = professores.map((p, i) => {
+        const disciList = (p.disciplinas && p.disciplinas.length > 0)
+          ? p.disciplinas.map(d => `
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 border border-slate-300 rounded-lg text-xs font-semibold mb-1 mr-1 shadow-sm">
+                <span>📘 ${d}</span>
+                <button onclick="enviarDisciplinaWhatsApp(${p.id}, '${d}')" class="px-1.5 py-0.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded font-bold text-[10px] flex items-center gap-1" title="Enviar por WhatsApp">💬 WhatsApp</button>
+                <button onclick="enviarDisciplinaEmail(${p.id}, '${d}')" class="px-1.5 py-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-[10px] flex items-center gap-1" title="Enviar por E-mail">✉️ E-mail</button>
+                ${ehAdmin ? `<button onclick="removerDisciplinaProf(${p.id}, '${d}')" class="text-rose-600 hover:text-rose-800 font-black text-xs ml-1" title="Remover Atribuição">✕</button>` : ''}
+              </div>
+            `).join('')
+          : `<span class="text-xs text-slate-400 italic">Nenhuma disciplina atribuída</span>`;
+
+        const acoesAdmin = ehAdmin
+          ? `<button onclick="abrirModalAtribuirDisciplina(${p.id})" class="px-2.5 py-1 text-xs bg-emerald-600 text-white font-bold rounded hover:bg-emerald-700 shadow" title="Atribuir Disciplina">+ Atribuir</button>
+             <button onclick="editarProfessor(${p.id})" class="px-2.5 py-1 text-xs bg-slate-800 text-white rounded hover:bg-slate-700">✏️ Editar</button>
+             <button onclick="excluirProfessor(${p.id})" class="px-2.5 py-1 text-xs bg-rose-600 text-white rounded hover:bg-rose-700">🗑️</button>`
+          : `<span class="text-xs text-slate-400 italic">Visão Restrita</span>`;
+
+        return `
+          <tr class="hover:bg-slate-50">
+            <td class="p-4 font-bold text-slate-400">${i + 1}</td>
+            <td class="p-4 font-semibold text-slate-800">${p.nome}</td>
+            <td class="p-4 text-xs">
+              <p class="font-mono text-slate-600">${p.email}</p>
+              ${p.telefone ? `<p class="text-slate-400 text-[11px]">📱 ${p.telefone}</p>` : ''}
+            </td>
+            <td class="p-4 font-bold text-amber-600">${p.modulo}</td>
+            <td class="p-4">${disciList}</td>
+            <td class="p-4 text-center no-print flex gap-1 justify-center flex-wrap">${acoesAdmin}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function enviarDisciplinaWhatsApp(profId, discNome) {
+      const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
+      const prof = professores.find(p => p.id === profId);
+      if (!prof) return;
+
+      const curso = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const anoLetivo = localStorage.getItem('itq_ano_letivo') || '2026';
+      const urlSistema = localStorage.getItem('itq_url_sistema') || window.location.href;
+
+      const textoMensagem = `Olá Prof(a). ${prof.nome}! 👋\n\nVocê foi atribuído(a) para lecionar a disciplina *${discNome}* (${prof.modulo}) no Instituto Teológico Quadrangular (ITQ - Alagoas).\n\n📌 *Curso:* ${curso}\n📅 *Ano Letivo:* ${anoLetivo}\n\n🔗 *Acesse o Sistema clicando no link abaixo:*\n${urlSistema}\n\n🔑 *Seu Login:* ${prof.email}\n🔒 *Sua Senha:* ${prof.senha || '123'}\n\nPor lá você poderá realizar a chamada diária e o lançamento de notas. Bom trabalho!`;
+
+      let numTel = (prof.telefone || '').replace(/\D/g, '');
+      if (numTel && !numTel.startsWith('55')) numTel = '55' + numTel;
+
+      const url = numTel ? `https://api.whatsapp.com/send?phone=${numTel}&text=${encodeURIComponent(textoMensagem)}` : `https://api.whatsapp.com/send?text=${encodeURIComponent(textoMensagem)}`;
+      window.open(url, '_blank');
+    }
+
+    function enviarDisciplinaEmail(profId, discNome) {
+      const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
+      const prof = professores.find(p => p.id === profId);
+      if (!prof) return;
+
+      const curso = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const anoLetivo = localStorage.getItem('itq_ano_letivo') || '2026';
+      const urlSistema = localStorage.getItem('itq_url_sistema') || window.location.href;
+
+      const assunto = encodeURIComponent(`Atribuição de Disciplina ITQ - ${discNome}`);
+      const corpo = encodeURIComponent(`Olá Prof(a). ${prof.nome},\n\nInformamos que você foi atribuído(a) para lecionar a disciplina de ${discNome} (${prof.modulo}) no Instituto Teológico Quadrangular.\n\nDetalhes:\n- Curso: ${curso}\n- Ano Letivo: ${anoLetivo}\n\nAcesse o sistema diretamente clicando no link abaixo:\n${urlSistema}\n\nSeu Login: ${prof.email}\nSua Senha: ${prof.senha || '123'}\n\nAtenciosamente,\nDireção / Secretaria Acadêmica ITQ`);
+
+      window.location.href = `mailto:${prof.email}?subject=${assunto}&body=${corpo}`;
+    }
+
+    function abrirModalAtribuirDisciplina(profId) {
+      const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
+      const prof = professores.find(p => p.id === profId);
+      if (!prof) return;
+
+      document.getElementById('atribuir-prof-id').value = prof.id;
+      document.getElementById('atribuir-prof-nome').innerText = `Professor(a): ${prof.nome}`;
+
+      const anoSel = obterAnoAtualSelecionado();
+      const disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || [];
+      const filtradas = disciplinas.filter(d => d.ano === anoSel);
+      
+      const select = document.getElementById('atribuir-disciplina-select');
+      select.innerHTML = filtradas.map(d => `<option value="${d.nome}">${d.nome} (${d.modulo})</option>`).join('');
+
+      document.getElementById('modal-atribuir-disciplina').classList.remove('hidden');
+      document.getElementById('modal-atribuir-disciplina').classList.add('flex');
+    }
+
+    function fecharModalAtribuirDisciplina() {
+      document.getElementById('modal-atribuir-disciplina').classList.add('hidden');
+      document.getElementById('modal-atribuir-disciplina').classList.remove('flex');
+    }
+
+    function salvarAtribuicaoDisciplina(e) {
+      e.preventDefault();
+      const profId = parseInt(document.getElementById('atribuir-prof-id').value);
+      const discNome = document.getElementById('atribuir-disciplina-select').value;
+      const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
+
+      const index = professores.findIndex(p => p.id === profId);
+      if (index !== -1) {
+        if (!professores[index].disciplinas) professores[index].disciplinas = [];
+        if (!professores[index].disciplinas.includes(discNome)) {
+          professores[index].disciplinas.push(discNome);
+        }
+        localStorage.setItem('itq_professores', JSON.stringify(professores));
+      }
+
+      fecharModalAtribuirDisciplina();
+      renderizarProfessores();
+      atualizarDashboard();
+      enviarParaNuvem();
+    }
+
+    function removerDisciplinaProf(profId, discNome) {
+      const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
+      const index = professores.findIndex(p => p.id === profId);
+      if (index !== -1 && professores[index].disciplinas) {
+        professores[index].disciplinas = professores[index].disciplinas.filter(d => d !== discNome);
+        localStorage.setItem('itq_professores', JSON.stringify(professores));
+        renderizarProfessores();
+        enviarParaNuvem();
+      }
+    }
+
+    function abrirModalNovoProfessor() {
+      document.getElementById('edit-prof-id').value = '';
+      document.getElementById('modal-prof-titulo').innerText = 'Cadastrar Professor';
+      document.getElementById('novo-prof-nome').value = '';
+      document.getElementById('novo-prof-email').value = '';
+      document.getElementById('novo-prof-telefone').value = '';
+      document.getElementById('novo-prof-senha').value = '';
+      document.getElementById('modal-professor').classList.remove('hidden');
+      document.getElementById('modal-professor').classList.add('flex');
+    }
+
+    function editarProfessor(id) {
+      const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
+      const prof = professores.find(p => p.id === id);
+      if (prof) {
+        document.getElementById('edit-prof-id').value = prof.id;
+        document.getElementById('modal-prof-titulo').innerText = 'Editar Professor & Senha';
+        document.getElementById('novo-prof-nome').value = prof.nome;
+        document.getElementById('novo-prof-email').value = prof.email;
+        document.getElementById('novo-prof-telefone').value = prof.telefone || '';
+        document.getElementById('novo-prof-senha').value = prof.senha || '';
+        document.getElementById('novo-prof-modulo').value = prof.modulo;
+        document.getElementById('modal-professor').classList.remove('hidden');
+        document.getElementById('modal-professor').classList.add('flex');
+      }
+    }
+
+    function fecharModalProfessor() {
+      document.getElementById('modal-professor').classList.add('hidden');
+      document.getElementById('modal-professor').classList.remove('flex');
+    }
+
+    function salvarProfessor(e) {
+      e.preventDefault();
+      const anoLetivoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
+      const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
+      const editId = document.getElementById('edit-prof-id').value;
+      const nome = document.getElementById('novo-prof-nome').value.trim();
+      const email = document.getElementById('novo-prof-email').value.trim();
+      const telefone = document.getElementById('novo-prof-telefone').value.trim();
+      const senha = document.getElementById('novo-prof-senha').value.trim();
+      const modulo = document.getElementById('novo-prof-modulo').value;
+
+      if (editId) {
+        const index = professores.findIndex(p => p.id == editId);
+        if (index !== -1) {
+          const discExistentes = professores[index].disciplinas || [];
+          professores[index] = { id: parseInt(editId), nome, email, telefone, senha, modulo, disciplinas: discExistentes, anoLetivo: anoLetivoAtual, curso: cursoAtual };
+        }
+      } else {
+        professores.push({ id: Date.now(), nome, email, telefone, senha, modulo, disciplinas: [], anoLetivo: anoLetivoAtual, curso: cursoAtual });
+      }
+
+      localStorage.setItem('itq_professores', JSON.stringify(professores));
+      fecharModalProfessor();
+      renderizarTudo();
+      enviarParaNuvem();
+    }
+
+    function excluirProfessor(id) {
+      if (confirm("Tem certeza que deseja excluir este professor?")) {
+        let professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
+        professores = professores.filter(p => p.id !== id);
+        localStorage.setItem('itq_professores', JSON.stringify(professores));
+        renderizarTudo();
+        enviarParaNuvem();
+      }
+    }
+
+    function renderizarListaChamada() {
+      const anoLetivoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
+      const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const alunos = (JSON.parse(localStorage.getItem('itq_alunos')) || []).filter(a => a.status !== 'desistente' && a.anoLetivo === anoLetivoAtual && (a.curso === cursoAtual || (!a.curso && cursoAtual === '1º Ano EAD')));
+      const disc = document.getElementById('chamada-disciplina').value;
+      const data = document.getElementById('chamada-data').value;
+      const diarioDatas = JSON.parse(localStorage.getItem('itq_diario_datas')) || {};
+      const container = document.getElementById('lista-chamada');
+
+      if (!data || !disc) {
+        container.innerHTML = '<p class="text-slate-400 text-sm">Selecione uma data e disciplina.</p>';
+        return;
+      }
+
+      container.innerHTML = '';
+      if (alunos.length === 0) {
+        container.innerHTML = `<p class="text-slate-400 text-sm">Sem alunos registrados em ${cursoAtual} (${anoLetivoAtual}).</p>`;
+        return;
+      }
+
+      alunos.forEach(aluno => {
+        const chaveData = `${aluno.id}_${disc}_${data}`;
+        const statusAtual = diarioDatas[chaveData] || '';
+
+        container.innerHTML += `
+          <div class="flex items-center justify-between p-3 bg-slate-50 border rounded-lg">
+            <span class="font-semibold text-slate-800 text-sm">${aluno.matricula} - ${aluno.nome}</span>
+            <div class="flex gap-2">
+              <button onclick="marcarPresencaData(${aluno.id}, '${disc}', '${data}', 'P')" class="px-3 py-1 rounded-md text-xs font-bold ${statusAtual === 'P' ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'}">Presença (P)</button>
+              <button onclick="marcarPresencaData(${aluno.id}, '${disc}', '${data}', 'F')" class="px-3 py-1 rounded-md text-xs font-bold ${statusAtual === 'F' ? 'bg-rose-600 text-white' : 'bg-slate-200 text-slate-700'}">Falta (F)</button>
+              <button onclick="marcarPresencaData(${aluno.id}, '${disc}', '${data}', 'J')" class="px-3 py-1 rounded-md text-xs font-bold ${statusAtual === 'J' ? 'bg-amber-500 text-white' : 'bg-slate-200 text-slate-700'}">F. Justificada (J)</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function marcarPresencaData(alunoId, disc, data, status) {
+      const diarioDatas = JSON.parse(localStorage.getItem('itq_diario_datas')) || {};
+      const chaveData = `${alunoId}_${disc}_${data}`;
+      const statusAnterior = diarioDatas[chaveData];
+
+      diarioDatas[chaveData] = status;
+      localStorage.setItem('itq_diario_datas', JSON.stringify(diarioDatas));
+
+      const boletim = JSON.parse(localStorage.getItem('itq_boletim')) || {};
+      const chaveBoletim = `${alunoId}_${disc}`;
+      const b = boletim[chaveBoletim] || { presenca: 0, faltas: 0, justificada: 0, autoatividade: 0, somativa: 0, conclusiva: 0, recuperacao: 0 };
+
+      if (statusAnterior === 'P') b.presenca = Math.max(0, b.presenca - 1);
+      if (statusAnterior === 'F') b.faltas = Math.max(0, b.faltas - 1);
+      if (statusAnterior === 'J') b.justificada = Math.max(0, b.justificada - 1);
+
+      if (status === 'P') b.presenca += 1;
+      if (status === 'F') b.faltas += 1;
+      if (status === 'J') b.justificada += 1;
+
+      boletim[chaveBoletim] = b;
+      localStorage.setItem('itq_boletim', JSON.stringify(boletim));
+
+      renderizarListaChamada();
+      renderizarAlunos();
+      atualizarDashboard();
+      enviarParaNuvem();
+    }
+
+    function renderizarRelatoriosAulas() {
+      const diarioDatas = JSON.parse(localStorage.getItem('itq_diario_datas')) || {};
+      const container = document.getElementById('container-relatorios-aulas');
+      if (!container) return;
+      
+      const datasDisciplinas = new Map();
+      Object.keys(diarioDatas).forEach(k => {
+        const partes = k.split('_');
+        if (partes.length >= 3) {
+          const disc = partes[1];
+          const data = partes[2];
+          const comboKey = `${data}___${disc}`;
+          datasDisciplinas.set(comboKey, { data, disc });
+        }
+      });
+
+      const lista = Array.from(datasDisciplinas.values());
+
+      if (lista.length === 0) {
+        container.innerHTML = '<p class="text-slate-400 text-sm text-center py-4">Nenhuma aula computada por data até o momento.</p>';
+        return;
+      }
+
+      const userLogged = JSON.parse(localStorage.getItem('itq_user_logged')) || { perfil: 'diretor' };
+      const ehAdmin = ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(userLogged.perfil);
+
+      container.innerHTML = lista.sort((a,b) => new Date(b.data) - new Date(a.data)).map(item => {
+        const btnDeletar = ehAdmin
+          ? `<button onclick="deletarAulaRealizada('${item.data}', '${item.disc}')" class="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded text-xs shadow transition no-print" title="Excluir aula do sistema">
+              🗑️ Deletar Aula
+             </button>`
+          : '';
+
+        return `
+          <div class="p-3 bg-slate-50 border rounded-lg flex justify-between items-center text-sm shadow-sm">
+            <div>
+              <span class="font-extrabold text-slate-800">📅 ${item.data}</span>
+              <span class="ml-2 font-bold text-blue-700">📘 Disciplina: ${item.disc}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-bold rounded text-xs border border-emerald-300">AULA REALIZADA</span>
+              ${btnDeletar}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function deletarAulaRealizada(data, disciplina) {
+      if (confirm(`Tem certeza que deseja excluir/deletar o registro de aula realizada do dia ${data} para a disciplina "${disciplina}"?\n\nEsta ação removerá os lançamentos desta data.`)) {
+        let diarioDatas = JSON.parse(localStorage.getItem('itq_diario_datas')) || {};
+        let boletim = JSON.parse(localStorage.getItem('itq_boletim')) || {};
+
+        Object.keys(diarioDatas).forEach(chave => {
+          const partes = chave.split('_');
+          if (partes.length >= 3 && partes[1] === disciplina && partes[2] === data) {
+            const alunoId = partes[0];
+            const statusAntigo = diarioDatas[chave];
+
+            const chaveBoletim = `${alunoId}_${disciplina}`;
+            if (boletim[chaveBoletim]) {
+              if (statusAntigo === 'P') boletim[chaveBoletim].presenca = Math.max(0, boletim[chaveBoletim].presenca - 1);
+              if (statusAntigo === 'F') boletim[chaveBoletim].faltas = Math.max(0, boletim[chaveBoletim].faltas - 1);
+              if (statusAntigo === 'J') boletim[chaveBoletim].justificada = Math.max(0, boletim[chaveBoletim].justificada - 1);
+            }
+
+            delete diarioDatas[chave];
+          }
+        });
+
+        localStorage.setItem('itq_diario_datas', JSON.stringify(diarioDatas));
+        localStorage.setItem('itq_boletim', JSON.stringify(boletim));
+
+        renderizarTudo();
+        enviarParaNuvem();
+        alert("✅ Registro de aula deletado com sucesso!");
+      }
+    }
+
+    function atualizarDashboard() {
+      const anoLetivoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
+      const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const todosAlunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+      const ativos = todosAlunos.filter(a => a.status !== 'desistente' && a.anoLetivo === anoLetivoAtual && (a.curso === cursoAtual || (!a.curso && cursoAtual === '1º Ano EAD')));
+      const professores = (JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS).filter(p => (p.anoLetivo || '2026') === anoLetivoAtual && (p.curso === cursoAtual || (!p.curso && cursoAtual === '1º Ano EAD')));
+
+      document.getElementById('dash-total-alunos').innerText = ativos.length;
+      document.getElementById('dash-total-professores').innerText = professores.length;
+
+      const mesAtual = new Date().getMonth() + 1;
+      const adimplentes = ativos.filter(a => (a.pagamentosMeses ? a.pagamentosMeses[mesAtual] !== false : true) && a.financeiro !== 'inadimplente').length;
+      const inadimplentes = ativos.length - adimplentes;
+
+      document.getElementById('dash-adimplentes').innerText = adimplentes;
+      document.getElementById('dash-inadimplentes').innerText = inadimplentes;
+
+      const diarioDatas = JSON.parse(localStorage.getItem('itq_diario_datas')) || {};
+      const totalAulasGeral = new Set(Object.keys(diarioDatas).map(k => k.split('_')[2])).size;
+      document.getElementById('dash-aulas-computadas').innerText = totalAulasGeral;
+    }
+
+    function exportarRelatorioExcel() {
+      const anoLetivoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
+      const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const alunos = (JSON.parse(localStorage.getItem('itq_alunos')) || []).filter(a => a.anoLetivo === anoLetivoAtual && (a.curso === cursoAtual || (!a.curso && cursoAtual === '1º Ano EAD')));
+      let csv = "Matricula,Nome,Status,SituacaoFinanceira,Curso,AnoLetivo\n";
+      alunos.forEach(a => csv += `${a.matricula},${a.nome},${a.status || 'ativo'},${a.financeiro || 'adimplente'},${a.curso || cursoAtual},${a.anoLetivo || anoLetivoAtual}\n`);
+      
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', `relatorio_alunos_${cursoAtual.replace(/\s+/g, '_')}_${anoLetivoAtual}.csv`);
+      a.click();
+    }
+
+    function carregarModulos() {
+      const anoSel = obterAnoAtualSelecionado();
+      const modulosDoAno = obterModulosAno(anoSel);
+      const html = modulosDoAno.map(m => `<option value="${m}">${m}</option>`).join('');
+
+      document.getElementById('filtro-modulo').innerHTML = html;
+      document.getElementById('chamada-modulo').innerHTML = html;
+      document.getElementById('novo-prof-modulo').innerHTML = html;
+      
+      if (modulosDoAno.length > 0) {
+        document.getElementById('filtro-modulo').value = modulosDoAno[0];
+        document.getElementById('chamada-modulo').value = modulosDoAno[0];
+      }
+
+      atualizarFiltroDisciplinas();
+      atualizarFiltroDisciplinasChamada();
+    }
+
+    function gerarMatriculaAutomatica() {
+      const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const anoLetivo = localStorage.getItem('itq_ano_letivo') || '2026';
+      const anoDigito = anoLetivo.slice(-2);
+
+      let prefixoSerie = "1";
+      if (cursoAtual.includes("2º Ano")) {
+        prefixoSerie = "2";
+      } else if (cursoAtual.includes("3º Ano")) {
+        prefixoSerie = "3";
+      }
+
+      const prefixoBase = `${prefixoSerie}${anoDigito}`;
+
+      const alunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+      const alunosDaSerie = alunos.filter(a => a.matricula && a.matricula.startsWith(prefixoBase));
+      
+      const proximoSequencial = alunosDaSerie.length + 1;
+      const matriculaGerada = `${prefixoBase}${String(proximoSequencial).padStart(3, '0')}`;
+
+      const inputMatricula = document.getElementById('novo-aluno-matricula');
+      if (inputMatricula) {
+        inputMatricula.value = matriculaGerada;
+      }
+    }
+
+    function carregarConsultaAluno() {
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      document.getElementById('aluno-consulta-matricula').innerText = `Matrícula: ${user.matricula || '---'}`;
+
+      const anoSel = obterAnoAtualSelecionado();
+      const modulosDoAno = obterModulosAno(anoSel);
+      const html = modulosDoAno.map(m => `<option value="${m}">${m}</option>`).join('');
+
+      const selectMod = document.getElementById('aluno-select-modulo');
+      selectMod.innerHTML = html;
+      if (modulosDoAno.length > 0) selectMod.value = modulosDoAno[0];
+
+      atualizarDisciplinasConsultaAluno();
+      renderizarCardsDisciplinasAluno();
+      atualizarDashboardAluno();
+    }
+
+    function atualizarDisciplinasConsultaAluno() {
+      const anoSel = obterAnoAtualSelecionado();
+      const mod = document.getElementById('aluno-select-modulo').value;
+      const disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || [];
+      const filtradas = disciplinas.filter(d => (d.ano === anoSel || !d.ano) && d.modulo === mod);
+      
+      const selectDisc = document.getElementById('aluno-select-disciplina');
+      selectDisc.innerHTML = filtradas.map(d => `<option value="${d.nome}">${d.nome}</option>`).join('');
+
+      renderizarNotasConsultaAluno();
+    }
+
+    function renderizarCardsDisciplinasAluno() {
+      const anoSel = obterAnoAtualSelecionado();
+      const disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || DISCIPLINAS_INICIAIS;
+      const filtradas = disciplinas.filter(d => d.ano === anoSel || !d.ano);
+      const modulosDoAno = obterModulosAno(anoSel);
+      
+      const containerCards = document.getElementById('aluno-container-cards-disciplinas');
+      if (!containerCards) return;
+
+      containerCards.innerHTML = modulosDoAno.map(mod => {
+        const discDoMod = filtradas.filter(d => d.modulo === mod);
+        const listaItens = discDoMod.length > 0 
+          ? discDoMod.map(d => `<li class="text-xs font-semibold text-slate-700 flex items-center gap-1.5"><span class="text-amber-500">📘</span> ${d.nome}</li>`).join('')
+          : `<li class="text-xs text-slate-400 italic">Nenhuma disciplina cadastrada</li>`;
+
+        return `
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 shadow-sm">
+            <div class="flex items-center justify-between border-b pb-2">
+              <span class="font-extrabold text-xs text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded-full">${mod}</span>
+              <span class="text-[10px] text-slate-400 font-bold">${discDoMod.length} Matérias</span>
+            </div>
+            <ul class="space-y-1.5 pt-1">
+              ${listaItens}
+            </ul>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function atualizarDashboardAluno() {
+      const anoLetivoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
+      const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const professores = (JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS).filter(p => (p.anoLetivo || '2026') === anoLetivoAtual && (p.curso === cursoAtual || (!p.curso && cursoAtual === '1º Ano EAD')));
+      
+      document.getElementById('aluno-dash-total-professores').innerText = professores.length;
+
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      const disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || DISCIPLINAS_INICIAIS;
+      const boletim = JSON.parse(localStorage.getItem('itq_boletim')) || {};
+
+      let somaMedias = 0;
+      let qtdComNotas = 0;
+
+      disciplinas.forEach(d => {
+        const b = boletim[`${user.id}_${d.nome}`];
+        if (b) {
+          const media = (parseFloat(b.autoatividade || 0) + parseFloat(b.somativa || 0) + parseFloat(b.conclusiva || 0)) / 3;
+          somaMedias += media;
+          qtdComNotas++;
+        }
+      });
+
+      const mediaGeral = qtdComNotas > 0 ? (somaMedias / qtdComNotas).toFixed(2) : "0.0";
+      document.getElementById('aluno-dash-media-geral').innerText = mediaGeral;
+    }
+
+    function renderizarNotasConsultaAluno() {
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      const disc = document.getElementById('aluno-select-disciplina').value;
+      const container = document.getElementById('container-boletim-aluno');
+      if (!container) return;
+
+      if (!disc) {
+        container.innerHTML = '<p class="col-span-4 text-center text-slate-400 py-4">Nenhuma disciplina cadastrada para este módulo.</p>';
+        return;
+      }
+
+      const boletim = JSON.parse(localStorage.getItem('itq_boletim')) || {};
+      const b = boletim[`${user.id}_${disc}`] || { presenca: 0, faltas: 0, justificada: 0, autoatividade: 0, somativa: 0, conclusiva: 0, recuperacao: 0 };
+      
+      const aulasRealizadas = calcularAulasRealizadasDisciplina(disc);
+      const totalAulas = aulasRealizadas > 0 ? aulasRealizadas : ((b.presenca || 0) + (b.faltas || 0) + (b.justificada || 0));
+      const pct = totalAulas > 0 ? ((b.presenca / totalAulas) * 100).toFixed(1) : "100.0";
+      const media = ((parseFloat(b.autoatividade || 0) + parseFloat(b.somativa || 0) + parseFloat(b.conclusiva || 0)) / 3).toFixed(2);
+      const notaFinal = parseFloat(b.recuperacao || 0) > 0 ? parseFloat(b.recuperacao).toFixed(2) : media;
+      const aprovado = notaFinal >= 7.0 && pct >= 75.0;
+
+      container.innerHTML = `
+        <div class="bg-slate-50 p-4 rounded-xl border text-center">
+          <p class="text-xs font-bold text-slate-500 uppercase">Frequência</p>
+          <p class="text-2xl font-black text-slate-800 mt-1">${pct}%</p>
+          <p class="text-[11px] text-slate-400 mt-1">Presenças: ${b.presenca} | Faltas: ${b.faltas}</p>
+        </div>
+        <div class="bg-slate-50 p-4 rounded-xl border text-center">
+          <p class="text-xs font-bold text-slate-500 uppercase">Avaliações</p>
+          <p class="text-xs text-slate-700 font-semibold mt-1">Autoativ: ${b.autoatividade}</p>
+          <p class="text-xs text-slate-700 font-semibold">Somativa: ${b.somativa}</p>
+          <p class="text-xs text-slate-700 font-semibold">Conclusiva: ${b.conclusiva}</p>
+        </div>
+        <div class="bg-slate-50 p-4 rounded-xl border text-center">
+          <p class="text-xs font-bold text-slate-500 uppercase">Nota Final</p>
+          <p class="text-2xl font-black text-blue-700 mt-1">${notaFinal}</p>
+          <p class="text-[11px] text-slate-400 mt-1">Média Parcial: ${media}</p>
+        </div>
+        <div class="bg-slate-50 p-4 rounded-xl border text-center flex flex-col items-center justify-center">
+          <p class="text-xs font-bold text-slate-500 uppercase">Situação</p>
+          <span class="mt-2 px-3 py-1 rounded-full text-xs font-extrabold ${aprovado ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-100 text-rose-800 border border-rose-300'}">
+            ${aprovado ? 'APROVADO' : 'EM RECUPERAÇÃO'}
+          </span>
+        </div>
+      `;
+
+      atualizarDashboardAluno();
+    }
+
+    function navegar(aba) {
+      ['dashboard', 'alunos', 'financeiro', 'chamada', 'resumo-aulas', 'relatorios-aulas', 'desistentes', 'disciplinas', 'professores', 'consulta-aluno'].forEach(a => {
+        const elAba = document.getElementById(`aba-${a}`);
+        const elNav = document.getElementById(`nav-${a}`);
+        if (elAba) elAba.classList.add('hidden');
+        if (elNav) elNav.className = "w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition";
+      });
+      const elAtivoAba = document.getElementById(`aba-${aba}`);
+      const elAtivoNav = document.getElementById(`nav-${aba}`);
+      if (elAtivoAba) elAtivoAba.classList.remove('hidden');
+      if (elAtivoNav) elAtivoNav.className = "w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-slate-800 text-white";
+    }
+
+    function renderizarTudo() {
+      renderizarDisciplinas();
+      renderizarAlunos();
+      renderizarFinanceiro();
+      renderizarResumoAulas();
+      renderizarDesistentes();
+      renderizarProfessores();
+      renderizarListaChamada();
+      renderizarRelatoriosAulas();
+      atualizarDashboard();
+      
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      if (user.perfil === 'aluno') {
+        renderizarCardsDisciplinasAluno();
+        atualizarDashboardAluno();
+      } else if (user.perfil === 'professor') {
+        const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
+        const prof = professores.find(p => p.email === user.email);
+        if (prof) renderizarDisciplinasProfessorDashboard(prof);
+      }
+    }
+
+    function excluirAluno(id) {
+      if (confirm("Tem certeza que deseja excluir este aluno?")) {
+        let todosAlunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+        todosAlunos = todosAlunos.filter(a => parseInt(a.id) !== parseInt(id));
+        localStorage.setItem('itq_alunos', JSON.stringify(todosAlunos));
+        renderizarTudo();
+        enviarParaNuvem();
+      }
+    }
+
+    function abrirModalNovoAluno() { 
+      document.getElementById('novo-aluno-nome').value = '';
+      document.getElementById('novo-aluno-senha').value = '';
+      gerarMatriculaAutomatica();
+      document.getElementById('modal-aluno').classList.remove('hidden'); 
+      document.getElementById('modal-aluno').classList.add('flex'); 
+    }
+
+    function fecharModalAluno() { document.getElementById('modal-aluno').classList.add('hidden'); document.getElementById('modal-aluno').classList.remove('flex'); }
+    
+    function salvarNovoAluno(e) {
+      e.preventDefault();
+      const anoLetivoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
+      const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const alunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+      const mat = document.getElementById('novo-aluno-matricula').value.trim();
+      const sen = document.getElementById('novo-aluno-senha').value.trim();
+
+      alunos.push({
+        id: Date.now(),
+        matricula: mat,
+        nome: document.getElementById('novo-aluno-nome').value.trim().toUpperCase(),
+        senha: sen,
+        status: "ativo",
+        financeiro: "adimplente",
+        pagamentosMeses: {1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true,9:true,10:true,11:true,12:true},
+        anoLetivo: anoLetivoAtual,
+        curso: cursoAtual
+      });
+      localStorage.setItem('itq_alunos', JSON.stringify(alunos));
+      fecharModalAluno();
+      renderizarTudo();
+      enviarParaNuvem();
+    }
+
+    function abrirModalNota(alunoId, disciplina) {
+      const alunos = JSON.parse(localStorage.getItem('itq_alunos'));
+      const aluno = alunos.find(a => a.id === alunoId);
+      const boletim = JSON.parse(localStorage.getItem('itq_boletim')) || {};
+      const b = boletim[`${alunoId}_${disciplina}`] || { presenca: 0, faltas: 0, justificada: 0, autoatividade: 0, somativa: 0, conclusiva: 0, recuperacao: 0 };
+
+      document.getElementById('edit-aluno-id').value = alunoId;
+      document.getElementById('edit-disc-id').value = disciplina;
+      document.getElementById('modal-titulo-aluno').innerText = `${aluno.matricula} - ${aluno.nome}`;
+      document.getElementById('modal-subtitulo-disc').innerText = `Disciplina: ${disciplina}`;
+
+      document.getElementById('inp-presenca').value = b.presenca;
+      document.getElementById('inp-faltas').value = b.faltas;
+      document.getElementById('inp-justificada').value = b.justificada;
+      document.getElementById('inp-auto').value = b.autoatividade;
+      document.getElementById('inp-soma').value = b.somativa;
+      document.getElementById('inp-conc').value = b.conclusiva;
+      document.getElementById('inp-recup').value = b.recuperacao;
+
+      document.getElementById('modal-nota').classList.remove('hidden');
+      document.getElementById('modal-nota').classList.add('flex');
+    }
+
+    function fecharModalNota() { document.getElementById('modal-nota').classList.add('hidden'); document.getElementById('modal-nota').classList.remove('flex'); }
+    function salvarNotasAluno(e) {
+      e.preventDefault();
+      const alunoId = document.getElementById('edit-aluno-id').value;
+      const disc = document.getElementById('edit-disc-id').value;
+      const boletim = JSON.parse(localStorage.getItem('itq_boletim')) || {};
+
+      const b = boletim[`${alunoId}_${disc}`] || {};
+      b.presenca = parseInt(document.getElementById('inp-presenca').value) || 0;
+      b.faltas = parseInt(document.getElementById('inp-faltas').value) || 0;
+      b.justificada = parseInt(document.getElementById('inp-justificada').value) || 0;
+      b.autoatividade = parseFloat(document.getElementById('inp-auto').value) || 0;
+      b.somativa = parseFloat(document.getElementById('inp-soma').value) || 0;
+      b.conclusiva = parseFloat(document.getElementById('inp-conc').value) || 0;
+      b.recuperacao = parseFloat(document.getElementById('inp-recup').value) || 0;
+
+      boletim[`${alunoId}_${disc}`] = b;
+      localStorage.setItem('itq_boletim', JSON.stringify(boletim));
+      fecharModalNota();
+      renderizarAlunos();
+      atualizarDashboard();
+      enviarParaNuvem();
+    }
+
+    function imprimirRelatorio() {
+      const c = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const a = localStorage.getItem('itq_ano_letivo') || '2026';
+      document.getElementById('print-curso-ano').innerText = `${c} - ${a}`;
+      window.print();
+    }
+
+    function alterarLogo() {
+      const url = prompt("Cole aqui o link (URL) da imagem do logotipo:");
+      if (url) {
+        localStorage.setItem('itq_logo_url', url);
+        document.getElementById('img-logo-sidebar').src = url;
+        document.getElementById('img-logo-dash').src = url;
+        document.getElementById('img-logo-print').src = url;
+      }
+    }
+
+    function abrirModalPerfil() {
+      const adminConfig = JSON.parse(localStorage.getItem('itq_admin_config')) || { email: 'admin@itq.edu.br', senha: '123456', nome: 'Clauneis Nazário', cargo: 'Diretor(a)' };
+      document.getElementById('perfil-nome').value = adminConfig.nome;
+      document.getElementById('perfil-cargo').value = adminConfig.cargo || 'Diretor(a)';
+      document.getElementById('perfil-email').value = adminConfig.email;
+      document.getElementById('perfil-senha').value = '';
+      document.getElementById('modal-perfil').classList.remove('hidden');
+      document.getElementById('modal-perfil').classList.add('flex');
+    }
+
+    function fecharModalPerfil() {
+      document.getElementById('modal-perfil').classList.add('hidden');
+      document.getElementById('modal-perfil').classList.remove('flex');
+    }
+
+    function salvarPerfilUsuario(e) {
+      e.preventDefault();
+      const nome = document.getElementById('perfil-nome').value.trim();
+      const cargo = document.getElementById('perfil-cargo').value;
+      const email = document.getElementById('perfil-email').value.trim();
+      const senhaNova = document.getElementById('perfil-senha').value.trim();
+
+      const adminConfig = JSON.parse(localStorage.getItem('itq_admin_config')) || { email: 'admin@itq.edu.br', senha: '123456' };
+      
+      adminConfig.nome = nome;
+      adminConfig.cargo = cargo;
+      adminConfig.email = email;
+      if (senhaNova) adminConfig.senha = senhaNova;
+
+      let perfilCod = "diretor";
+      if (cargo === 'Secretário(a)') perfilCod = "secretario";
+      if (cargo === 'Coordenador(a)') perfilCod = "coordenador";
+      if (cargo === 'Administrador IT') perfilCod = "admin_it";
+
+      localStorage.setItem('itq_admin_config', JSON.stringify(adminConfig));
+      localStorage.setItem('itq_user_logged', JSON.stringify({ nome: nome, email: email, perfil: perfilCod, cargo: cargo }));
+
+      fecharModalPerfil();
+      inicializar();
+      enviarParaNuvem();
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      document.getElementById('interface-sistema').classList.add('hidden');
+      document.getElementById('tela-login').classList.remove('hidden');
+      document.getElementById('login-usuario').value = '';
+      document.getElementById('login-senha').value = '';
+
+      await sincronizarNuvem(false);
+    });
+  </script>
+</body>
+</html>

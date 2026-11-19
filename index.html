@@ -328,7 +328,7 @@
         </div>
       </section>
 
-      <!-- Situação Financeira (Mês a Mês) -->
+      <!-- Situação Financeira (Mês a Mês - Exclusivo Gestão) -->
       <section id="aba-financeiro" class="space-y-6 hidden">
         <div class="flex justify-between items-center">
           <div>
@@ -517,7 +517,7 @@
                 <th class="p-4">Nome do Professor</th>
                 <th class="p-4">E-mail / Contacto</th>
                 <th class="p-4">Módulo Principal</th>
-                <th class="p-4">Disciplinas Atribuídas e Envio</th>
+                <th class="p-4">Disciplinas Atribuídas</th>
                 <th class="p-4 text-center no-print">Ações</th>
               </tr>
             </thead>
@@ -926,6 +926,11 @@
       return custom[ano] || MODULOS_PADRAO[ano] || ["1º MÓDULO", "2º MÓDULO", "3º MÓDULO", "4º MÓDULO", "5º MÓDULO", "6º MÓDULO"];
     }
 
+    function usuarioEhAdmin(user) {
+      const u = user || JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      return ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(u.perfil);
+    }
+
     const DISCIPLINAS_INICIAIS = [
       // 1º ANO
       { id: 1, nome: "METODOLOGIA DO TRABALHO ACADÊMICO", modulo: "1º MÓDULO", ano: "1º Ano" },
@@ -1075,7 +1080,7 @@
       const user = JSON.parse(localStorage.getItem('itq_user_logged')) || { perfil: 'diretor' };
       const ehProf = user.perfil === 'professor';
       const ehAluno = user.perfil === 'aluno';
-      const ehAdmin = ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(user.perfil);
+      const ehAdmin = usuarioEhAdmin(user);
 
       const painelAdmin = document.getElementById('painel-config-admin');
       const painelProf = document.getElementById('painel-info-professor');
@@ -1123,38 +1128,6 @@
         return;
       }
 
-      if (navMenuContainer) {
-        navMenuContainer.innerHTML = `
-          <button onclick="navegar('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-slate-800 text-white">
-            📊 Dashboard
-          </button>
-          <button onclick="navegar('alunos')" id="nav-alunos" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
-            🎓 Alunos Ativos & Notas
-          </button>
-          <button onclick="navegar('financeiro')" id="nav-financeiro" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
-            💳 Situação Financeira
-          </button>
-          <button onclick="navegar('chamada')" id="nav-chamada" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
-            📅 Chamada por Data
-          </button>
-          <button onclick="navegar('resumo-aulas')" id="nav-resumo-aulas" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
-            📝 Resumo das Aulas
-          </button>
-          <button onclick="navegar('relatorios-aulas')" id="nav-relatorios-aulas" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
-            📑 Relatórios de Aulas
-          </button>
-          <button onclick="navegar('desistentes')" id="nav-desistentes" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
-            🛑 Alunos Desistentes
-          </button>
-          <button onclick="navegar('disciplinas')" id="nav-disciplinas" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
-            📚 Disciplinas do Ano
-          </button>
-          <button onclick="navegar('professores')" id="nav-professores" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
-            👨‍🏫 Professores
-          </button>
-        `;
-      }
-
       if (ehProf) {
         if (painelAdmin) painelAdmin.classList.add('hidden');
         if (painelProf) painelProf.classList.remove('hidden');
@@ -1168,6 +1141,36 @@
         if (btnPerfilConfig) btnPerfilConfig.classList.add('hidden');
         
         if (perfSubtext) perfSubtext.innerText = 'Docente';
+
+        // Menu exclusivo do Docente (sem Situação Financeira)
+        if (navMenuContainer) {
+          navMenuContainer.innerHTML = `
+            <button onclick="navegar('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-slate-800 text-white">
+              📊 Dashboard
+            </button>
+            <button onclick="navegar('alunos')" id="nav-alunos" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              🎓 Alunos Ativos & Notas
+            </button>
+            <button onclick="navegar('chamada')" id="nav-chamada" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              📅 Chamada por Data
+            </button>
+            <button onclick="navegar('resumo-aulas')" id="nav-resumo-aulas" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              📝 Resumo das Aulas
+            </button>
+            <button onclick="navegar('relatorios-aulas')" id="nav-relatorios-aulas" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              📑 Relatórios de Aulas
+            </button>
+            <button onclick="navegar('desistentes')" id="nav-desistentes" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              🛑 Alunos Desistentes
+            </button>
+            <button onclick="navegar('disciplinas')" id="nav-disciplinas" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              📚 Disciplinas do Ano
+            </button>
+            <button onclick="navegar('professores')" id="nav-professores" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              👨‍🏫 Professores
+            </button>
+          `;
+        }
 
         const curso = localStorage.getItem('itq_curso') || '1º Ano EAD';
         const ano = localStorage.getItem('itq_ano_letivo') || '2026';
@@ -1192,6 +1195,8 @@
             }
           }
         }
+
+        navegar('dashboard');
       } else if (ehAdmin) {
         if (painelAdmin) painelAdmin.classList.remove('hidden');
         if (painelProf) painelProf.classList.add('hidden');
@@ -1204,6 +1209,40 @@
         if (btnResetAno) btnResetAno.classList.remove('hidden');
         if (btnPerfilConfig) btnPerfilConfig.classList.remove('hidden');
         if (perfSubtext) perfSubtext.innerText = user.cargo || 'Administração ITQ';
+
+        if (navMenuContainer) {
+          navMenuContainer.innerHTML = `
+            <button onclick="navegar('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-slate-800 text-white">
+              📊 Dashboard
+            </button>
+            <button onclick="navegar('alunos')" id="nav-alunos" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              🎓 Alunos Ativos & Notas
+            </button>
+            <button onclick="navegar('financeiro')" id="nav-financeiro" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              💳 Situação Financeira
+            </button>
+            <button onclick="navegar('chamada')" id="nav-chamada" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              📅 Chamada por Data
+            </button>
+            <button onclick="navegar('resumo-aulas')" id="nav-resumo-aulas" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              📝 Resumo das Aulas
+            </button>
+            <button onclick="navegar('relatorios-aulas')" id="nav-relatorios-aulas" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              📑 Relatórios de Aulas
+            </button>
+            <button onclick="navegar('desistentes')" id="nav-desistentes" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              🛑 Alunos Desistentes
+            </button>
+            <button onclick="navegar('disciplinas')" id="nav-disciplinas" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              📚 Disciplinas do Ano
+            </button>
+            <button onclick="navegar('professores')" id="nav-professores" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              👨‍🏫 Professores
+            </button>
+          `;
+        }
+
+        navegar('dashboard');
       }
     }
 
@@ -1508,7 +1547,7 @@
       const disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || DISCIPLINAS_INICIAIS;
       const filtradas = disciplinas.filter(d => d.ano === anoSel);
       const userLogged = JSON.parse(localStorage.getItem('itq_user_logged')) || { perfil: 'diretor' };
-      const ehAdmin = ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(userLogged.perfil);
+      const ehAdmin = usuarioEhAdmin(userLogged);
 
       const tbody = document.getElementById('tabela-disciplinas');
       if (tbody) {
@@ -1738,7 +1777,7 @@
         return;
       }
 
-      const ehAdmin = ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(userLogged.perfil);
+      const ehAdmin = usuarioEhAdmin(userLogged);
 
       alunos.filter(a => a.nome.toLowerCase().includes(busca) || a.matricula.includes(busca)).forEach(aluno => {
         const b = boletim[`${aluno.id}_${disc}`] || { presenca: 0, faltas: 0, justificada: 0, autoatividade: 0, somativa: 0, conclusiva: 0, recuperacao: 0 };
@@ -1777,10 +1816,15 @@
     }
 
     function renderizarFinanceiro() {
+      const userLogged = JSON.parse(localStorage.getItem('itq_user_logged')) || { perfil: 'diretor' };
+      if (!usuarioEhAdmin(userLogged)) {
+        navegar('dashboard');
+        return;
+      }
+
       const anoLetivoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
       const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
       const todosAlunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
-      const userLogged = JSON.parse(localStorage.getItem('itq_user_logged')) || { perfil: 'diretor' };
       const filtro = document.getElementById('filtro-status-financeiro').value;
 
       let alunos = todosAlunos.filter(a => a.status !== 'desistente' && a.anoLetivo === anoLetivoAtual && (a.curso === cursoAtual || (!a.curso && cursoAtual === '1º Ano EAD')));
@@ -1796,8 +1840,6 @@
         return;
       }
 
-      const ehAdmin = ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(userLogged.perfil);
-
       tbody.innerHTML = alunos.map(a => {
         const pag = a.pagamentosMeses || {};
         const mesAtual = new Date().getMonth() + 1;
@@ -1806,7 +1848,7 @@
         const botoesMeses = MESES_ANO.map(m => {
           const pago = pag[m.id] !== false;
           return `
-            <button ${ehAdmin ? `onclick="alternarPagamentoMes(${a.id}, ${m.id})"` : 'disabled'} class="px-2 py-1 rounded text-[10px] font-bold ${pago ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white hover:bg-rose-600'}" title="${m.nome}: ${pago ? 'Pago' : 'Pendente'}">
+            <button onclick="alternarPagamentoMes(${a.id}, ${m.id})" class="px-2 py-1 rounded text-[10px] font-bold ${pago ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white hover:bg-rose-600'}" title="${m.nome}: ${pago ? 'Pago' : 'Pendente'}">
               ${m.nome} ${pago ? '✓' : '✕'}
             </button>
           `;
@@ -1827,6 +1869,9 @@
     }
 
     function alternarPagamentoMes(alunoId, mesId) {
+      const userLogged = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      if (!usuarioEhAdmin(userLogged)) return;
+
       let alunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
       const idx = alunos.findIndex(a => a.id === alunoId);
       if (idx !== -1) {
@@ -1922,7 +1967,7 @@
         return;
       }
 
-      const ehAdmin = ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(userLogged.perfil);
+      const ehAdmin = usuarioEhAdmin(userLogged);
 
       tbody.innerHTML = desistentes.map(a => {
         const acao = ehAdmin
@@ -1976,18 +2021,24 @@
         return;
       }
 
-      const ehAdmin = ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(userLogged.perfil);
+      const ehAdmin = usuarioEhAdmin(userLogged);
 
       tbody.innerHTML = professores.map((p, i) => {
         const disciList = (p.disciplinas && p.disciplinas.length > 0)
-          ? p.disciplinas.map(d => `
-              <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 border border-slate-300 rounded-lg text-xs font-semibold mb-1 mr-1 shadow-sm">
-                <span>📘 ${d}</span>
-                <button onclick="enviarDisciplinaWhatsApp(${p.id}, '${d}')" class="px-1.5 py-0.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded font-bold text-[10px] flex items-center gap-1" title="Enviar por WhatsApp">💬 WhatsApp</button>
-                <button onclick="enviarDisciplinaEmail(${p.id}, '${d}')" class="px-1.5 py-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-[10px] flex items-center gap-1" title="Enviar por E-mail">✉️ E-mail</button>
-                ${ehAdmin ? `<button onclick="removerDisciplinaProf(${p.id}, '${d}')" class="text-rose-600 hover:text-rose-800 font-black text-xs ml-1" title="Remover Atribuição">✕</button>` : ''}
-              </div>
-            `).join('')
+          ? p.disciplinas.map(d => {
+              const botoesEnvioAdmin = ehAdmin
+                ? `<button onclick="enviarDisciplinaWhatsApp(${p.id}, '${d}')" class="px-1.5 py-0.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded font-bold text-[10px] flex items-center gap-1" title="Enviar por WhatsApp">💬 WhatsApp</button>
+                   <button onclick="enviarDisciplinaEmail(${p.id}, '${d}')" class="px-1.5 py-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-[10px] flex items-center gap-1" title="Enviar por E-mail">✉️ E-mail</button>
+                   <button onclick="removerDisciplinaProf(${p.id}, '${d}')" class="text-rose-600 hover:text-rose-800 font-black text-xs ml-1" title="Remover Atribuição">✕</button>`
+                : '';
+
+              return `
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 border border-slate-300 rounded-lg text-xs font-semibold mb-1 mr-1 shadow-sm">
+                  <span>📘 ${d}</span>
+                  ${botoesEnvioAdmin}
+                </div>
+              `;
+            }).join('')
           : `<span class="text-xs text-slate-400 italic">Nenhuma disciplina atribuída</span>`;
 
         const acoesAdmin = ehAdmin
@@ -2013,6 +2064,12 @@
     }
 
     function enviarDisciplinaWhatsApp(profId, discNome) {
+      const userLogged = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      if (!usuarioEhAdmin(userLogged)) {
+        alert("Apenas a administração pode enviar notificações por WhatsApp.");
+        return;
+      }
+
       const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
       const prof = professores.find(p => p.id === profId);
       if (!prof) return;
@@ -2031,6 +2088,12 @@
     }
 
     function enviarDisciplinaEmail(profId, discNome) {
+      const userLogged = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      if (!usuarioEhAdmin(userLogged)) {
+        alert("Apenas a administração pode enviar notificações por e-mail.");
+        return;
+      }
+
       const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
       const prof = professores.find(p => p.id === profId);
       if (!prof) return;
@@ -2261,7 +2324,7 @@
       }
 
       const userLogged = JSON.parse(localStorage.getItem('itq_user_logged')) || { perfil: 'diretor' };
-      const ehAdmin = ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(userLogged.perfil);
+      const ehAdmin = usuarioEhAdmin(userLogged);
 
       container.innerHTML = lista.sort((a,b) => new Date(b.data) - new Date(a.data)).map(item => {
         const btnDeletar = ehAdmin
@@ -2532,6 +2595,14 @@
     }
 
     function navegar(aba) {
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      if (aba === 'financeiro' && !usuarioEhAdmin(user)) {
+        aba = 'dashboard';
+      }
+      if (aba === 'consulta-aluno' && user.perfil !== 'aluno') {
+        aba = 'dashboard';
+      }
+
       ['dashboard', 'alunos', 'financeiro', 'chamada', 'resumo-aulas', 'relatorios-aulas', 'desistentes', 'disciplinas', 'professores', 'consulta-aluno'].forEach(a => {
         const elAba = document.getElementById(`aba-${a}`);
         const elNav = document.getElementById(`nav-${a}`);

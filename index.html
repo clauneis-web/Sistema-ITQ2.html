@@ -1129,7 +1129,10 @@
             📊 Dashboard
           </button>
           <button onclick="navegar('alunos')" id="nav-alunos" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
-            🎓 Alunos Ativos
+            🎓 Alunos Ativos & Notas
+          </button>
+          <button onclick="navegar('financeiro')" id="nav-financeiro" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            💳 Situação Financeira
           </button>
           <button onclick="navegar('chamada')" id="nav-chamada" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
             📅 Chamada por Data
@@ -1356,7 +1359,6 @@
       localStorage.setItem('itq_curso', novoCurso);
       const anoSalvo = localStorage.getItem('itq_ano_letivo') || '2026';
       
-      // Atualiza os selos visuais em tempo real
       document.getElementById('badge-curso-dash').innerText = novoCurso;
       document.getElementById('print-curso-ano').innerText = `${novoCurso} - ${anoSalvo}`;
       

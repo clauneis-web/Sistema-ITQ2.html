@@ -174,9 +174,7 @@
       </div>
 
       <!-- Menu de Navegação -->
-      <nav id="menu-navegacao" class="p-4 space-y-1 flex-1 overflow-y-auto">
-        <!-- Preenchido via JavaScript -->
-      </nav>
+      <nav id="menu-navegacao" class="p-4 space-y-1 flex-1 overflow-y-auto"></nav>
 
       <div class="p-4 border-t border-slate-800">
         <button onclick="efetuarLogout()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg transition">
@@ -419,7 +417,7 @@
         <div class="flex justify-between items-center">
           <div>
             <h2 class="text-2xl font-bold">Relatório Consolidado de Aulas Realizadas</h2>
-            <p class="text-sm text-slate-500">Histórico de chamadas registradas por data (Gerenciar e Deletar Aulas)</p>
+            <p class="text-sm text-slate-500">Histórico de chamadas registradas por data</p>
           </div>
           <button onclick="imprimirRelatorio()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg shadow no-print">
             🖨️ Imprimir PDF Aulas
@@ -475,7 +473,6 @@
           </div>
         </div>
 
-        <!-- Cards com as Disciplinas por Módulo -->
         <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
           <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Visualização em Cards por Módulo</h3>
           <div id="container-cards-disciplinas-modulo" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
@@ -539,7 +536,6 @@
             </div>
           </div>
 
-          <!-- Cards Exclusivos do Aluno (Professores Ativos e Notas) -->
           <div id="container-cards-aluno-dashboard" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
@@ -568,11 +564,8 @@
             </div>
           </div>
 
-          <div id="container-boletim-aluno" class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
-            <!-- Renderizado dinamicamente -->
-          </div>
+          <div id="container-boletim-aluno" class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2"></div>
 
-          <!-- Cards das Disciplinas do Aluno Organizados por Módulo -->
           <div class="pt-4 border-t space-y-3">
             <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">📚 Suas Disciplinas e Módulos</h3>
             <div id="aluno-container-cards-disciplinas" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
@@ -931,8 +924,18 @@
       return ['diretor', 'secretario', 'coordenador', 'admin_it'].includes(u.perfil);
     }
 
+    // Helper: retorna os nomes das disciplinas atribuídas ao professor logado (ou null se for admin)
+    function obterDisciplinasPermitidasProfessor() {
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      if (user.perfil !== 'professor') return null;
+
+      const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
+      const prof = professores.find(p => (p.email || '').trim().toLowerCase() === (user.email || '').trim().toLowerCase());
+      if (!prof || !Array.isArray(prof.disciplinas)) return [];
+      return prof.disciplinas.map(d => d.trim().toUpperCase());
+    }
+
     const DISCIPLINAS_INICIAIS = [
-      // 1º ANO
       { id: 1, nome: "METODOLOGIA DO TRABALHO ACADÊMICO", modulo: "1º MÓDULO", ano: "1º Ano" },
       { id: 2, nome: "BIBLIOLOGIA", modulo: "1º MÓDULO", ano: "1º Ano" },
       { id: 3, nome: "INTRODUÇÃO À TEOLOGIA", modulo: "1º MÓDULO", ano: "1º Ano" },
@@ -959,7 +962,6 @@
       { id: 19, nome: "TEOLOGIA DO CULTO", modulo: "6º MÓDULO", ano: "1º Ano" },
       { id: 20, nome: "LIDERANÇA 1 – GESTÃO DE PESSOAS", modulo: "6º MÓDULO", ano: "1º Ano" },
 
-      // 2º ANO
       { id: 21, nome: "TEOLOGIA DO ANTIGO TESTAMENTO", modulo: "1º MÓDULO", ano: "2º Ano" },
       { id: 22, nome: "CULTURA BÍBLICA", modulo: "1º MÓDULO", ano: "2º Ano" },
       { id: 23, nome: "PENTATEUCO", modulo: "1º MÓDULO", ano: "2º Ano" },
@@ -979,7 +981,6 @@
       { id: 32, nome: "TEOLOGIA SISTEMÁTICA 1", modulo: "6º MÓDULO", ano: "2º Ano" },
       { id: 33, nome: "MISSÃO INTEGRAL DA IGREJA", modulo: "6º MÓDULO", ano: "2º Ano" },
 
-      // 3º ANO
       { id: 34, nome: "TCC – TRABALHO DE CONCLUSÃO DE CURSO", modulo: "1º MÓDULO", ano: "3º Ano" },
       { id: 35, nome: "TEOLOGIA SISTEMÁTICA 2", modulo: "1º MÓDULO", ano: "3º Ano" },
       { id: 36, nome: "ESTÁGIO SUPERVISIONADO", modulo: "1º MÓDULO", ano: "3º Ano" },
@@ -1047,6 +1048,7 @@
         if (dados.adminConfig) localStorage.setItem('itq_admin_config', JSON.stringify(dados.adminConfig));
         if (dados.urlSistema) localStorage.setItem('itq_url_sistema', dados.urlSistema);
         
+        carregarModulos();
         renderizarTudo();
         if (st) st.classList.add('hidden');
         if (mostrarAlerta) alert("✅ Dados sincronizados com sucesso da nuvem!");
@@ -1142,7 +1144,6 @@
         
         if (perfSubtext) perfSubtext.innerText = 'Docente';
 
-        // Menu exclusivo do Docente (sem Situação Financeira)
         if (navMenuContainer) {
           navMenuContainer.innerHTML = `
             <button onclick="navegar('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-slate-800 text-white">
@@ -1176,24 +1177,10 @@
         const ano = localStorage.getItem('itq_ano_letivo') || '2026';
         document.getElementById('prof-curso-fixo').innerText = `${curso} - ${ano}`;
 
-        const selectModFiltro = document.getElementById('filtro-modulo');
-        const selectModChamada = document.getElementById('chamada-modulo');
-        
         const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
-        const prof = professores.find(p => p.email === user.email);
-        
+        const prof = professores.find(p => (p.email || '').trim().toLowerCase() === (user.email || '').trim().toLowerCase());
         if (prof) {
           renderizarDisciplinasProfessorDashboard(prof);
-          if (prof.disciplinas && prof.disciplinas.length > 0) {
-            const disciplinasGerais = JSON.parse(localStorage.getItem('itq_disciplinas')) || DISCIPLINAS_INICIAIS;
-            const meusModulos = disciplinasGerais.filter(d => prof.disciplinas.includes(d.nome)).map(d => d.modulo);
-            const modulosUnicos = Array.from(new Set(meusModulos));
-            
-            if (modulosUnicos.length > 0) {
-              selectModFiltro.innerHTML = modulosUnicos.map(m => `<option value="${m}">${m}</option>`).join('');
-              selectModChamada.innerHTML = modulosUnicos.map(m => `<option value="${m}">${m}</option>`).join('');
-            }
-          }
         }
 
         navegar('dashboard');
@@ -1251,8 +1238,8 @@
       if (!container) return;
 
       const disciplinasGerais = JSON.parse(localStorage.getItem('itq_disciplinas')) || DISCIPLINAS_INICIAIS;
-      const minhasDiscNomes = prof.disciplinas || [];
-      const minhasDiscObj = disciplinasGerais.filter(d => minhasDiscNomes.includes(d.nome));
+      const minhasDiscNomes = (prof.disciplinas || []).map(d => d.trim().toUpperCase());
+      const minhasDiscObj = disciplinasGerais.filter(d => minhasDiscNomes.includes(d.nome.trim().toUpperCase()));
 
       if (minhasDiscObj.length === 0) {
         container.innerHTML = `<p class="text-xs text-slate-400 italic col-span-3">Nenhuma disciplina atribuída a você no momento.</p>`;
@@ -1309,6 +1296,9 @@
         const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
         const prof = professores.find(p => (p.email || '').trim().toLowerCase() === u && (p.senha || '').trim() === s);
         if (prof) {
+          // Sincroniza curso/ano da turma do professor se cadastrado
+          if (prof.curso) localStorage.setItem('itq_curso', prof.curso);
+          if (prof.anoLetivo) localStorage.setItem('itq_ano_letivo', prof.anoLetivo);
           localStorage.setItem('itq_user_logged', JSON.stringify({ nome: prof.nome, email: prof.email, perfil: 'professor' }));
           entrarNoSistema();
         } else {
@@ -1438,25 +1428,44 @@
       return "1º Ano";
     }
 
+    // Filtra disciplinas exibidas no select da aba Alunos Ativos
     function atualizarFiltroDisciplinas() {
       const anoSel = obterAnoAtualSelecionado();
       const mod = document.getElementById('filtro-modulo').value;
       const disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || [];
-      const filtradas = disciplinas.filter(d => (d.ano === anoSel || !d.ano) && d.modulo === mod);
+      const permitidasProf = obterDisciplinasPermitidasProfessor();
+
+      let filtradas = disciplinas.filter(d => (d.ano === anoSel || !d.ano) && d.modulo === mod);
+      if (permitidasProf !== null) {
+        filtradas = filtradas.filter(d => permitidasProf.includes(d.nome.trim().toUpperCase()));
+      }
+
       const selectDisc = document.getElementById('filtro-disciplina');
-      selectDisc.innerHTML = filtradas.map(d => `<option value="${d.nome}">${d.nome}</option>`).join('');
+      selectDisc.innerHTML = filtradas.length > 0
+        ? filtradas.map(d => `<option value="${d.nome}">${d.nome}</option>`).join('')
+        : `<option value="">Nenhuma disciplina atribuída neste módulo</option>`;
     }
 
+    // Filtra disciplinas exibidas no select da aba Chamada por Data
     function atualizarFiltroDisciplinasChamada() {
       const anoSel = obterAnoAtualSelecionado();
       const mod = document.getElementById('chamada-modulo').value;
       const disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || [];
-      const filtradas = disciplinas.filter(d => (d.ano === anoSel || !d.ano) && d.modulo === mod);
+      const permitidasProf = obterDisciplinasPermitidasProfessor();
+
+      let filtradas = disciplinas.filter(d => (d.ano === anoSel || !d.ano) && d.modulo === mod);
+      if (permitidasProf !== null) {
+        filtradas = filtradas.filter(d => permitidasProf.includes(d.nome.trim().toUpperCase()));
+      }
+
       const selectDisc = document.getElementById('chamada-disciplina');
-      selectDisc.innerHTML = filtradas.map(d => `<option value="${d.nome}">${d.nome}</option>`).join('');
+      selectDisc.innerHTML = filtradas.length > 0
+        ? filtradas.map(d => `<option value="${d.nome}">${d.nome}</option>`).join('')
+        : `<option value="">Nenhuma disciplina atribuída neste módulo</option>`;
     }
 
     function calcularAulasRealizadasDisciplina(disciplina) {
+      if (!disciplina) return 0;
       const diarioDatas = JSON.parse(localStorage.getItem('itq_diario_datas')) || {};
       const datasUnicas = new Set();
       Object.keys(diarioDatas).forEach(chave => {
@@ -1769,6 +1778,12 @@
       if (!tbody) return;
       tbody.innerHTML = '';
 
+      if (!disc) {
+        document.getElementById('contador-aulas-realizadas').innerText = '0';
+        tbody.innerHTML = `<tr><td colspan="13" class="p-6 text-center text-slate-400 font-semibold">Você não possui disciplinas atribuídas neste módulo.</td></tr>`;
+        return;
+      }
+
       const aulasRealizadas = calcularAulasRealizadasDisciplina(disc);
       document.getElementById('contador-aulas-realizadas').innerText = aulasRealizadas;
 
@@ -1890,12 +1905,17 @@
     }
 
     function renderizarResumoAulas() {
-      const resumos = JSON.parse(localStorage.getItem('itq_resumos_aulas')) || [];
+      let resumos = JSON.parse(localStorage.getItem('itq_resumos_aulas')) || [];
+      const permitidasProf = obterDisciplinasPermitidasProfessor();
+      if (permitidasProf !== null) {
+        resumos = resumos.filter(r => permitidasProf.includes((r.disciplina || '').trim().toUpperCase()));
+      }
+
       const container = document.getElementById('container-resumo-aulas');
       if (!container) return;
 
       if (resumos.length === 0) {
-        container.innerHTML = '<p class="text-slate-400 text-sm text-center py-6">Nenhum resumo de aula registrado até o momento.</p>';
+        container.innerHTML = '<p class="text-slate-400 text-sm text-center py-6">Nenhum resumo de aula registrado para suas disciplinas até o momento.</p>';
         return;
       }
 
@@ -1919,10 +1939,18 @@
     function abrirModalNovoResumo() {
       const anoSel = obterAnoAtualSelecionado();
       const disciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || [];
-      const filtradas = disciplinas.filter(d => d.ano === anoSel);
+      const permitidasProf = obterDisciplinasPermitidasProfessor();
+
+      let filtradas = disciplinas.filter(d => d.ano === anoSel);
+      if (permitidasProf !== null) {
+        filtradas = filtradas.filter(d => permitidasProf.includes(d.nome.trim().toUpperCase()));
+      }
       
       const select = document.getElementById('resumo-disciplina-select');
-      select.innerHTML = filtradas.map(d => `<option value="${d.nome}">${d.nome} (${d.modulo})</option>`).join('');
+      select.innerHTML = filtradas.length > 0
+        ? filtradas.map(d => `<option value="${d.nome}">${d.nome} (${d.modulo})</option>`).join('')
+        : `<option value="">Nenhuma disciplina atribuída</option>`;
+
       document.getElementById('resumo-data').value = new Date().toISOString().split('T')[0];
       document.getElementById('resumo-texto').value = '';
 
@@ -1937,13 +1965,19 @@
 
     function salvarResumoAula(e) {
       e.preventDefault();
+      const discSelecionada = document.getElementById('resumo-disciplina-select').value;
+      if (!discSelecionada) {
+        alert("Você não possui disciplina atribuída para registrar resumo.");
+        return;
+      }
+
       const resumos = JSON.parse(localStorage.getItem('itq_resumos_aulas')) || [];
       const user = JSON.parse(localStorage.getItem('itq_user_logged')) || { nome: 'Docente' };
 
       resumos.push({
         id: Date.now(),
         data: document.getElementById('resumo-data').value,
-        disciplina: document.getElementById('resumo-disciplina-select').value,
+        disciplina: discSelecionada,
         texto: document.getElementById('resumo-texto').value,
         autor: user.nome
       });
@@ -2244,7 +2278,7 @@
       const container = document.getElementById('lista-chamada');
 
       if (!data || !disc) {
-        container.innerHTML = '<p class="text-slate-400 text-sm">Selecione uma data e disciplina.</p>';
+        container.innerHTML = '<p class="text-slate-400 text-sm">Selecione uma data e uma disciplina atribuída.</p>';
         return;
       }
 
@@ -2305,12 +2339,17 @@
       const container = document.getElementById('container-relatorios-aulas');
       if (!container) return;
       
+      const permitidasProf = obterDisciplinasPermitidasProfessor();
       const datasDisciplinas = new Map();
+
       Object.keys(diarioDatas).forEach(k => {
         const partes = k.split('_');
         if (partes.length >= 3) {
           const disc = partes[1];
           const data = partes[2];
+          if (permitidasProf !== null && !permitidasProf.includes(disc.trim().toUpperCase())) {
+            return;
+          }
           const comboKey = `${data}___${disc}`;
           datasDisciplinas.set(comboKey, { data, disc });
         }
@@ -2416,18 +2455,35 @@
       a.click();
     }
 
+    // Garante que os selects de Módulo e Disciplina respeitem as atribuições do Professor
     function carregarModulos() {
       const anoSel = obterAnoAtualSelecionado();
       const modulosDoAno = obterModulosAno(anoSel);
-      const html = modulosDoAno.map(m => `<option value="${m}">${m}</option>`).join('');
+      const permitidasProf = obterDisciplinasPermitidasProfessor();
+      const disciplinasGerais = JSON.parse(localStorage.getItem('itq_disciplinas')) || DISCIPLINAS_INICIAIS;
 
-      document.getElementById('filtro-modulo').innerHTML = html;
-      document.getElementById('chamada-modulo').innerHTML = html;
-      document.getElementById('novo-prof-modulo').innerHTML = html;
+      // Para modais de cadastro (admin)
+      document.getElementById('novo-prof-modulo').innerHTML = modulosDoAno.map(m => `<option value="${m}">${m}</option>`).join('');
+
+      let modulosParaFiltros = modulosDoAno;
+      if (permitidasProf !== null) {
+        const modulosProf = disciplinasGerais
+          .filter(d => (d.ano === anoSel || !d.ano) && permitidasProf.includes(d.nome.trim().toUpperCase()))
+          .map(d => d.modulo);
+        const unicos = Array.from(new Set(modulosProf));
+        modulosParaFiltros = unicos.length > 0 ? unicos : [];
+      }
+
+      const htmlFiltros = modulosParaFiltros.length > 0
+        ? modulosParaFiltros.map(m => `<option value="${m}">${m}</option>`).join('')
+        : `<option value="">Nenhum módulo atribuído</option>`;
+
+      document.getElementById('filtro-modulo').innerHTML = htmlFiltros;
+      document.getElementById('chamada-modulo').innerHTML = htmlFiltros;
       
-      if (modulosDoAno.length > 0) {
-        document.getElementById('filtro-modulo').value = modulosDoAno[0];
-        document.getElementById('chamada-modulo').value = modulosDoAno[0];
+      if (modulosParaFiltros.length > 0) {
+        document.getElementById('filtro-modulo').value = modulosParaFiltros[0];
+        document.getElementById('chamada-modulo').value = modulosParaFiltros[0];
       }
 
       atualizarFiltroDisciplinas();
@@ -2632,7 +2688,7 @@
         atualizarDashboardAluno();
       } else if (user.perfil === 'professor') {
         const professores = JSON.parse(localStorage.getItem('itq_professores')) || PROFESSORES_INICIAIS;
-        const prof = professores.find(p => p.email === user.email);
+        const prof = professores.find(p => (p.email || '').trim().toLowerCase() === (user.email || '').trim().toLowerCase());
         if (prof) renderizarDisciplinasProfessorDashboard(prof);
       }
     }

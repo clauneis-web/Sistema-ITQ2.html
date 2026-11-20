@@ -62,6 +62,9 @@
         border: none !important;
         padding: 0 !important;
       }
+      body.imprimindo-relacao-alunos .rodape-impressao {
+        display: none !important;
+      }
     }
     .cabecalho-impressao, .rodape-impressao {
       display: none;
@@ -352,6 +355,77 @@
         </div>
       </section>
 
+      <!-- ABA EXCLUSIVA DE RELAÇÃO DE ALUNOS POR ANO PARA IMPRESSÃO (SOMENTE ADMINISTRAÇÃO) -->
+      <section id="aba-relacao-alunos" class="space-y-6 hidden">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 no-print">
+          <div>
+            <h2 class="text-2xl font-black text-slate-800">📋 Planilha de Relação de Alunos por Ano</h2>
+            <p class="text-xs text-slate-500">Acesso exclusivo para administradores • Filtragem por ano letivo e impressão direta</p>
+          </div>
+          <button onclick="imprimirRelacaoAlunos()" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold text-sm rounded-lg shadow flex items-center gap-2">
+            🖨️ Imprimir Planilha de Alunos
+          </button>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-4 no-print">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Ano Letivo</label>
+            <select id="relacao-filtro-ano" onchange="renderizarRelacaoAlunos()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-bold">
+              <option value="todos">Todos os Anos</option>
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+              <option value="2029">2029</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Turma / Ano do Curso</label>
+            <select id="relacao-filtro-turma" onchange="renderizarRelacaoAlunos()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-bold">
+              <option value="todos">Todas as Turmas</option>
+              <option value="1º Ano EAD">1º Ano EAD</option>
+              <option value="1º Ano Presencial">1º Ano Presencial</option>
+              <option value="2º Ano EAD">2º Ano EAD</option>
+              <option value="2º Ano Presencial">2º Ano Presencial</option>
+              <option value="3º Ano EAD">3º Ano EAD</option>
+              <option value="3º Ano Presencial">3º Ano Presencial</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Buscar Aluno / Matrícula / CPF</label>
+            <input type="text" id="relacao-filtro-busca" oninput="renderizarRelacaoAlunos()" placeholder="Filtrar relação..." class="w-full p-2.5 border rounded-lg text-sm bg-slate-50">
+          </div>
+        </div>
+
+        <div id="area-impressao-relacao-alunos" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 gap-2">
+            <div>
+              <h3 class="text-base font-black text-slate-900 uppercase">Relação Oficial de Alunos — ITQ/AL</h3>
+              <p id="relacao-subtitulo-filtro" class="text-xs text-slate-600 font-semibold">Ano Letivo: Todos os Anos • Turma: Todas as Turmas</p>
+            </div>
+            <span id="relacao-total-registros" class="px-3 py-1 bg-slate-100 text-slate-800 font-black text-xs rounded-full border border-slate-300">
+              Total: 0 aluno(s)
+            </span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-700 border-collapse border border-slate-300">
+              <thead class="bg-slate-100 text-slate-900 font-bold">
+                <tr>
+                  <th class="p-3 border border-slate-300">#</th>
+                  <th class="p-3 border border-slate-300">Matrícula</th>
+                  <th class="p-3 border border-slate-300">Nome do Aluno</th>
+                  <th class="p-3 border border-slate-300">CPF</th>
+                  <th class="p-3 border border-slate-300">Turma / Curso</th>
+                  <th class="p-3 border border-slate-300">Ano Letivo</th>
+                  <th class="p-3 border border-slate-300">Situação</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-relacao-alunos"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <!-- Situação Financeira (Mês a Mês - Exclusivo Gestão) -->
       <section id="aba-financeiro" class="space-y-6 hidden">
         <div class="flex justify-between items-center">
@@ -570,10 +644,10 @@
         <!-- Área Visual da Carteira Frente e Verso -->
         <div id="area-impressao-carteira" class="flex flex-col lg:flex-row items-center justify-center gap-8 py-4">
           <!-- FRENTE DA CARTEIRA -->
-          <div id="carteira-frente" class="w-full max-w-[400px] h-[252px] rounded-2xl shadow-xl overflow-hidden border-2 border-slate-800 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white flex flex-col justify-between p-5 relative">
-            <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-11 h-11 bg-white rounded-lg p-1 flex items-center justify-center shrink-0">
+          <div id="carteira-frente" class="w-full max-w-[400px] min-h-[252px] rounded-2xl shadow-xl overflow-hidden border-2 border-slate-800 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white flex flex-col justify-between p-4 relative">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+              <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 bg-white rounded-lg p-1 flex items-center justify-center shrink-0">
                   <img id="img-logo-carteira-frente" src="https://lh3.googleusercontent.com/d/1qUc3ZADEnXvlFV_NxmYzDflv_YaNzAEA" alt="ITQ Logo" class="w-full h-full object-contain">
                 </div>
                 <div>
@@ -584,38 +658,48 @@
               <span class="px-2 py-0.5 bg-amber-400 text-slate-950 font-black text-[9px] rounded uppercase tracking-wider">Estudante</span>
             </div>
 
-            <div class="space-y-2.5 my-auto pt-2">
+            <div class="space-y-1 my-auto py-1.5">
               <div>
-                <p class="text-[9px] uppercase tracking-wider text-slate-400 font-bold">Nome do(a) Aluno(a)</p>
-                <p id="carteira-nome-aluno" class="text-sm font-black text-white uppercase tracking-wide leading-snug">---</p>
+                <p class="text-[8px] uppercase tracking-wider text-slate-400 font-bold">Nome do(a) Aluno(a)</p>
+                <p id="carteira-nome-aluno" class="text-xs font-black text-white uppercase tracking-wide leading-tight">---</p>
               </div>
 
-              <div class="grid grid-cols-2 gap-3 pt-1">
+              <div>
+                <p class="text-[8px] uppercase tracking-wider text-slate-400 font-bold">Curso</p>
+                <p id="carteira-curso-formacao-aluno" class="text-[10px] font-extrabold text-amber-300 leading-tight">Curso de Teologia Livre</p>
+              </div>
+
+              <div>
+                <p class="text-[8px] uppercase tracking-wider text-slate-400 font-bold">Campus/PAP</p>
+                <p id="carteira-campus-aluno" class="text-[10px] font-bold text-slate-100 leading-tight">Polo Maceió (Ponta Grossa/Rua Dr. Virgílio Guedes) - AL</p>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 pt-0.5">
                 <div>
-                  <p class="text-[9px] uppercase tracking-wider text-slate-400 font-bold">Matrícula</p>
-                  <p id="carteira-matricula-aluno" class="text-xs font-extrabold text-amber-400 font-mono">---</p>
+                  <p class="text-[8px] uppercase tracking-wider text-slate-400 font-bold">CPF</p>
+                  <p id="carteira-cpf-aluno" class="text-[10px] font-bold text-slate-100 font-mono leading-tight">---</p>
                 </div>
                 <div>
-                  <p class="text-[9px] uppercase tracking-wider text-slate-400 font-bold">Curso / Modalidade</p>
-                  <p id="carteira-curso-aluno" class="text-xs font-bold text-slate-100">---</p>
+                  <p class="text-[8px] uppercase tracking-wider text-slate-400 font-bold">Matrícula</p>
+                  <p id="carteira-matricula-aluno" class="text-[11px] font-extrabold text-amber-400 font-mono leading-tight">---</p>
                 </div>
               </div>
             </div>
 
-            <div class="flex items-center justify-between border-t border-slate-700 pt-2.5 text-[10px]">
+            <div class="flex items-center justify-between border-t border-slate-700 pt-1.5 text-[9px]">
               <div>
                 <span class="text-slate-400 font-semibold">Ano Letivo: </span>
                 <span id="carteira-ano-aluno" class="font-extrabold text-white">2026</span>
               </div>
-              <span id="carteira-status-badge" class="px-2.5 py-0.5 rounded-full font-black text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase">
+              <span id="carteira-status-badge" class="px-2 py-0.5 rounded-full font-black text-[8px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase">
                 ● Matrícula Ativa
               </span>
             </div>
           </div>
 
           <!-- VERSO DA CARTEIRA -->
-          <div id="carteira-verso" class="w-full max-w-[400px] h-[252px] rounded-2xl shadow-xl overflow-hidden border-2 border-slate-300 bg-white text-slate-800 flex flex-col justify-between p-5">
-            <div class="flex items-start justify-between gap-3 border-b border-slate-200 pb-3">
+          <div id="carteira-verso" class="w-full max-w-[400px] min-h-[252px] rounded-2xl shadow-xl overflow-hidden border-2 border-slate-300 bg-white text-slate-800 flex flex-col justify-between p-4">
+            <div class="flex items-start justify-between gap-3 border-b border-slate-200 pb-2.5">
               <div class="space-y-1 text-[10px] leading-relaxed">
                 <p class="font-black text-slate-900 uppercase text-xs">Identificação Estudantil Oficial</p>
                 <p class="text-slate-600">Este documento é pessoal e intransferível, válido em todo o território nacional mediante apresentação de documento oficial com foto.</p>
@@ -628,7 +712,7 @@
             </div>
 
             <div class="text-[9px] text-slate-500 space-y-0.5 my-auto pt-1">
-              <p class="font-bold text-slate-700">Instituto Teológico Quadrangular — Unidade Ponta Grossa</p>
+              <p class="font-bold text-slate-700">Instituto Teológico Quadrangular — Polo Maceió</p>
               <p>Rua Dr. Virgílio Guedes, 1250 – Ponta Grossa, Maceió – AL</p>
             </div>
 
@@ -846,12 +930,6 @@
           <div class="pt-4 border-t space-y-3">
             <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">📚 Suas Disciplinas e Módulos</h3>
             <div id="aluno-container-cards-disciplinas" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
-          </div>
-
-          <div class="flex justify-end pt-4 no-print">
-            <button onclick="imprimirRelatorio()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg shadow">
-              🖨️ Imprimir Meu Boletim
-            </button>
           </div>
         </div>
       </section>
@@ -1322,8 +1400,9 @@
         if (dados.diarioDatas) localStorage.setItem('itq_diario_datas', JSON.stringify(dados.diarioDatas));
         if (dados.resumosAulas) localStorage.setItem('itq_resumos_aulas', JSON.stringify(dados.resumosAulas));
         if (dados.adminConfig) localStorage.setItem('itq_admin_config', JSON.stringify(dados.adminConfig));
-        if (dados.urlSistema) localStorage.setItem('itq_url_sistema', dados.urlSistema);
+        if (dados.urlSistema) localStorage.setItem('itq_url_sistema', JSON.stringify(dados.urlSistema));
         
+        sincronizarOpcoesAnosLetivos();
         carregarModulos();
         renderizarTudo();
         if (st) st.classList.add('hidden');
@@ -1351,6 +1430,36 @@
         await fetch(API_URL_NUVEM, { method: 'POST', body: JSON.stringify(payload) });
       } catch(err) {
         console.error("Erro ao enviar para a nuvem:", err);
+      }
+    }
+
+    function sincronizarOpcoesAnosLetivos() {
+      const selectSidebar = document.getElementById('select-ano-letivo');
+      const selectRelacao = document.getElementById('relacao-filtro-ano');
+      const alunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+      const anosSet = new Set(['2026', '2027', '2028', '2029']);
+
+      if (selectSidebar) {
+        Array.from(selectSidebar.options).forEach(opt => {
+          if (opt.value) anosSet.add(opt.value);
+        });
+      }
+      alunos.forEach(a => {
+        if (a.anoLetivo) anosSet.add(String(a.anoLetivo));
+      });
+
+      const anosOrdenados = Array.from(anosSet).sort();
+      const anoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
+
+      if (selectSidebar) {
+        selectSidebar.innerHTML = anosOrdenados.map(ano => `<option value="${ano}">${ano}</option>`).join('');
+        selectSidebar.value = anosOrdenados.includes(anoAtual) ? anoAtual : anosOrdenados[0];
+      }
+
+      if (selectRelacao) {
+        const valorRelacaoAnterior = selectRelacao.value || 'todos';
+        selectRelacao.innerHTML = `<option value="todos">Todos os Anos</option>` + anosOrdenados.map(ano => `<option value="${ano}">${ano}</option>`).join('');
+        selectRelacao.value = (valorRelacaoAnterior === 'todos' || anosOrdenados.includes(valorRelacaoAnterior)) ? valorRelacaoAnterior : 'todos';
       }
     }
 
@@ -1484,6 +1593,9 @@
             <button onclick="navegar('alunos')" id="nav-alunos" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
               🎓 Alunos Ativos & Notas
             </button>
+            <button onclick="navegar('relacao-alunos')" id="nav-relacao-alunos" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              📋 Relação de Alunos
+            </button>
             <button onclick="navegar('carteira-estudante')" id="nav-carteira-estudante" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
               🪪 Carteira Estudantil
             </button>
@@ -1516,6 +1628,83 @@
 
         navegar('dashboard');
       }
+    }
+
+    function renderizarRelacaoAlunos() {
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      if (!usuarioEhAdmin(user)) return;
+
+      const anoFiltro = document.getElementById('relacao-filtro-ano')?.value || 'todos';
+      const turmaFiltro = document.getElementById('relacao-filtro-turma')?.value || 'todos';
+      const busca = (document.getElementById('relacao-filtro-busca')?.value || '').trim().toLowerCase();
+
+      const todosAlunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+      let filtrados = todosAlunos.filter(a => {
+        const anoAluno = String(a.anoLetivo || '2026');
+        const turmaAluno = a.curso || '1º Ano EAD';
+        const matchAno = anoFiltro === 'todos' || anoAluno === anoFiltro;
+        const matchTurma = turmaFiltro === 'todos' || turmaAluno === turmaFiltro;
+        const matchBusca = !busca ||
+          (a.nome || '').toLowerCase().includes(busca) ||
+          (a.matricula || '').toLowerCase().includes(busca) ||
+          (a.cpf || '').toLowerCase().includes(busca);
+        return matchAno && matchTurma && matchBusca;
+      });
+
+      const subtitulo = document.getElementById('relacao-subtitulo-filtro');
+      if (subtitulo) {
+        const rotuloAno = anoFiltro === 'todos' ? 'Todos os Anos' : anoFiltro;
+        const rotuloTurma = turmaFiltro === 'todos' ? 'Todas as Turmas' : turmaFiltro;
+        subtitulo.innerText = `Ano Letivo: ${rotuloAno} • Turma: ${rotuloTurma}`;
+      }
+
+      const totalEl = document.getElementById('relacao-total-registros');
+      if (totalEl) {
+        totalEl.innerText = `Total: ${filtrados.length} aluno(s)`;
+      }
+
+      const tbody = document.getElementById('tabela-relacao-alunos');
+      if (!tbody) return;
+
+      if (filtrados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 font-semibold border border-slate-300">Nenhum aluno encontrado para o filtro selecionado.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtrados.map((a, index) => {
+        const isAtivo = a.status !== 'desistente';
+        const statusLabel = isAtivo ? 'ATIVO' : 'DESISTENTE / TRANCADO';
+        const statusClasse = isAtivo ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-100 text-rose-800 border border-rose-300';
+
+        return `
+          <tr class="hover:bg-slate-50">
+            <td class="p-3 border border-slate-300 font-bold text-slate-500">${index + 1}</td>
+            <td class="p-3 border border-slate-300 font-mono font-bold text-slate-900">${a.matricula || '---'}</td>
+            <td class="p-3 border border-slate-300 font-semibold text-slate-900">${a.nome || '---'}</td>
+            <td class="p-3 border border-slate-300 font-mono text-xs">${(a.cpf || '').trim() || '---'}</td>
+            <td class="p-3 border border-slate-300 font-medium">${a.curso || '1º Ano EAD'}</td>
+            <td class="p-3 border border-slate-300 font-bold">${a.anoLetivo || '2026'}</td>
+            <td class="p-3 border border-slate-300"><span class="px-2 py-0.5 rounded-full text-xs font-extrabold ${statusClasse}">${statusLabel}</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function imprimirRelacaoAlunos() {
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      if (!usuarioEhAdmin(user)) return;
+
+      renderizarRelacaoAlunos();
+      const anoFiltro = document.getElementById('relacao-filtro-ano')?.value || 'todos';
+      const turmaFiltro = document.getElementById('relacao-filtro-turma')?.value || 'todos';
+      document.getElementById('print-curso-ano').innerText = `Relação de Alunos • ${turmaFiltro === 'todos' ? 'Todas as Turmas' : turmaFiltro} • ${anoFiltro === 'todos' ? 'Todos os Anos' : anoFiltro}`;
+
+      document.body.classList.remove('imprimindo-carteira', 'imprimindo-historico');
+      document.body.classList.add('imprimindo-relacao-alunos');
+      window.print();
+      setTimeout(() => {
+        document.body.classList.remove('imprimindo-relacao-alunos');
+      }, 500);
     }
 
     function carregarSeletorCarteiraEstudante() {
@@ -1562,10 +1751,15 @@
       const imgLogoFrente = document.getElementById('img-logo-carteira-frente');
       if (imgLogoFrente) imgLogoFrente.src = logoSalvo;
 
+      const cursoFormacao = "Curso de Teologia Livre";
+      const campusPap = "Polo Maceió (Ponta Grossa/Rua Dr. Virgílio Guedes) - AL";
+
       if (!aluno) {
         document.getElementById('carteira-nome-aluno').innerText = 'NENHUM ALUNO SELECIONADO';
+        document.getElementById('carteira-curso-formacao-aluno').innerText = cursoFormacao;
+        document.getElementById('carteira-campus-aluno').innerText = campusPap;
+        document.getElementById('carteira-cpf-aluno').innerText = '---';
         document.getElementById('carteira-matricula-aluno').innerText = '---';
-        document.getElementById('carteira-curso-aluno').innerText = '---';
         document.getElementById('carteira-ano-aluno').innerText = '---';
         document.getElementById('carteira-validade').innerText = '---';
         document.getElementById('carteira-codigo-verificacao').innerText = 'COD: ---';
@@ -1573,26 +1767,28 @@
       }
 
       const anoLetivo = aluno.anoLetivo || localStorage.getItem('itq_ano_letivo') || '2026';
-      const curso = aluno.curso || localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const cpfTexto = (aluno.cpf || '').trim() || '---';
       const ativo = aluno.status !== 'desistente';
 
       document.getElementById('carteira-nome-aluno').innerText = aluno.nome;
+      document.getElementById('carteira-curso-formacao-aluno').innerText = cursoFormacao;
+      document.getElementById('carteira-campus-aluno').innerText = campusPap;
+      document.getElementById('carteira-cpf-aluno').innerText = cpfTexto;
       document.getElementById('carteira-matricula-aluno').innerText = aluno.matricula;
-      document.getElementById('carteira-curso-aluno').innerText = curso;
       document.getElementById('carteira-ano-aluno').innerText = anoLetivo;
       document.getElementById('carteira-validade').innerText = `31/12/${anoLetivo}`;
       document.getElementById('carteira-codigo-verificacao').innerText = `COD: ITQ-${aluno.matricula}-${anoLetivo}`;
 
       const badge = document.getElementById('carteira-status-badge');
       if (ativo) {
-        badge.className = "px-2.5 py-0.5 rounded-full font-black text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase";
+        badge.className = "px-2 py-0.5 rounded-full font-black text-[8px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase";
         badge.innerText = "● Matrícula Ativa";
       } else {
-        badge.className = "px-2.5 py-0.5 rounded-full font-black text-[9px] bg-rose-500/20 text-rose-300 border border-rose-500/40 uppercase";
+        badge.className = "px-2 py-0.5 rounded-full font-black text-[8px] bg-rose-500/20 text-rose-300 border border-rose-500/40 uppercase";
         badge.innerText = "● Matrícula Trancada";
       }
 
-      const dadosQr = encodeURIComponent(`ITQ ALAGOAS | ALUNO: ${aluno.nome} | MAT: ${aluno.matricula} | CURSO: ${curso} (${anoLetivo}) | STATUS: ${ativo ? 'ATIVO' : 'TRANCADO'}`);
+      const dadosQr = encodeURIComponent(`ITQ ALAGOAS | ALUNO: ${aluno.nome} | MAT: ${aluno.matricula} | CPF: ${cpfTexto} | CURSO: ${cursoFormacao} | CAMPUS/PAP: ${campusPap} (${anoLetivo}) | STATUS: ${ativo ? 'ATIVO' : 'TRANCADO'}`);
       const qrImg = document.getElementById('carteira-qrcode');
       if (qrImg) {
         qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${dadosQr}`;
@@ -1600,7 +1796,7 @@
     }
 
     function imprimirCarteiraEstudantil() {
-      document.body.classList.remove('imprimindo-historico');
+      document.body.classList.remove('imprimindo-historico', 'imprimindo-relacao-alunos');
       document.body.classList.add('imprimindo-carteira');
       window.print();
       setTimeout(() => {
@@ -1714,6 +1910,8 @@
       localStorage.setItem('itq_hist_expedicao', document.getElementById('hist-input-expedicao').value.trim());
 
       atualizarCamposHistorico();
+      renderizarCarteiraEstudante();
+      renderizarRelacaoAlunos();
       enviarParaNuvem();
       alert("✅ Dados do Histórico Escolar salvos com sucesso!");
     }
@@ -1778,7 +1976,7 @@
       const user = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
       if (!usuarioEhAdmin(user)) return;
 
-      document.body.classList.remove('imprimindo-carteira');
+      document.body.classList.remove('imprimindo-carteira', 'imprimindo-relacao-alunos');
       document.body.classList.add('imprimindo-historico');
       window.print();
       setTimeout(() => {
@@ -1899,6 +2097,8 @@
         if (!localStorage.getItem('itq_alunos')) localStorage.setItem('itq_alunos', JSON.stringify(ALUNOS_PLANILHA_INICIAL));
         if (!localStorage.getItem('itq_professores')) localStorage.setItem('itq_professores', JSON.stringify(PROFESSORES_INICIAIS));
 
+        sincronizarOpcoesAnosLetivos();
+
         const cursoSalvo = localStorage.getItem('itq_curso') || '1º Ano EAD';
         const anoSalvo = localStorage.getItem('itq_ano_letivo') || '2026';
 
@@ -1963,13 +2163,10 @@
     function adicionarNovoAno() {
       const novoAno = prompt("Digite o novo Ano Letivo (ex: 2027):");
       if (novoAno && novoAno.trim() !== '') {
-        const select = document.getElementById('select-ano-letivo');
-        const opt = document.createElement('option');
-        opt.value = novoAno.trim();
-        opt.innerText = novoAno.trim();
-        select.appendChild(opt);
-        select.value = novoAno.trim();
-        alterarAnoLetivo(novoAno.trim());
+        const anoLimpo = novoAno.trim();
+        localStorage.setItem('itq_ano_letivo', anoLimpo);
+        sincronizarOpcoesAnosLetivos();
+        alterarAnoLetivo(anoLimpo);
       }
     }
 
@@ -3206,6 +3403,9 @@
       if (aba === 'historico-escolar' && !usuarioEhAdmin(user)) {
         aba = 'dashboard';
       }
+      if (aba === 'relacao-alunos' && !usuarioEhAdmin(user)) {
+        aba = 'dashboard';
+      }
       if (aba === 'consulta-aluno' && user.perfil !== 'aluno') {
         aba = 'dashboard';
       }
@@ -3213,7 +3413,7 @@
         aba = 'dashboard';
       }
 
-      ['dashboard', 'alunos', 'carteira-estudante', 'historico-escolar', 'financeiro', 'chamada', 'resumo-aulas', 'relatorios-aulas', 'desistentes', 'disciplinas', 'professores', 'consulta-aluno'].forEach(a => {
+      ['dashboard', 'alunos', 'relacao-alunos', 'carteira-estudante', 'historico-escolar', 'financeiro', 'chamada', 'resumo-aulas', 'relatorios-aulas', 'desistentes', 'disciplinas', 'professores', 'consulta-aluno'].forEach(a => {
         const elAba = document.getElementById(`aba-${a}`);
         const elNav = document.getElementById(`nav-${a}`);
         if (elAba) elAba.classList.add('hidden');
@@ -3224,6 +3424,9 @@
       if (elAtivoAba) elAtivoAba.classList.remove('hidden');
       if (elAtivoNav) elAtivoNav.className = "w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-slate-800 text-white";
 
+      if (aba === 'relacao-alunos') {
+        renderizarRelacaoAlunos();
+      }
       if (aba === 'carteira-estudante') {
         carregarSeletorCarteiraEstudante();
       }
@@ -3233,6 +3436,7 @@
     }
 
     function renderizarTudo() {
+      sincronizarOpcoesAnosLetivos();
       renderizarDisciplinas();
       renderizarAlunos();
       renderizarFinanceiro();
@@ -3258,6 +3462,7 @@
       }
       if (usuarioEhAdmin(user)) {
         carregarSeletorHistoricoEscolar();
+        renderizarRelacaoAlunos();
       }
     }
 
@@ -3357,7 +3562,12 @@
     }
 
     function imprimirRelatorio() {
-      document.body.classList.remove('imprimindo-carteira', 'imprimindo-historico');
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      if (user.perfil === 'aluno') {
+        alert("A impressão de notas está desabilitada para o perfil de aluno.");
+        return;
+      }
+      document.body.classList.remove('imprimindo-carteira', 'imprimindo-historico', 'imprimindo-relacao-alunos');
       const c = localStorage.getItem('itq_curso') || '1º Ano EAD';
       const a = localStorage.getItem('itq_ano_letivo') || '2026';
       document.getElementById('print-curso-ano').innerText = `${c} - ${a}`;

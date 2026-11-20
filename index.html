@@ -50,6 +50,18 @@
         gap: 24px !important;
         padding-top: 20px !important;
       }
+      body.imprimindo-historico .cabecalho-impressao,
+      body.imprimindo-historico .rodape-impressao {
+        display: none !important;
+      }
+      body.imprimindo-historico {
+        background-color: #fff !important;
+      }
+      body.imprimindo-historico #area-impressao-historico {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+      }
     }
     .cabecalho-impressao, .rodape-impressao {
       display: none;
@@ -631,6 +643,160 @@
         </div>
       </section>
 
+      <!-- ABA EXCLUSIVA DE HISTÓRICO ESCOLAR (SOMENTE ADMINISTRAÇÃO) -->
+      <section id="aba-historico-escolar" class="space-y-6 hidden">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 no-print">
+          <div>
+            <h2 class="text-2xl font-black text-slate-800">📄 Histórico Escolar — ITQ/AL/001</h2>
+            <p class="text-xs text-slate-500">Acesso restrito aos administradores do sistema • Pronto para impressão/PDF</p>
+          </div>
+          <button onclick="imprimirHistoricoEscolar()" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold text-sm rounded-lg shadow flex items-center gap-2">
+            🖨️ Imprimir / Salvar Histórico em PDF
+          </button>
+        </div>
+
+        <!-- Controles de Seleção e Dados Complementares (Apenas Tela / Não Imprime) -->
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-4 no-print">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold text-slate-600 mb-1">Selecione o Aluno da Turma</label>
+              <select id="select-aluno-historico" onchange="carregarDadosHistoricoAluno()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-bold"></select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">CPF do Aluno</label>
+              <input type="text" id="hist-input-cpf" oninput="atualizarCamposHistorico()" placeholder="000.000.000-00" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Data de Início</label>
+              <input type="text" id="hist-input-inicio" oninput="atualizarCamposHistorico()" placeholder="16/02/2019" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Data de Conclusão</label>
+              <input type="text" id="hist-input-conclusao" oninput="atualizarCamposHistorico()" placeholder="20/12/2022" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Curso / Título do Histórico</label>
+              <input type="text" id="hist-input-curso" oninput="atualizarCamposHistorico()" value="CURSO LIVRE DE TEOLOGIA" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 uppercase">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Local e Data de Expedição</label>
+              <input type="text" id="hist-input-expedicao" oninput="atualizarCamposHistorico()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50">
+            </div>
+            <div class="flex items-end">
+              <button type="button" onclick="salvarDadosComplementaresHistorico()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow">
+                💾 Salvar Dados do Histórico
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Documento do Histórico Escolar -->
+        <div id="area-impressao-historico" class="bg-white p-6 md:p-8 rounded-2xl border border-slate-300 shadow-sm text-slate-900 space-y-5">
+          <!-- Cabeçalho Institucional -->
+          <div class="border-b-2 border-slate-900 pb-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <img id="img-logo-historico" src="https://lh3.googleusercontent.com/d/1qUc3ZADEnXvlFV_NxmYzDflv_YaNzAEA" alt="Logo ITQ" class="w-16 h-16 object-contain shrink-0">
+              <div class="space-y-0.5 text-xs">
+                <p class="font-black text-slate-900 uppercase tracking-wide">Secretaria Geral de Educação e Cultura da Igreja do Evangelho Quadrangular</p>
+                <p class="font-extrabold text-sm text-slate-900 uppercase">Instituto Teológico Quadrangular — ITQ/AL/001</p>
+                <p class="text-slate-700">Rua Professor Virgílio Guedes - Lado Par, 1254 • CEP: 57.014-002 • Maceió-AL</p>
+                <p class="text-slate-700">Região Eclesiástica: 253 SGEC • E-mail: <span class="font-semibold">itq253al@hotmail.com</span></p>
+              </div>
+            </div>
+            <div class="text-right text-xs border border-slate-400 rounded-lg px-3 py-2 bg-slate-50 shrink-0">
+              <p class="font-black uppercase text-slate-900">Unidade ITQ/AL/001</p>
+              <p class="text-slate-600">Maceió – Alagoas</p>
+              <p class="font-bold text-amber-800 mt-0.5" id="hist-doc-ano-curso">1º Ano EAD • 2026</p>
+            </div>
+          </div>
+
+          <!-- Título e Identificação do Aluno -->
+          <div class="space-y-3">
+            <h3 class="text-center text-base md:text-lg font-black uppercase tracking-wide py-1.5 bg-slate-100 border border-slate-800">
+              Histórico Escolar - <span id="hist-doc-curso">CURSO LIVRE DE TEOLOGIA</span>
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs border border-slate-300 p-3 rounded-lg bg-slate-50/60">
+              <div class="md:col-span-2">
+                <span class="font-bold text-slate-600 uppercase">Aluno(a): </span>
+                <span id="hist-doc-aluno-nome" class="font-black text-slate-900 uppercase">---</span>
+              </div>
+              <div>
+                <span class="font-bold text-slate-600 uppercase">Matrícula: </span>
+                <span id="hist-doc-aluno-matricula" class="font-extrabold font-mono text-slate-900">---</span>
+              </div>
+              <div>
+                <span class="font-bold text-slate-600 uppercase">CPF: </span>
+                <span id="hist-doc-cpf" class="font-bold text-slate-900">---</span>
+              </div>
+              <div>
+                <span class="font-bold text-slate-600 uppercase">Data de Início: </span>
+                <span id="hist-doc-inicio" class="font-bold text-slate-900">---</span>
+              </div>
+              <div>
+                <span class="font-bold text-slate-600 uppercase">Data de Conclusão: </span>
+                <span id="hist-doc-conclusao" class="font-bold text-slate-900">---</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabela de Disciplinas -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse border border-slate-800">
+              <thead class="bg-slate-200 text-slate-900 font-black uppercase">
+                <tr>
+                  <th class="border border-slate-800 p-2">Ano / Módulo</th>
+                  <th class="border border-slate-800 p-2">Disciplina</th>
+                  <th class="border border-slate-800 p-2 text-center">Crédito</th>
+                  <th class="border border-slate-800 p-2 text-center">Carga Hor.</th>
+                  <th class="border border-slate-800 p-2 text-center">Freq. (1)</th>
+                  <th class="border border-slate-800 p-2 text-center">Média (2)</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-historico-disciplinas"></tbody>
+              <tfoot>
+                <tr class="bg-slate-100 font-black text-slate-900">
+                  <td colspan="2" class="border border-slate-800 p-2 text-right uppercase">Créditos / Carga Horária Total:</td>
+                  <td id="hist-total-creditos" class="border border-slate-800 p-2 text-center">0</td>
+                  <td id="hist-total-ch" class="border border-slate-800 p-2 text-center">0h</td>
+                  <td colspan="2" class="border border-slate-800 p-2 text-center text-[11px] font-bold">Média Geral: <span id="hist-media-geral">0.00</span></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Observações Regimentais -->
+          <div class="text-[11px] text-slate-700 space-y-1 border-t border-slate-300 pt-3 leading-relaxed">
+            <p><strong class="text-slate-900">Observação:</strong> (1) <strong>F/S</strong>: Frequência Suficiente, ou seja, igual ou superior a 75%.</p>
+            <p class="pl-16">(2) As Médias apresentadas correspondem às disciplinas avaliadas na instituição, que conforme o regimento interno devem ser iguais ou superiores a <strong>7,0</strong>.</p>
+            <p class="font-bold text-slate-900 pt-2" id="hist-doc-expedicao">Local e data de expedição do Histórico Escolar: Maceió - AL</p>
+          </div>
+
+          <!-- Assinaturas e Local para Carimbo da Instituição -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 items-end">
+            <div class="text-center space-y-1">
+              <div class="border-b border-slate-900 h-8"></div>
+              <p class="text-[11px] font-black uppercase text-slate-900">Secretaria Acadêmica</p>
+              <p class="text-[10px] text-slate-600">ITQ/AL/001 — Maceió/AL</p>
+            </div>
+
+            <div class="text-center space-y-1">
+              <div class="border-b border-slate-900 h-8"></div>
+              <p class="text-[11px] font-black uppercase text-slate-900">Direção da Unidade</p>
+              <p class="text-[10px] text-slate-600">Instituto Teológico Quadrangular</p>
+            </div>
+
+            <!-- Espaço Reservado para Carimbo -->
+            <div class="border-2 border-dashed border-slate-700 rounded-xl h-24 flex flex-col items-center justify-center p-2 text-center bg-slate-50/50">
+              <span class="text-[10px] font-black uppercase tracking-wider text-slate-700">Carimbo da Instituição</span>
+              <span class="text-[9px] text-slate-500 mt-1">ITQ/AL/001 • Maceió - AL</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ABA EXCLUSIVA DE CONSULTA DE NOTAS DO ALUNO -->
       <section id="aba-consulta-aluno" class="space-y-6 hidden">
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
@@ -1046,76 +1212,76 @@
     }
 
     const DISCIPLINAS_INICIAIS = [
-      { id: 1, nome: "METODOLOGIA DO TRABALHO ACADÊMICO", modulo: "1º MÓDULO", ano: "1º Ano" },
-      { id: 2, nome: "BIBLIOLOGIA", modulo: "1º MÓDULO", ano: "1º Ano" },
-      { id: 3, nome: "INTRODUÇÃO À TEOLOGIA", modulo: "1º MÓDULO", ano: "1º Ano" },
-      { id: 4, nome: "VIVÊNCIA CRISTÃ", modulo: "1º MÓDULO", ano: "1º Ano" },
+      { id: 1, nome: "METODOLOGIA DO TRABALHO ACADÊMICO", modulo: "1º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 2, nome: "BIBLIOLOGIA", modulo: "1º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 3, nome: "INTRODUÇÃO À TEOLOGIA", modulo: "1º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 4, nome: "VIVÊNCIA CRISTÃ", modulo: "1º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
 
-      { id: 5, nome: "VIDA DE CRISTO E ESPIRITUALIDADE", modulo: "2º MÓDULO", ano: "1º Ano" },
-      { id: 6, nome: "DONS E MINISTÉRIOS", modulo: "2º MÓDULO", ano: "1º Ano" },
-      { id: 7, nome: "PASTORAL URBANA", modulo: "2º MÓDULO", ano: "1º Ano" },
+      { id: 5, nome: "VIDA DE CRISTO E ESPIRITUALIDADE", modulo: "2º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 6, nome: "DONS E MINISTÉRIOS", modulo: "2º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 7, nome: "PASTORAL URBANA", modulo: "2º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
 
-      { id: 8, nome: "EVANGELHO QUADRANGULAR", modulo: "3º MÓDULO", ano: "1º Ano" },
-      { id: 9, nome: "EVANGELIZAÇÃO", modulo: "3º MÓDULO", ano: "1º Ano" },
-      { id: 10, nome: "DISCIPULADO", modulo: "3º MÓDULO", ano: "1º Ano" },
-      { id: 11, nome: "CIDADANIA", modulo: "3º MÓDULO", ano: "1º Ano" },
+      { id: 8, nome: "EVANGELHO QUADRANGULAR", modulo: "3º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 9, nome: "EVANGELIZAÇÃO", modulo: "3º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 10, nome: "DISCIPULADO", modulo: "3º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 11, nome: "CIDADANIA", modulo: "3º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
 
-      { id: 12, nome: "INTRODUÇÃO À EDUCAÇÃO CRISTÃ", modulo: "4º MÓDULO", ano: "1º Ano" },
-      { id: 13, nome: "HERMENÊUTICA", modulo: "4º MÓDULO", ano: "1º Ano" },
-      { id: 14, nome: "ADMINISTRAÇÃO ECLESIÁSTICA", modulo: "4º MÓDULO", ano: "1º Ano" },
+      { id: 12, nome: "INTRODUÇÃO À EDUCAÇÃO CRISTÃ", modulo: "4º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 13, nome: "HERMENÊUTICA", modulo: "4º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 14, nome: "ADMINISTRAÇÃO ECLESIÁSTICA", modulo: "4º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
 
-      { id: 15, nome: "ACONSELHAMENTO E ORIENTAÇÃO FAMILIAR", modulo: "5º MÓDULO", ano: "1º Ano" },
-      { id: 16, nome: "HOMILÉTICA", modulo: "5º MÓDULO", ano: "1º Ano" },
-      { id: 17, nome: "MÉTODOS DE ESTUDO BÍBLICO", modulo: "5º MÓDULO", ano: "1º Ano" },
+      { id: 15, nome: "ACONSELHAMENTO E ORIENTAÇÃO FAMILIAR", modulo: "5º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 16, nome: "HOMILÉTICA", modulo: "5º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 17, nome: "MÉTODOS DE ESTUDO BÍBLICO", modulo: "5º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
 
-      { id: 18, nome: "TEOLOGIA PASTORAL", modulo: "6º MÓDULO", ano: "1º Ano" },
-      { id: 19, nome: "TEOLOGIA DO CULTO", modulo: "6º MÓDULO", ano: "1º Ano" },
-      { id: 20, nome: "LIDERANÇA 1 – GESTÃO DE PESSOAS", modulo: "6º MÓDULO", ano: "1º Ano" },
+      { id: 18, nome: "TEOLOGIA PASTORAL", modulo: "6º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 19, nome: "TEOLOGIA DO CULTO", modulo: "6º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 20, nome: "LIDERANÇA 1 – GESTÃO DE PESSOAS", modulo: "6º MÓDULO", ano: "1º Ano", creditos: 2, cargaHoraria: 36 },
 
-      { id: 21, nome: "TEOLOGIA DO ANTIGO TESTAMENTO", modulo: "1º MÓDULO", ano: "2º Ano" },
-      { id: 22, nome: "CULTURA BÍBLICA", modulo: "1º MÓDULO", ano: "2º Ano" },
-      { id: 23, nome: "PENTATEUCO", modulo: "1º MÓDULO", ano: "2º Ano" },
+      { id: 21, nome: "TEOLOGIA DO ANTIGO TESTAMENTO", modulo: "1º MÓDULO", ano: "2º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 22, nome: "CULTURA BÍBLICA", modulo: "1º MÓDULO", ano: "2º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 23, nome: "PENTATEUCO", modulo: "1º MÓDULO", ano: "2º Ano", creditos: 4, cargaHoraria: 72 },
 
-      { id: 24, nome: "TEOLOGIA DO NOVO TESTAMENTO", modulo: "2º MÓDULO", ano: "2º Ano" },
-      { id: 25, nome: "HEBREUS", modulo: "2º MÓDULO", ano: "2º Ano" },
+      { id: 24, nome: "TEOLOGIA DO NOVO TESTAMENTO", modulo: "2º MÓDULO", ano: "2º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 25, nome: "HEBREUS", modulo: "2º MÓDULO", ano: "2º Ano", creditos: 2, cargaHoraria: 36 },
 
-      { id: 26, nome: "EVANGELHOS", modulo: "3º MÓDULO", ano: "2º Ano" },
-      { id: 27, nome: "ATOS DOS APÓSTOLOS", modulo: "3º MÓDULO", ano: "2º Ano" },
-      { id: 28, nome: "HISTÓRIA DE ISRAEL", modulo: "3º MÓDULO", ano: "2º Ano" },
+      { id: 26, nome: "EVANGELHOS", modulo: "3º MÓDULO", ano: "2º Ano", creditos: 4, cargaHoraria: 72 },
+      { id: 27, nome: "ATOS DOS APÓSTOLOS", modulo: "3º MÓDULO", ano: "2º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 28, nome: "HISTÓRIA DE ISRAEL", modulo: "3º MÓDULO", ano: "2º Ano", creditos: 6, cargaHoraria: 108 },
 
-      { id: 29, nome: "EPÍSTOLAS PAULINAS", modulo: "4º MÓDULO", ano: "2º Ano" },
+      { id: 29, nome: "EPÍSTOLAS PAULINAS", modulo: "4º MÓDULO", ano: "2º Ano", creditos: 4, cargaHoraria: 72 },
 
-      { id: 30, nome: "EPÍSTOLAS GERAIS", modulo: "5º MÓDULO", ano: "2º Ano" },
+      { id: 30, nome: "EPÍSTOLAS GERAIS", modulo: "5º MÓDULO", ano: "2º Ano", creditos: 2, cargaHoraria: 36 },
 
-      { id: 31, nome: "LIVROS POÉTICOS", modulo: "6º MÓDULO", ano: "2º Ano" },
-      { id: 32, nome: "TEOLOGIA SISTEMÁTICA 1", modulo: "6º MÓDULO", ano: "2º Ano" },
-      { id: 33, nome: "MISSÃO INTEGRAL DA IGREJA", modulo: "6º MÓDULO", ano: "2º Ano" },
+      { id: 31, nome: "LIVROS POÉTICOS", modulo: "6º MÓDULO", ano: "2º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 32, nome: "TEOLOGIA SISTEMÁTICA 1", modulo: "6º MÓDULO", ano: "2º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 33, nome: "MISSÃO INTEGRAL DA IGREJA", modulo: "6º MÓDULO", ano: "2º Ano", creditos: 2, cargaHoraria: 36 },
 
-      { id: 34, nome: "TCC – TRABALHO DE CONCLUSÃO DE CURSO", modulo: "1º MÓDULO", ano: "3º Ano" },
-      { id: 35, nome: "TEOLOGIA SISTEMÁTICA 2", modulo: "1º MÓDULO", ano: "3º Ano" },
-      { id: 36, nome: "ESTÁGIO SUPERVISIONADO", modulo: "1º MÓDULO", ano: "3º Ano" },
+      { id: 34, nome: "TCC – TRABALHO DE CONCLUSÃO DE CURSO", modulo: "1º MÓDULO", ano: "3º Ano", creditos: 4, cargaHoraria: 144 },
+      { id: 35, nome: "TEOLOGIA SISTEMÁTICA 2", modulo: "1º MÓDULO", ano: "3º Ano", creditos: 4, cargaHoraria: 72 },
+      { id: 36, nome: "ESTÁGIO SUPERVISIONADO", modulo: "1º MÓDULO", ano: "3º Ano", creditos: 4, cargaHoraria: 120 },
 
-      { id: 37, nome: "HISTÓRIA DA IGREJA", modulo: "2º MÓDULO", ano: "3º Ano" },
-      { id: 38, nome: "ACONSELHAMENTO PASTORAL", modulo: "2º MÓDULO", ano: "3º Ano" },
+      { id: 37, nome: "HISTÓRIA DA IGREJA", modulo: "2º MÓDULO", ano: "3º Ano", creditos: 4, cargaHoraria: 72 },
+      { id: 38, nome: "ACONSELHAMENTO PASTORAL", modulo: "2º MÓDULO", ano: "3º Ano", creditos: 2, cargaHoraria: 36 },
 
-      { id: 39, nome: "TEOLOGIA SISTEMÁTICA 3", modulo: "3º MÓDULO", ano: "3º Ano" },
-      { id: 40, nome: "ESCATOLOGIA BÍBLICA", modulo: "3º MÓDULO", ano: "3º Ano" },
+      { id: 39, nome: "TEOLOGIA SISTEMÁTICA 3", modulo: "3º MÓDULO", ano: "3º Ano", creditos: 4, cargaHoraria: 72 },
+      { id: 40, nome: "ESCATOLOGIA BÍBLICA", modulo: "3º MÓDULO", ano: "3º Ano", creditos: 4, cargaHoraria: 72 },
 
-      { id: 41, nome: "LIDERANÇA 2", modulo: "4º MÓDULO", ano: "3º Ano" },
+      { id: 41, nome: "LIDERANÇA 2", modulo: "4º MÓDULO", ano: "3º Ano", creditos: 2, cargaHoraria: 36 },
 
-      { id: 42, nome: "INTRODUÇÃO À MISSIOLOGIA", modulo: "5º MÓDULO", ano: "3º Ano" },
-      { id: 43, nome: "MOVIMENTOS RELIGIOSOS CONTEMPORÂNEOS", modulo: "5º MÓDULO", ano: "3º Ano" },
-      { id: 44, nome: "LIDERANÇA 3", modulo: "5º MÓDULO", ano: "3º Ano" },
+      { id: 42, nome: "INTRODUÇÃO À MISSIOLOGIA", modulo: "5º MÓDULO", ano: "3º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 43, nome: "MOVIMENTOS RELIGIOSOS CONTEMPORÂNEOS", modulo: "5º MÓDULO", ano: "3º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 44, nome: "LIDERANÇA 3", modulo: "5º MÓDULO", ano: "3º Ano", creditos: 2, cargaHoraria: 36 },
 
-      { id: 45, nome: "TEOLOGIA CONTEMPORÂNEA", modulo: "6º MÓDULO", ano: "3º Ano" },
-      { id: 46, nome: "COMUNICAÇÃO SOCIAL", modulo: "6º MÓDULO", ano: "3º Ano" },
-      { id: 47, nome: "ÉTICA", modulo: "6º MÓDULO", ano: "3º Ano" }
+      { id: 45, nome: "TEOLOGIA CONTEMPORÂNEA", modulo: "6º MÓDULO", ano: "3º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 46, nome: "COMUNICAÇÃO SOCIAL", modulo: "6º MÓDULO", ano: "3º Ano", creditos: 2, cargaHoraria: 36 },
+      { id: 47, nome: "ÉTICA", modulo: "6º MÓDULO", ano: "3º Ano", creditos: 2, cargaHoraria: 36 }
     ];
 
     const ALUNOS_PLANILHA_INICIAL = [
-      { id: 1, matricula: "47967", nome: "ANA LUISA DA SILVA FERRIRA", senha: "", status: "ativo", anoLetivo: "2026", curso: "1º Ano EAD", financeiro: "adimplente", pagamentosMeses: {1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true,9:true,10:true,11:true,12:true} },
-      { id: 2, matricula: "96136", nome: "CRISTIANE SANTOS SILVA", senha: "", status: "ativo", anoLetivo: "2026", curso: "1º Ano EAD", financeiro: "adimplente", pagamentosMeses: {1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true,9:true,10:true,11:true,12:true} },
-      { id: 3, matricula: "102085", nome: "LUIZ EUGÊNIO CALHEIROS SANTOS", senha: "", status: "ativo", anoLetivo: "2026", curso: "1º Ano EAD", financeiro: "adimplente", pagamentosMeses: {1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true,9:true,10:true,11:true,12:true} }
+      { id: 1, matricula: "47967", nome: "ANA LUISA DA SILVA FERRIRA", cpf: "", dataInicio: "", dataConclusao: "", senha: "", status: "ativo", anoLetivo: "2026", curso: "1º Ano EAD", financeiro: "adimplente", pagamentosMeses: {1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true,9:true,10:true,11:true,12:true} },
+      { id: 2, matricula: "96136", nome: "CRISTIANE SANTOS SILVA", cpf: "", dataInicio: "", dataConclusao: "", senha: "", status: "ativo", anoLetivo: "2026", curso: "1º Ano EAD", financeiro: "adimplente", pagamentosMeses: {1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true,9:true,10:true,11:true,12:true} },
+      { id: 3, matricula: "102085", nome: "LUIZ EUGÊNIO CALHEIROS SANTOS", cpf: "", dataInicio: "", dataConclusao: "", senha: "", status: "ativo", anoLetivo: "2026", curso: "1º Ano EAD", financeiro: "adimplente", pagamentosMeses: {1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true,9:true,10:true,11:true,12:true} }
     ];
 
     const PROFESSORES_INICIAIS = [
@@ -1321,6 +1487,9 @@
             <button onclick="navegar('carteira-estudante')" id="nav-carteira-estudante" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
               🪪 Carteira Estudantil
             </button>
+            <button onclick="navegar('historico-escolar')" id="nav-historico-escolar" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
+              📄 Histórico Escolar
+            </button>
             <button onclick="navegar('financeiro')" id="nav-financeiro" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition">
               💳 Situação Financeira
             </button>
@@ -1431,10 +1600,189 @@
     }
 
     function imprimirCarteiraEstudantil() {
+      document.body.classList.remove('imprimindo-historico');
       document.body.classList.add('imprimindo-carteira');
       window.print();
       setTimeout(() => {
         document.body.classList.remove('imprimindo-carteira');
+      }, 500);
+    }
+
+    function carregarSeletorHistoricoEscolar() {
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      if (!usuarioEhAdmin(user)) return;
+
+      const anoLetivoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
+      const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const todosAlunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+      const alunosTurma = todosAlunos.filter(a => a.anoLetivo === anoLetivoAtual && (a.curso === cursoAtual || (!a.curso && cursoAtual === '1º Ano EAD')));
+
+      const select = document.getElementById('select-aluno-historico');
+      if (select) {
+        const valorAnterior = select.value;
+        select.innerHTML = alunosTurma.length > 0
+          ? alunosTurma.map(a => `<option value="${a.id}">${a.matricula} - ${a.nome}</option>`).join('')
+          : `<option value="">Nenhum aluno cadastrado nesta turma</option>`;
+        if (valorAnterior && alunosTurma.some(a => String(a.id) === String(valorAnterior))) {
+          select.value = valorAnterior;
+        }
+      }
+
+      const logoSalvo = localStorage.getItem('itq_logo_url') || 'https://lh3.googleusercontent.com/d/1qUc3ZADEnXvlFV_NxmYzDflv_YaNzAEA';
+      const imgLogoHist = document.getElementById('img-logo-historico');
+      if (imgLogoHist) imgLogoHist.src = logoSalvo;
+
+      carregarDadosHistoricoAluno();
+    }
+
+    function carregarDadosHistoricoAluno() {
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      if (!usuarioEhAdmin(user)) return;
+
+      const select = document.getElementById('select-aluno-historico');
+      const idSel = select ? parseInt(select.value) : null;
+      const todosAlunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+      const aluno = todosAlunos.find(a => a.id === idSel);
+
+      const anoLetivoAtual = localStorage.getItem('itq_ano_letivo') || '2026';
+      const cursoAtual = localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const dataHoje = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+
+      if (!aluno) {
+        document.getElementById('hist-doc-aluno-nome').innerText = 'NENHUM ALUNO SELECIONADO';
+        document.getElementById('hist-doc-aluno-matricula').innerText = '---';
+        document.getElementById('hist-doc-cpf').innerText = '---';
+        document.getElementById('hist-doc-inicio').innerText = '---';
+        document.getElementById('hist-doc-conclusao').innerText = '---';
+        document.getElementById('hist-doc-ano-curso').innerText = `${cursoAtual} • ${anoLetivoAtual}`;
+        document.getElementById('hist-doc-expedicao').innerText = `Local e data de expedição do Histórico Escolar: Maceió - AL, ${dataHoje}`;
+        document.getElementById('tabela-historico-disciplinas').innerHTML = `<tr><td colspan="6" class="border border-slate-800 p-4 text-center text-slate-500">Selecione um aluno para preencher o histórico.</td></tr>`;
+        document.getElementById('hist-total-creditos').innerText = '0';
+        document.getElementById('hist-total-ch').innerText = '0h';
+        document.getElementById('hist-media-geral').innerText = '0.00';
+        return;
+      }
+
+      document.getElementById('hist-input-cpf').value = aluno.cpf || '';
+      document.getElementById('hist-input-inicio').value = aluno.dataInicio || '';
+      document.getElementById('hist-input-conclusao').value = aluno.dataConclusao || '';
+      const cursoHistSalvo = localStorage.getItem('itq_hist_curso_titulo') || 'CURSO LIVRE DE TEOLOGIA';
+      document.getElementById('hist-input-curso').value = cursoHistSalvo;
+      const expSalva = localStorage.getItem('itq_hist_expedicao') || `Maceió - AL, ${dataHoje}`;
+      document.getElementById('hist-input-expedicao').value = expSalva;
+
+      document.getElementById('hist-doc-aluno-nome').innerText = aluno.nome;
+      document.getElementById('hist-doc-aluno-matricula').innerText = aluno.matricula;
+      document.getElementById('hist-doc-ano-curso').innerText = `${aluno.curso || cursoAtual} • ${aluno.anoLetivo || anoLetivoAtual}`;
+
+      atualizarCamposHistorico();
+      renderizarTabelaHistorico(aluno);
+    }
+
+    function atualizarCamposHistorico() {
+      const cpf = (document.getElementById('hist-input-cpf').value || '').trim();
+      const inicio = (document.getElementById('hist-input-inicio').value || '').trim();
+      const conclusao = (document.getElementById('hist-input-conclusao').value || '').trim();
+      const cursoTitulo = (document.getElementById('hist-input-curso').value || 'CURSO LIVRE DE TEOLOGIA').trim().toUpperCase();
+      const expedicao = (document.getElementById('hist-input-expedicao').value || '').trim();
+
+      document.getElementById('hist-doc-cpf').innerText = cpf || 'Não informado';
+      document.getElementById('hist-doc-inicio').innerText = inicio || '---';
+      document.getElementById('hist-doc-conclusao').innerText = conclusao || 'Em curso';
+      document.getElementById('hist-doc-curso').innerText = cursoTitulo;
+      document.getElementById('hist-doc-expedicao').innerText = `Local e data de expedição do Histórico Escolar: ${expedicao || 'Maceió - AL'}`;
+    }
+
+    function salvarDadosComplementaresHistorico() {
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      if (!usuarioEhAdmin(user)) return;
+
+      const select = document.getElementById('select-aluno-historico');
+      const idSel = select ? parseInt(select.value) : null;
+      if (!idSel) return;
+
+      let alunos = JSON.parse(localStorage.getItem('itq_alunos')) || [];
+      const idx = alunos.findIndex(a => a.id === idSel);
+      if (idx !== -1) {
+        alunos[idx].cpf = document.getElementById('hist-input-cpf').value.trim();
+        alunos[idx].dataInicio = document.getElementById('hist-input-inicio').value.trim();
+        alunos[idx].dataConclusao = document.getElementById('hist-input-conclusao').value.trim();
+        localStorage.setItem('itq_alunos', JSON.stringify(alunos));
+      }
+
+      localStorage.setItem('itq_hist_curso_titulo', document.getElementById('hist-input-curso').value.trim().toUpperCase());
+      localStorage.setItem('itq_hist_expedicao', document.getElementById('hist-input-expedicao').value.trim());
+
+      atualizarCamposHistorico();
+      enviarParaNuvem();
+      alert("✅ Dados do Histórico Escolar salvos com sucesso!");
+    }
+
+    function renderizarTabelaHistorico(aluno) {
+      const tbody = document.getElementById('tabela-historico-disciplinas');
+      if (!tbody || !aluno) return;
+
+      const cursoAluno = aluno.curso || localStorage.getItem('itq_curso') || '1º Ano EAD';
+      const anoSerie = cursoAluno.includes('2º Ano') ? '2º Ano' : (cursoAluno.includes('3º Ano') ? '3º Ano' : '1º Ano');
+      const todasDisciplinas = JSON.parse(localStorage.getItem('itq_disciplinas')) || DISCIPLINAS_INICIAIS;
+      const disciplinasAno = todasDisciplinas.filter(d => d.ano === anoSerie);
+      const boletim = JSON.parse(localStorage.getItem('itq_boletim')) || {};
+
+      let totalCreditos = 0;
+      let totalCargaHoraria = 0;
+      let somaMedias = 0;
+      let qtdDisciplinas = disciplinasAno.length;
+
+      if (disciplinasAno.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="border border-slate-800 p-4 text-center text-slate-500">Nenhuma disciplina cadastrada para ${anoSerie}.</td></tr>`;
+        document.getElementById('hist-total-creditos').innerText = '0';
+        document.getElementById('hist-total-ch').innerText = '0h';
+        document.getElementById('hist-media-geral').innerText = '0.00';
+        return;
+      }
+
+      tbody.innerHTML = disciplinasAno.map(d => {
+        const b = boletim[`${aluno.id}_${d.nome}`] || { presenca: 0, faltas: 0, justificada: 0, autoatividade: 0, somativa: 0, conclusiva: 0, recuperacao: 0 };
+        const aulasRealizadas = calcularAulasRealizadasDisciplina(d.nome);
+        const totalAulas = aulasRealizadas > 0 ? aulasRealizadas : ((b.presenca || 0) + (b.faltas || 0) + (b.justificada || 0));
+        const pctFreq = totalAulas > 0 ? ((b.presenca / totalAulas) * 100) : 100;
+        const freqTexto = pctFreq >= 75 ? 'F/S' : `${pctFreq.toFixed(0)}%`;
+
+        const mediaParcial = (parseFloat(b.autoatividade || 0) + parseFloat(b.somativa || 0) + parseFloat(b.conclusiva || 0)) / 3;
+        const notaFinal = parseFloat(b.recuperacao || 0) > 0 ? parseFloat(b.recuperacao) : mediaParcial;
+
+        const cred = parseInt(d.creditos) || 2;
+        const ch = parseInt(d.cargaHoraria) || 36;
+        totalCreditos += cred;
+        totalCargaHoraria += ch;
+        somaMedias += notaFinal;
+
+        return `
+          <tr>
+            <td class="border border-slate-800 p-2 font-semibold">${anoSerie} • ${d.modulo}</td>
+            <td class="border border-slate-800 p-2 font-bold text-slate-900">${d.nome}</td>
+            <td class="border border-slate-800 p-2 text-center">${cred}</td>
+            <td class="border border-slate-800 p-2 text-center">${ch}h</td>
+            <td class="border border-slate-800 p-2 text-center font-bold">${freqTexto}</td>
+            <td class="border border-slate-800 p-2 text-center font-extrabold">${notaFinal.toFixed(2)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('hist-total-creditos').innerText = totalCreditos;
+      document.getElementById('hist-total-ch').innerText = `${totalCargaHoraria}h`;
+      document.getElementById('hist-media-geral').innerText = qtdDisciplinas > 0 ? (somaMedias / qtdDisciplinas).toFixed(2) : '0.00';
+    }
+
+    function imprimirHistoricoEscolar() {
+      const user = JSON.parse(localStorage.getItem('itq_user_logged')) || {};
+      if (!usuarioEhAdmin(user)) return;
+
+      document.body.classList.remove('imprimindo-carteira');
+      document.body.classList.add('imprimindo-historico');
+      window.print();
+      setTimeout(() => {
+        document.body.classList.remove('imprimindo-historico');
       }, 500);
     }
 
@@ -1858,10 +2206,10 @@
       if (editId) {
         const index = disciplinas.findIndex(d => d.id == editId);
         if (index !== -1) {
-          disciplinas[index] = { id: parseInt(editId), nome, ano, modulo };
+          disciplinas[index] = { ...disciplinas[index], id: parseInt(editId), nome, ano, modulo };
         }
       } else {
-        disciplinas.push({ id: Date.now(), nome, ano, modulo });
+        disciplinas.push({ id: Date.now(), nome, ano, modulo, creditos: 2, cargaHoraria: 36 });
       }
 
       localStorage.setItem('itq_disciplinas', JSON.stringify(disciplinas));
@@ -2855,6 +3203,9 @@
       if (aba === 'financeiro' && !usuarioEhAdmin(user)) {
         aba = 'dashboard';
       }
+      if (aba === 'historico-escolar' && !usuarioEhAdmin(user)) {
+        aba = 'dashboard';
+      }
       if (aba === 'consulta-aluno' && user.perfil !== 'aluno') {
         aba = 'dashboard';
       }
@@ -2862,7 +3213,7 @@
         aba = 'dashboard';
       }
 
-      ['dashboard', 'alunos', 'carteira-estudante', 'financeiro', 'chamada', 'resumo-aulas', 'relatorios-aulas', 'desistentes', 'disciplinas', 'professores', 'consulta-aluno'].forEach(a => {
+      ['dashboard', 'alunos', 'carteira-estudante', 'historico-escolar', 'financeiro', 'chamada', 'resumo-aulas', 'relatorios-aulas', 'desistentes', 'disciplinas', 'professores', 'consulta-aluno'].forEach(a => {
         const elAba = document.getElementById(`aba-${a}`);
         const elNav = document.getElementById(`nav-${a}`);
         if (elAba) elAba.classList.add('hidden');
@@ -2875,6 +3226,9 @@
 
       if (aba === 'carteira-estudante') {
         carregarSeletorCarteiraEstudante();
+      }
+      if (aba === 'historico-escolar') {
+        carregarSeletorHistoricoEscolar();
       }
     }
 
@@ -2901,6 +3255,9 @@
 
       if (user.perfil === 'aluno' || usuarioEhAdmin(user)) {
         carregarSeletorCarteiraEstudante();
+      }
+      if (usuarioEhAdmin(user)) {
+        carregarSeletorHistoricoEscolar();
       }
     }
 
@@ -2936,6 +3293,9 @@
         id: Date.now(),
         matricula: mat,
         nome: document.getElementById('novo-aluno-nome').value.trim().toUpperCase(),
+        cpf: "",
+        dataInicio: "",
+        dataConclusao: "",
         senha: sen,
         status: "ativo",
         financeiro: "adimplente",
@@ -2997,7 +3357,7 @@
     }
 
     function imprimirRelatorio() {
-      document.body.classList.remove('imprimindo-carteira');
+      document.body.classList.remove('imprimindo-carteira', 'imprimindo-historico');
       const c = localStorage.getItem('itq_curso') || '1º Ano EAD';
       const a = localStorage.getItem('itq_ano_letivo') || '2026';
       document.getElementById('print-curso-ano').innerText = `${c} - ${a}`;
@@ -3013,6 +3373,8 @@
         document.getElementById('img-logo-print').src = url;
         const logoCarteira = document.getElementById('img-logo-carteira-frente');
         if (logoCarteira) logoCarteira.src = url;
+        const logoHist = document.getElementById('img-logo-historico');
+        if (logoHist) logoHist.src = url;
       }
     }
 

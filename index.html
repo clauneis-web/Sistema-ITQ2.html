@@ -25,13 +25,11 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Estilos exclusivos de impressão */
         @media print {
             @page { size: auto; margin: 10mm; }
             body * { visibility: hidden !important; }
             body { background: white !important; margin: 0 !important; padding: 0 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             
-            /* Impressão do Histórico Escolar */
             body.printing-historico #historico-print-area,
             body.printing-historico #historico-print-area * { visibility: visible !important; }
             body.printing-historico #historico-print-area {
@@ -39,7 +37,6 @@
                 width: 100% !important; box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important;
             }
             
-            /* Impressão da Carteirinha Estudantil */
             body.printing-carteirinha #carteirinha-print-wrapper,
             body.printing-carteirinha #carteirinha-print-wrapper * { visibility: visible !important; }
             body.printing-carteirinha #carteirinha-print-wrapper {
@@ -52,7 +49,6 @@
                 page-break-inside: avoid !important;
             }
 
-            /* Impressão da Relação de Alunos por Ano */
             body.printing-relacao #relacao-print-area,
             body.printing-relacao #relacao-print-area * { visibility: visible !important; }
             body.printing-relacao #relacao-print-area {
@@ -66,7 +62,6 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- URL DE PRODUÇÃO NO VERCEL (Altere caso use outro domínio personalizado) -->
     <script>
         const URL_PORTAL_PUBLICO = window.location.origin && !window.location.origin.startsWith('file') && !window.location.origin.includes('localhost')
             ? window.location.origin + window.location.pathname
@@ -78,8 +73,8 @@
     <div id="validacao-publica-screen" class="hidden fixed inset-0 z-[200] bg-slate-950 flex flex-col items-center justify-center p-4 overflow-y-auto">
         <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden fade-in my-auto">
             <div class="bg-blue-950 p-6 text-center text-white relative">
-                <div class="w-14 h-14 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-inner">
-                    <i data-lucide="book-open-check" class="w-8 h-8 text-amber-400"></i>
+                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-3 p-1.5 shadow-inner overflow-hidden">
+                    <img src="logo-itq.png" alt="Logo ITQ" class="w-full h-full object-contain">
                 </div>
                 <h1 class="text-lg font-extrabold tracking-tight uppercase break-words">Instituto Teológico Quadrangular</h1>
                 <p class="text-xs text-blue-200 font-medium mt-1">Validação Oficial de Carteira Estudantil</p>
@@ -87,8 +82,8 @@
 
             <div id="validacao-loading" class="p-8 text-center">
                 <div class="w-10 h-10 border-4 border-blue-800 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p class="text-sm font-bold text-slate-700">Consultando base acadêmica na nuvem...</p>
-                <p class="text-xs text-slate-400 mt-1">Verificando autenticidade da matrícula</p>
+                <p class="text-sm font-bold text-slate-700">A consultar a base académica na nuvem...</p>
+                <p class="text-xs text-slate-400 mt-1">A verificar a autenticidade da matrícula</p>
             </div>
 
             <div id="validacao-resultado" class="hidden p-6 space-y-5">
@@ -123,7 +118,7 @@
                 <div class="text-center pt-1">
                     <p class="text-[11px] text-slate-400">Consulta realizada em <span id="val-timestamp" class="font-semibold text-slate-600">--</span></p>
                     <button onclick="sairModoValidacao()" class="mt-4 w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
-                        <i data-lucide="log-in" class="w-4 h-4"></i> Acessar Portal Acadêmico
+                        <i data-lucide="log-in" class="w-4 h-4"></i> Aceder ao Portal Académico
                     </button>
                 </div>
             </div>
@@ -134,8 +129,8 @@
     <div id="login-screen" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-4 overflow-y-auto">
         <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden fade-in my-auto">
             <div class="bg-blue-900 p-7 text-center text-white relative overflow-hidden">
-                <div class="w-16 h-16 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center mx-auto mb-3 backdrop-blur-sm">
-                    <i data-lucide="book-open-check" class="w-8 h-8 text-amber-400"></i>
+                <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mx-auto mb-3 p-1.5 shadow-md overflow-hidden">
+                    <img src="logo-itq.png" alt="Logo Instituto Teológico Quadrangular" class="w-full h-full object-contain">
                 </div>
                 <h1 class="text-xl font-bold tracking-tight">Instituto Teológico Quadrangular</h1>
                 <p class="text-xs text-blue-200 mt-1 font-medium">Portal de Gestão Acadêmica e Pedagógica</p>
@@ -184,7 +179,7 @@
                 </div>
 
                 <button type="submit" id="btn-login-submit" class="w-full py-3 bg-blue-800 hover:bg-blue-900 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
-                    <i data-lucide="log-in" class="w-4 h-4"></i> Acessar Portal Acadêmico
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Aceder ao Portal Académico
                 </button>
             </form>
         </div>
@@ -198,7 +193,7 @@
                 <button onclick="fecharModalPrimeiroAcesso()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <form id="form-primeiro-acesso" class="p-6 space-y-4">
-                <p class="text-xs text-slate-600 leading-relaxed">Informe seu <strong>E-mail cadastrado</strong> ou número de <strong>Matrícula</strong> para validar seu cadastro e criar sua senha pessoal.</p>
+                <p class="text-xs text-slate-600 leading-relaxed">Informe o seu <strong>E-mail cadastrado</strong> ou número de <strong>Matrícula</strong> para validar o seu registo e criar a sua senha pessoal.</p>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Perfil</label>
                     <select id="pa-role" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm">
@@ -223,7 +218,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="fecharModalPrimeiroAcesso()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-blue-800 hover:bg-blue-900 rounded-lg">Salvar Nova Senha</button>
+                    <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-blue-800 hover:bg-blue-900 rounded-lg">Guardar Nova Senha</button>
                 </div>
             </form>
         </div>
@@ -236,8 +231,8 @@
         <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 no-print">
             <div class="p-5 border-b border-slate-800 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 bg-blue-800 rounded-lg flex items-center justify-center text-amber-400 font-bold shadow">
-                        <i data-lucide="book-open-check" class="w-5 h-5"></i>
+                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center p-1 shadow shrink-0 overflow-hidden">
+                        <img src="logo-itq.png" alt="Logo ITQ" class="w-full h-full object-contain">
                     </div>
                     <div>
                         <h2 class="text-sm font-bold text-white leading-tight">ITQ Acadêmico</h2>
@@ -324,7 +319,7 @@
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-slate-600 uppercase tracking-wide break-words">Aulas Computadas</p>
                                 <h3 id="stat-aulas-computadas" class="text-3xl font-extrabold text-slate-900 mt-1.5 break-words">0</h3>
-                                <p class="text-xs font-medium text-slate-500 mt-1 break-words">Registros no diário de classe</p>
+                                <p class="text-xs font-medium text-slate-500 mt-1 break-words">Registos no diário de classe</p>
                             </div>
                             <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
                                 <i data-lucide="calendar-check" class="w-5 h-5"></i>
@@ -365,14 +360,13 @@
                         </div>
                     </div>
 
-                    <!-- PAINEL ESPECÍFICO DO PROFESSOR -->
                     <div id="painel-professor-disciplinas" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                         <div class="px-6 py-4 bg-blue-950 text-white flex flex-wrap items-center justify-between gap-2">
                             <div class="flex items-center gap-2.5">
                                 <i data-lucide="book-marked" class="w-5 h-5 text-amber-400 shrink-0"></i>
                                 <div>
                                     <h3 class="text-sm font-bold uppercase tracking-wide break-words">Minhas Disciplinas Atribuídas</h3>
-                                    <p class="text-xs text-blue-200 break-words">Clique em uma disciplina para abrir o Diário de Classe e Lançamento de Notas</p>
+                                    <p class="text-xs text-blue-200 break-words">Clique numa disciplina para abrir o Diário de Classe e Lançamento de Notas</p>
                                 </div>
                             </div>
                             <span id="prof-total-disc-badge" class="px-3 py-1 bg-white/15 rounded-full text-xs font-bold">0 disciplinas</span>
@@ -380,7 +374,6 @@
                         <div id="lista-disciplinas-professor" class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                     </div>
 
-                    <!-- PAINEL ESPECÍFICO DO ALUNO -->
                     <div id="painel-aluno-resumo" class="hidden space-y-6">
                         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-wrap items-center justify-between gap-4">
                             <div>
@@ -389,7 +382,7 @@
                                 <p id="aluno-dash-info" class="text-xs text-slate-600 font-medium break-words">Matrícula: -- • Curso: --</p>
                             </div>
                             <button onclick="navegarPara('carteirinha')" class="px-4 py-2.5 bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold rounded-xl shadow-sm flex items-center gap-2 transition-colors">
-                                <i data-lucide="id-card" class="w-4 h-4"></i> Ver Minha Carteira Digital
+                                <i data-lucide="id-card" class="w-4 h-4"></i> Ver a Minha Carteira Digital
                             </button>
                         </div>
 
@@ -419,7 +412,6 @@
                         </div>
                     </div>
 
-                    <!-- Resumo de Turmas -->
                     <div id="painel-admin-turmas" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                         <h3 class="text-sm font-extrabold text-slate-800 uppercase mb-4 flex items-center gap-2">
                             <i data-lucide="layers" class="w-4 h-4 text-blue-800"></i> Distribuição de Alunos por Turma e Modalidade
@@ -434,7 +426,7 @@
                         <div class="flex flex-wrap items-center gap-3 flex-1">
                             <div class="relative flex-1 min-w-[220px]">
                                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5"></i>
-                                <input type="text" id="busca-aluno" onkeyup="renderizarTabelaAlunos()" placeholder="Buscar por nome, matrícula ou CPF..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-800 outline-none">
+                                <input type="text" id="busca-aluno" onkeyup="renderizarTabelaAlunos()" placeholder="Pesquisar por nome, matrícula ou CPF..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-800 outline-none">
                             </div>
                             <select id="filtro-turma-aluno" onchange="renderizarTabelaAlunos()" class="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-700">
                                 <option value="todas">Todas as Turmas</option>
@@ -579,12 +571,11 @@
                     </div>
 
                     <div id="carteirinha-print-wrapper" class="flex flex-col lg:flex-row items-center justify-center gap-8 py-4">
-                        <!-- FRENTE DA CARTEIRA (SEM FOTO) -->
                         <div class="id-card-box w-[340px] h-[215px] rounded-2xl bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 text-white p-5 shadow-xl relative overflow-hidden flex flex-col justify-between border border-blue-700/50">
                             <div class="flex items-center justify-between border-b border-white/15 pb-2.5">
                                 <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-lg bg-amber-400 text-blue-950 flex items-center justify-center font-extrabold">
-                                        <i data-lucide="book-open-check" class="w-5 h-5"></i>
+                                    <div class="w-9 h-9 rounded-lg bg-white p-1 flex items-center justify-center shrink-0 overflow-hidden">
+                                        <img src="logo-itq.png" alt="Logo ITQ" class="w-full h-full object-contain">
                                     </div>
                                     <div>
                                         <h4 class="text-[11px] font-extrabold uppercase tracking-wider leading-tight">Instituto Teológico Quadrangular</h4>
@@ -620,11 +611,10 @@
                             </div>
                         </div>
 
-                        <!-- VERSO DA CARTEIRA (COM QR CODE DE VALIDAÇÃO ON-LINE) -->
                         <div class="id-card-box w-[340px] h-[215px] rounded-2xl bg-white text-slate-800 p-5 shadow-xl relative overflow-hidden flex flex-col justify-between border border-slate-300">
                             <div class="border-b border-slate-200 pb-2">
                                 <p class="text-[9px] font-extrabold text-blue-950 uppercase">Validação Digital On-line</p>
-                                <p class="text-[9px] text-slate-500 leading-tight mt-0.5">Aponte a câmera do celular para o QR Code ao lado para verificar a autenticidade e situação cadastral em tempo real.</p>
+                                <p class="text-[9px] text-slate-500 leading-tight mt-0.5">Aponte a câmara do telemóvel para o QR Code ao lado para verificar a autenticidade e situação cadastral em tempo real.</p>
                             </div>
 
                             <div class="flex items-center gap-4 my-auto">
@@ -665,14 +655,14 @@
 
                     <div id="historico-print-area" class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm max-w-4xl mx-auto space-y-6">
                         <div class="flex items-center justify-between border-b-2 border-slate-800 pb-4 gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-blue-900 text-amber-400 flex items-center justify-center shrink-0">
-                                <i data-lucide="book-open-check" class="w-6 h-6"></i>
+                            <div class="w-14 h-14 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shrink-0 overflow-hidden">
+                                <img src="logo-itq.png" alt="Logo ITQ" class="w-full h-full object-contain">
                             </div>
                             <div class="text-center flex-1">
                                 <h2 class="text-lg font-extrabold text-slate-900 uppercase">Instituto Teológico Quadrangular - ITQ</h2>
                                 <p class="text-xs font-bold text-slate-600 uppercase">Secretaria Geral de Ensino Teológico • Histórico Escolar Oficial</p>
                             </div>
-                            <div class="w-12 shrink-0 hidden sm:block"></div>
+                            <div class="w-14 shrink-0 hidden sm:block"></div>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
@@ -701,7 +691,7 @@
                         <div class="pt-10 grid grid-cols-2 gap-8 text-center text-xs">
                             <div>
                                 <div class="border-t border-slate-800 pt-1 font-bold">Secretário(a) Acadêmico(a)</div>
-                                <p class="text-[10px] text-slate-500">ITQ - Registro Escolar</p>
+                                <p class="text-[10px] text-slate-500">ITQ - Registo Escolar</p>
                             </div>
                             <div>
                                 <div class="border-t border-slate-800 pt-1 font-bold">Diretor(a) Geral</div>
@@ -875,7 +865,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
                     <button type="button" onclick="fecharModalAluno()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-800 hover:bg-blue-900 rounded-lg">Salvar Estudante</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-800 hover:bg-blue-900 rounded-lg">Guardar Estudante</button>
                 </div>
             </form>
         </div>
@@ -908,7 +898,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="fecharModalProfessor()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-800 rounded-lg">Salvar Docente</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-800 rounded-lg">Guardar Docente</button>
                 </div>
             </form>
         </div>
@@ -963,7 +953,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="fecharModalDisciplina()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-emerald-700 rounded-lg">Salvar Disciplina</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-emerald-700 rounded-lg">Guardar Disciplina</button>
                 </div>
             </form>
         </div>
@@ -1055,7 +1045,7 @@
                     <i data-lucide="alert-triangle" class="w-7 h-7 text-amber-600 shrink-0"></i>
                     <div>
                         <p class="text-xs font-extrabold uppercase">Matrícula Inativa / Irregular</p>
-                        <p class="text-[11px] text-amber-800 font-medium">Consta registro, porém a situação atual é: <strong>${aluno.situacao}</strong>.</p>
+                        <p class="text-[11px] text-amber-800 font-medium">Consta registo, porém a situação atual é: <strong>${aluno.situacao}</strong>.</p>
                     </div>
                 `;
                 dadosBox.classList.remove('hidden');
@@ -1072,7 +1062,7 @@
                 banner.innerHTML = `
                     <i data-lucide="x-circle" class="w-7 h-7 text-rose-600 shrink-0"></i>
                     <div>
-                        <p class="text-xs font-extrabold uppercase">Registro Não Localizado</p>
+                        <p class="text-xs font-extrabold uppercase">Registo Não Localizado</p>
                         <p class="text-[11px] text-rose-700 font-medium">A matrícula <strong>${matricula}</strong> não foi encontrada na base oficial.</p>
                     </div>
                 `;
@@ -1152,7 +1142,7 @@
                     body: JSON.stringify(db)
                 });
             } catch (e) {
-                console.warn('Erro ao enviar backup para nuvem:', e);
+                console.warn('Erro ao enviar cópia de segurança para a nuvem:', e);
             }
         }
 
@@ -1241,7 +1231,7 @@
             const conf = document.getElementById('pa-confirma-senha').value.trim();
 
             if (nova !== conf) {
-                alert('As senhas digitadas não conferem.');
+                alert('As senhas introduzidas não coincidem.');
                 return;
             }
 
@@ -1461,7 +1451,7 @@
                 container.innerHTML = `
                     <div class="col-span-full p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-300">
                         <p class="text-sm font-bold text-slate-600">Nenhuma disciplina atribuída ao seu perfil neste ano letivo (${db.anoAtual}).</p>
-                        <p class="text-xs text-slate-400 mt-1">Entre em contato com a Secretaria ou Coordenação Acadêmica.</p>
+                        <p class="text-xs text-slate-400 mt-1">Entre em contacto com a Secretaria ou Coordenação Acadêmica.</p>
                     </div>
                 `;
                 return;
@@ -1509,7 +1499,7 @@
             const disciplinasTurma = db.disciplinas.filter(d => d.turma === aluno.turma && (d.anoLetivo || '2026') === (aluno.anoLetivo || db.anoAtual));
             const tbody = document.getElementById('tabela-aluno-boletim-dash');
             if (disciplinasTurma.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-400">Nenhuma disciplina cadastrada para sua turma.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-400">Nenhuma disciplina cadastrada para a sua turma.</td></tr>`;
                 return;
             }
 
@@ -1564,7 +1554,7 @@
             const freqPerc = totalAulas > 0 ? Math.round((presencas / totalAulas) * 100) : 100;
             const freqTexto = totalAulas > 0 ? `${freqPerc}%` : '100%';
 
-            let status = 'Cursando';
+            let status = 'A frequentar';
             let badgeClass = 'bg-slate-100 text-slate-700';
             if (media !== null) {
                 if (media >= 7 && freqPerc >= 75) {
@@ -1996,7 +1986,7 @@
             const p = db.professores.find(x => x.id === profId);
             if (!p) return;
             const tel = (p.telefone || '').replace(/\D/g, '');
-            const msg = `Olá Prof(a). ${p.nome}! Seguem seus dados de acesso ao Portal Acadêmico ITQ:\nLink: ${URL_PORTAL_PUBLICO}\nPerfil: Docente / Professor\nE-mail: ${p.email}\nSenha: ${p.senha || 'itq2026'}`;
+            const msg = `Olá Prof(a). ${p.nome}! Seguem os seus dados de acesso ao Portal Acadêmico ITQ:\nLink: ${URL_PORTAL_PUBLICO}\nPerfil: Docente / Professor\nE-mail: ${p.email}\nSenha: ${p.senha || 'itq2026'}`;
             window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 

@@ -82,8 +82,8 @@
 
             <div id="validacao-loading" class="p-8 text-center">
                 <div class="w-10 h-10 border-4 border-blue-800 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p class="text-sm font-bold text-slate-700">A consultar a base académica na nuvem...</p>
-                <p class="text-xs text-slate-400 mt-1">A verificar a autenticidade da matrícula</p>
+                <p class="text-sm font-bold text-slate-700">Consultando base acadêmica na nuvem...</p>
+                <p class="text-xs text-slate-400 mt-1">Verificando autenticidade da matrícula</p>
             </div>
 
             <div id="validacao-resultado" class="hidden p-6 space-y-5">
@@ -118,7 +118,7 @@
                 <div class="text-center pt-1">
                     <p class="text-[11px] text-slate-400">Consulta realizada em <span id="val-timestamp" class="font-semibold text-slate-600">--</span></p>
                     <button onclick="sairModoValidacao()" class="mt-4 w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
-                        <i data-lucide="log-in" class="w-4 h-4"></i> Aceder ao Portal Académico
+                        <i data-lucide="log-in" class="w-4 h-4"></i> Acessar Portal Acadêmico
                     </button>
                 </div>
             </div>
@@ -153,7 +153,7 @@
                         <option value="diretor">Diretor(a)</option>
                         <option value="secretario">Secretário(a)</option>
                         <option value="coordenador">Coordenador(a)</option>
-                        <option value="admin_ti">Administrador IT (Suporte)</option>
+                        <option value="admin_ti">Administrador TI (Suporte)</option>
                         <option value="professor">Docente / Professor</option>
                         <option value="aluno">Aluno / Estudante</option>
                     </select>
@@ -179,7 +179,7 @@
                 </div>
 
                 <button type="submit" id="btn-login-submit" class="w-full py-3 bg-blue-800 hover:bg-blue-900 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
-                    <i data-lucide="log-in" class="w-4 h-4"></i> Aceder ao Portal Académico
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Acessar Portal Acadêmico
                 </button>
             </form>
         </div>
@@ -193,7 +193,7 @@
                 <button onclick="fecharModalPrimeiroAcesso()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <form id="form-primeiro-acesso" class="p-6 space-y-4">
-                <p class="text-xs text-slate-600 leading-relaxed">Informe o seu <strong>E-mail cadastrado</strong> ou número de <strong>Matrícula</strong> para validar o seu registo e criar a sua senha pessoal.</p>
+                <p class="text-xs text-slate-600 leading-relaxed">Informe seu <strong>E-mail cadastrado</strong> ou número de <strong>Matrícula</strong> para validar seu cadastro e criar sua senha pessoal.</p>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Perfil</label>
                     <select id="pa-role" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm">
@@ -218,7 +218,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="fecharModalPrimeiroAcesso()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-blue-800 hover:bg-blue-900 rounded-lg">Guardar Nova Senha</button>
+                    <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-blue-800 hover:bg-blue-900 rounded-lg">Salvar Nova Senha</button>
                 </div>
             </form>
         </div>
@@ -282,81 +282,100 @@
                 <!-- VIEW: DASHBOARD -->
                 <section id="view-dashboard" class="space-y-6 fade-in">
                     <div id="dashboard-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start justify-between gap-3">
+                        <button type="button" onclick="abrirListaCardDashboard('alunos_ativos')" class="text-left bg-white p-5 rounded-2xl border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all shadow-sm flex items-start justify-between gap-3 cursor-pointer">
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-slate-600 uppercase tracking-wide break-words">Alunos Ativos</p>
                                 <h3 id="stat-alunos-ativos" class="text-3xl font-extrabold text-slate-900 mt-1.5 break-words">0</h3>
-                                <p id="stat-alunos-sub" class="text-xs font-medium text-slate-500 mt-1 break-words">Matriculados regulares no ano</p>
+                                <p id="stat-alunos-sub" class="text-xs font-medium text-blue-700 mt-1 break-words">Clique para ver todos os cadastrados</p>
                             </div>
                             <div class="w-11 h-11 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
                                 <i data-lucide="users" class="w-5 h-5"></i>
                             </div>
-                        </div>
+                        </button>
 
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start justify-between gap-3">
+                        <button type="button" onclick="abrirListaCardDashboard('professores')" class="text-left bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-400 hover:shadow-md transition-all shadow-sm flex items-start justify-between gap-3 cursor-pointer">
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-slate-600 uppercase tracking-wide break-words">Professores Ativos</p>
                                 <h3 id="stat-professores-ativos" class="text-3xl font-extrabold text-slate-900 mt-1.5 break-words">0</h3>
-                                <p class="text-xs font-medium text-slate-500 mt-1 break-words">Corpo docente cadastrado</p>
+                                <p class="text-xs font-medium text-indigo-700 mt-1 break-words">Clique para ver todos os docentes</p>
                             </div>
                             <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center shrink-0">
                                 <i data-lucide="briefcase" class="w-5 h-5"></i>
                             </div>
-                        </div>
+                        </button>
 
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start justify-between gap-3">
+                        <button type="button" onclick="abrirListaCardDashboard('disciplinas')" class="text-left bg-white p-5 rounded-2xl border border-slate-200 hover:border-purple-400 hover:shadow-md transition-all shadow-sm flex items-start justify-between gap-3 cursor-pointer">
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-slate-600 uppercase tracking-wide break-words">Disciplinas na Grade</p>
                                 <h3 id="stat-disciplinas-grade" class="text-3xl font-extrabold text-slate-900 mt-1.5 break-words">0</h3>
-                                <p class="text-xs font-medium text-slate-500 mt-1 break-words">Módulos ativos na matriz</p>
+                                <p class="text-xs font-medium text-purple-700 mt-1 break-words">Clique para ver todas as disciplinas</p>
                             </div>
                             <div class="w-11 h-11 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center shrink-0">
                                 <i data-lucide="book-open" class="w-5 h-5"></i>
                             </div>
-                        </div>
+                        </button>
 
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start justify-between gap-3">
+                        <button type="button" onclick="abrirListaCardDashboard('aulas')" class="text-left bg-white p-5 rounded-2xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition-all shadow-sm flex items-start justify-between gap-3 cursor-pointer">
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-slate-600 uppercase tracking-wide break-words">Aulas Computadas</p>
                                 <h3 id="stat-aulas-computadas" class="text-3xl font-extrabold text-slate-900 mt-1.5 break-words">0</h3>
-                                <p class="text-xs font-medium text-slate-500 mt-1 break-words">Registos no diário de classe</p>
+                                <p class="text-xs font-medium text-amber-700 mt-1 break-words">Clique para ver datas registradas</p>
                             </div>
                             <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
                                 <i data-lucide="calendar-check" class="w-5 h-5"></i>
                             </div>
-                        </div>
+                        </button>
 
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start justify-between gap-3">
+                        <button type="button" onclick="abrirListaCardDashboard('adimplentes')" class="text-left bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-400 hover:shadow-md transition-all shadow-sm flex items-start justify-between gap-3 cursor-pointer">
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-emerald-800 uppercase tracking-wide break-words">Adimplentes</p>
                                 <h3 id="stat-adimplentes" class="text-3xl font-extrabold text-emerald-700 mt-1.5 break-words">0</h3>
-                                <p class="text-xs font-medium text-slate-500 mt-1 break-words">Mensalidades em dia</p>
+                                <p class="text-xs font-medium text-slate-500 mt-1 break-words">Clique para ver todos em dia</p>
                             </div>
                             <div class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
                                 <i data-lucide="check-circle-2" class="w-5 h-5"></i>
                             </div>
-                        </div>
+                        </button>
 
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start justify-between gap-3">
+                        <button type="button" onclick="abrirListaCardDashboard('inadimplentes')" class="text-left bg-white p-5 rounded-2xl border border-slate-200 hover:border-rose-400 hover:shadow-md transition-all shadow-sm flex items-start justify-between gap-3 cursor-pointer">
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-rose-800 uppercase tracking-wide break-words">Inadimplentes</p>
                                 <h3 id="stat-inadimplentes" class="text-3xl font-extrabold text-rose-700 mt-1.5 break-words">0</h3>
-                                <p class="text-xs font-medium text-slate-500 mt-1 break-words">Com pendência financeira</p>
+                                <p class="text-xs font-medium text-slate-500 mt-1 break-words">Clique para ver pendências</p>
                             </div>
                             <div class="w-11 h-11 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center shrink-0">
                                 <i data-lucide="alert-triangle" class="w-5 h-5"></i>
                             </div>
-                        </div>
+                        </button>
 
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start justify-between gap-3 sm:col-span-2 lg:col-span-2">
+                        <button type="button" onclick="abrirListaCardDashboard('desistentes')" class="text-left bg-white p-5 rounded-2xl border border-slate-200 hover:border-slate-400 hover:shadow-md transition-all shadow-sm flex items-start justify-between gap-3 sm:col-span-2 lg:col-span-2 cursor-pointer">
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-slate-700 uppercase tracking-wide break-words">Desistentes / Trancados</p>
                                 <h3 id="stat-desistentes" class="text-3xl font-extrabold text-slate-800 mt-1.5 break-words">0</h3>
-                                <p class="text-xs font-medium text-slate-500 mt-1 break-words">Matrículas inativas, transferidas ou trancadas no período</p>
+                                <p class="text-xs font-medium text-slate-500 mt-1 break-words">Clique para ver todos os inativos, transferidos ou trancados</p>
                             </div>
                             <div class="w-11 h-11 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center shrink-0">
                                 <i data-lucide="user-x" class="w-5 h-5"></i>
                             </div>
+                        </button>
+                    </div>
+
+                    <!-- PAINEL EXPANSÍVEL AO CLICAR EM UM CARD DO DASHBOARD -->
+                    <div id="painel-lista-card-dashboard" class="hidden bg-white rounded-2xl border border-blue-200 shadow-sm overflow-hidden fade-in">
+                        <div class="px-6 py-4 bg-blue-950 text-white flex flex-wrap items-center justify-between gap-3">
+                            <div>
+                                <h3 id="card-detalhe-titulo" class="text-sm font-extrabold uppercase tracking-wide">Registros Cadastrados</h3>
+                                <p id="card-detalhe-subtitulo" class="text-xs text-blue-200 mt-0.5">Listagem completa do ano letivo</p>
+                            </div>
+                            <button type="button" onclick="fecharListaCardDashboard()" class="px-3 py-1.5 bg-white/15 hover:bg-white/25 text-white text-xs font-bold rounded-lg flex items-center gap-1.5">
+                                <i data-lucide="x" class="w-3.5 h-3.5"></i> Fechar Lista
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead id="card-detalhe-thead" class="bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold text-slate-600 uppercase"></thead>
+                                <tbody id="card-detalhe-tbody" class="divide-y divide-slate-200 text-xs"></tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -366,7 +385,7 @@
                                 <i data-lucide="book-marked" class="w-5 h-5 text-amber-400 shrink-0"></i>
                                 <div>
                                     <h3 class="text-sm font-bold uppercase tracking-wide break-words">Minhas Disciplinas Atribuídas</h3>
-                                    <p class="text-xs text-blue-200 break-words">Clique numa disciplina para abrir o Diário de Classe e Lançamento de Notas</p>
+                                    <p class="text-xs text-blue-200 break-words">Clique em uma disciplina para abrir o Diário de Classe e Lançamento de Notas</p>
                                 </div>
                             </div>
                             <span id="prof-total-disc-badge" class="px-3 py-1 bg-white/15 rounded-full text-xs font-bold">0 disciplinas</span>
@@ -382,7 +401,7 @@
                                 <p id="aluno-dash-info" class="text-xs text-slate-600 font-medium break-words">Matrícula: -- • Curso: --</p>
                             </div>
                             <button onclick="navegarPara('carteirinha')" class="px-4 py-2.5 bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold rounded-xl shadow-sm flex items-center gap-2 transition-colors">
-                                <i data-lucide="id-card" class="w-4 h-4"></i> Ver a Minha Carteira Digital
+                                <i data-lucide="id-card" class="w-4 h-4"></i> Ver Minha Carteira Digital
                             </button>
                         </div>
 
@@ -426,7 +445,7 @@
                         <div class="flex flex-wrap items-center gap-3 flex-1">
                             <div class="relative flex-1 min-w-[220px]">
                                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5"></i>
-                                <input type="text" id="busca-aluno" onkeyup="renderizarTabelaAlunos()" placeholder="Pesquisar por nome, matrícula ou CPF..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-800 outline-none">
+                                <input type="text" id="busca-aluno" onkeyup="renderizarTabelaAlunos()" placeholder="Buscar por nome, matrícula ou CPF..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-800 outline-none">
                             </div>
                             <select id="filtro-turma-aluno" onchange="renderizarTabelaAlunos()" class="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-700">
                                 <option value="todas">Todas as Turmas</option>
@@ -614,7 +633,7 @@
                         <div class="id-card-box w-[340px] h-[215px] rounded-2xl bg-white text-slate-800 p-5 shadow-xl relative overflow-hidden flex flex-col justify-between border border-slate-300">
                             <div class="border-b border-slate-200 pb-2">
                                 <p class="text-[9px] font-extrabold text-blue-950 uppercase">Validação Digital On-line</p>
-                                <p class="text-[9px] text-slate-500 leading-tight mt-0.5">Aponte a câmara do telemóvel para o QR Code ao lado para verificar a autenticidade e situação cadastral em tempo real.</p>
+                                <p class="text-[9px] text-slate-500 leading-tight mt-0.5">Aponte a câmera do celular para o QR Code ao lado para verificar a autenticidade e situação cadastral em tempo real.</p>
                             </div>
 
                             <div class="flex items-center gap-4 my-auto">
@@ -691,7 +710,7 @@
                         <div class="pt-10 grid grid-cols-2 gap-8 text-center text-xs">
                             <div>
                                 <div class="border-t border-slate-800 pt-1 font-bold">Secretário(a) Acadêmico(a)</div>
-                                <p class="text-[10px] text-slate-500">ITQ - Registo Escolar</p>
+                                <p class="text-[10px] text-slate-500">ITQ - Registro Escolar</p>
                             </div>
                             <div>
                                 <div class="border-t border-slate-800 pt-1 font-bold">Diretor(a) Geral</div>
@@ -865,7 +884,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
                     <button type="button" onclick="fecharModalAluno()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-800 hover:bg-blue-900 rounded-lg">Guardar Estudante</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-800 hover:bg-blue-900 rounded-lg">Salvar Estudante</button>
                 </div>
             </form>
         </div>
@@ -898,7 +917,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="fecharModalProfessor()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-800 rounded-lg">Guardar Docente</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-800 rounded-lg">Salvar Docente</button>
                 </div>
             </form>
         </div>
@@ -953,7 +972,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="fecharModalDisciplina()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-emerald-700 rounded-lg">Guardar Disciplina</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-emerald-700 rounded-lg">Salvar Disciplina</button>
                 </div>
             </form>
         </div>
@@ -971,6 +990,7 @@
             financeiro: {}
         };
         let usuarioLogado = null;
+        let tipoCardAtivo = null;
         const CREDENCIAIS_ADMIN = {
             diretor: { user: 'diretor@itq.edu.br', pass: 'itq2026', nome: 'Diretoria Geral ITQ' },
             secretario: { user: 'secretaria@itq.edu.br', pass: 'itq2026', nome: 'Secretaria Acadêmica' },
@@ -1045,7 +1065,7 @@
                     <i data-lucide="alert-triangle" class="w-7 h-7 text-amber-600 shrink-0"></i>
                     <div>
                         <p class="text-xs font-extrabold uppercase">Matrícula Inativa / Irregular</p>
-                        <p class="text-[11px] text-amber-800 font-medium">Consta registo, porém a situação atual é: <strong>${aluno.situacao}</strong>.</p>
+                        <p class="text-[11px] text-amber-800 font-medium">Consta registro, porém a situação atual é: <strong>${aluno.situacao}</strong>.</p>
                     </div>
                 `;
                 dadosBox.classList.remove('hidden');
@@ -1062,7 +1082,7 @@
                 banner.innerHTML = `
                     <i data-lucide="x-circle" class="w-7 h-7 text-rose-600 shrink-0"></i>
                     <div>
-                        <p class="text-xs font-extrabold uppercase">Registo Não Localizado</p>
+                        <p class="text-xs font-extrabold uppercase">Registro Não Localizado</p>
                         <p class="text-[11px] text-rose-700 font-medium">A matrícula <strong>${matricula}</strong> não foi encontrada na base oficial.</p>
                     </div>
                 `;
@@ -1142,7 +1162,7 @@
                     body: JSON.stringify(db)
                 });
             } catch (e) {
-                console.warn('Erro ao enviar cópia de segurança para a nuvem:', e);
+                console.warn('Erro ao enviar backup para nuvem:', e);
             }
         }
 
@@ -1231,7 +1251,7 @@
             const conf = document.getElementById('pa-confirma-senha').value.trim();
 
             if (nova !== conf) {
-                alert('As senhas introduzidas não coincidem.');
+                alert('As senhas digitadas não conferem.');
                 return;
             }
 
@@ -1259,7 +1279,7 @@
                 diretor: 'Diretor(a) Geral',
                 secretario: 'Secretário(a) Acadêmico(a)',
                 coordenador: 'Coordenador(a) Pedagógico(a)',
-                admin_ti: 'Administrador IT',
+                admin_ti: 'Administrador TI',
                 professor: 'Docente / Professor',
                 aluno: 'Estudante'
             };
@@ -1361,6 +1381,7 @@
             db.anoAtual = document.getElementById('select-ano-letivo').value;
             salvarDadosLocais();
             renderizarDashboard();
+            if (tipoCardAtivo) abrirListaCardDashboard(tipoCardAtivo);
         }
 
         function adicionarNovoAnoLetivo() {
@@ -1375,6 +1396,192 @@
             }
         }
 
+        function obterListasFinanceirasAno() {
+            const alunosAno = db.alunos.filter(a => (a.anoLetivo || '2026') === db.anoAtual);
+            const ativos = alunosAno.filter(a => a.situacao === 'Ativo');
+            const mesAtualIdx = new Date().getMonth();
+            const adimplentes = [];
+            const inadimplentes = [];
+
+            ativos.forEach(al => {
+                const fin = (db.financeiro && db.financeiro[`${db.anoAtual}_${al.id}`]) || {};
+                let temPendencia = false;
+                for (let m = 0; m <= mesAtualIdx; m++) {
+                    if (!fin[MESES_KEYS[m]]) {
+                        temPendencia = true;
+                        break;
+                    }
+                }
+                if (temPendencia) inadimplentes.push(al);
+                else adimplentes.push(al);
+            });
+
+            return { alunosAno, ativos, adimplentes, inadimplentes };
+        }
+
+        function fecharListaCardDashboard() {
+            tipoCardAtivo = null;
+            document.getElementById('painel-lista-card-dashboard').classList.add('hidden');
+        }
+
+        function abrirListaCardDashboard(tipo) {
+            tipoCardAtivo = tipo;
+            const painel = document.getElementById('painel-lista-card-dashboard');
+            const titulo = document.getElementById('card-detalhe-titulo');
+            const subtitulo = document.getElementById('card-detalhe-subtitulo');
+            const thead = document.getElementById('card-detalhe-thead');
+            const tbody = document.getElementById('card-detalhe-tbody');
+
+            const { alunosAno, ativos, adimplentes, inadimplentes } = obterListasFinanceirasAno();
+            const desistentes = alunosAno.filter(a => ['Desistente', 'Trancado'].includes(a.situacao));
+            const disciplinasAno = db.disciplinas.filter(d => (d.anoLetivo || '2026') === db.anoAtual);
+
+            const mapaAulas = new Map();
+            Object.entries(db.frequencias || {}).forEach(([chave, val]) => {
+                const partes = chave.split('_');
+                if (partes.length >= 3) {
+                    const discId = partes[0];
+                    const data = partes[1];
+                    const chaveAula = `${discId}_${data}`;
+                    if (!mapaAulas.has(chaveAula)) {
+                        const disc = db.disciplinas.find(d => d.id === discId);
+                        mapaAulas.set(chaveAula, {
+                            data,
+                            disciplina: disc ? disc.nome : discId,
+                            turma: disc ? disc.turma : '-',
+                            registros: 0
+                        });
+                    }
+                    mapaAulas.get(chaveAula).registros++;
+                }
+            });
+            const aulasLista = Array.from(mapaAulas.values()).sort((a, b) => b.data.localeCompare(a.data));
+
+            painel.classList.remove('hidden');
+
+            if (tipo === 'alunos_ativos' || tipo === 'adimplentes' || tipo === 'inadimplentes' || tipo === 'desistentes') {
+                const configs = {
+                    alunos_ativos: {
+                        t: `Alunos Ativos (${ativos.length})`,
+                        s: `Todos os estudantes regulares em ${db.anoAtual}`,
+                        lista: ativos
+                    },
+                    adimplentes: {
+                        t: `Alunos Adimplentes (${adimplentes.length})`,
+                        s: `Estudantes ativos com mensalidades em dia em ${db.anoAtual}`,
+                        lista: adimplentes
+                    },
+                    inadimplentes: {
+                        t: `Alunos Inadimplentes (${inadimplentes.length})`,
+                        s: `Estudantes ativos com pendência financeira em ${db.anoAtual}`,
+                        lista: inadimplentes
+                    },
+                    desistentes: {
+                        t: `Desistentes / Trancados (${desistentes.length})`,
+                        s: `Estudantes desistentes ou trancados em ${db.anoAtual}`,
+                        lista: desistentes
+                    }
+                };
+                const cfg = configs[tipo];
+                titulo.textContent = cfg.t;
+                subtitulo.textContent = cfg.s;
+                thead.innerHTML = `
+                    <tr>
+                        <th class="py-3 px-4">Matrícula</th>
+                        <th class="py-3 px-4">Nome Completo</th>
+                        <th class="py-3 px-4">Turma / Modalidade</th>
+                        <th class="py-3 px-4">Contato</th>
+                        <th class="py-3 px-4 text-center">Situação</th>
+                    </tr>
+                `;
+                tbody.innerHTML = cfg.lista.length > 0
+                    ? cfg.lista.map(a => `
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-3 px-4 font-mono font-bold text-blue-900">${a.matricula}</td>
+                            <td class="py-3 px-4 font-bold text-slate-900">${a.nome}</td>
+                            <td class="py-3 px-4 text-slate-600">${a.turma}</td>
+                            <td class="py-3 px-4 text-slate-600">${a.telefone || a.email || '-'}</td>
+                            <td class="py-3 px-4 text-center"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${a.situacao === 'Ativo' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${a.situacao}</span></td>
+                        </tr>
+                    `).join('')
+                    : `<tr><td colspan="5" class="py-6 text-center text-slate-400">Nenhum registro encontrado nesta categoria.</td></tr>`;
+            } else if (tipo === 'professores') {
+                titulo.textContent = `Professores Cadastrados (${db.professores.length})`;
+                subtitulo.textContent = 'Corpo docente completo cadastrado no sistema';
+                thead.innerHTML = `
+                    <tr>
+                        <th class="py-3 px-4">Nome do Docente</th>
+                        <th class="py-3 px-4">E-mail</th>
+                        <th class="py-3 px-4">Telefone</th>
+                        <th class="py-3 px-4 text-center">Disciplinas em ${db.anoAtual}</th>
+                    </tr>
+                `;
+                tbody.innerHTML = db.professores.length > 0
+                    ? db.professores.map(p => {
+                        const qtdDisc = disciplinasAno.filter(d => d.professorId === p.id).length;
+                        return `
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4 font-bold text-slate-900">${p.nome}</td>
+                                <td class="py-3 px-4 text-slate-600">${p.email}</td>
+                                <td class="py-3 px-4 text-slate-600">${p.telefone || '-'}</td>
+                                <td class="py-3 px-4 text-center font-extrabold text-blue-900">${qtdDisc}</td>
+                            </tr>
+                        `;
+                    }).join('')
+                    : `<tr><td colspan="4" class="py-6 text-center text-slate-400">Nenhum professor cadastrado.</td></tr>`;
+            } else if (tipo === 'disciplinas') {
+                titulo.textContent = `Disciplinas na Grade (${disciplinasAno.length})`;
+                subtitulo.textContent = `Matriz curricular do ano letivo ${db.anoAtual}`;
+                thead.innerHTML = `
+                    <tr>
+                        <th class="py-3 px-4">Módulo</th>
+                        <th class="py-3 px-4">Disciplina</th>
+                        <th class="py-3 px-4">Turma / Modalidade</th>
+                        <th class="py-3 px-4">Docente Responsável</th>
+                        <th class="py-3 px-4 text-center">C.H.</th>
+                    </tr>
+                `;
+                tbody.innerHTML = disciplinasAno.length > 0
+                    ? disciplinasAno.map(d => {
+                        const prof = db.professores.find(p => p.id === d.professorId);
+                        return `
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4 font-semibold text-slate-700">${d.modulo}</td>
+                                <td class="py-3 px-4 font-bold text-slate-900">${d.nome}</td>
+                                <td class="py-3 px-4 text-slate-600">${d.turma}</td>
+                                <td class="py-3 px-4 text-slate-700">${prof ? prof.nome : 'Não atribuído'}</td>
+                                <td class="py-3 px-4 text-center font-bold">${d.ch}h</td>
+                            </tr>
+                        `;
+                    }).join('')
+                    : `<tr><td colspan="5" class="py-6 text-center text-slate-400">Nenhuma disciplina cadastrada neste ano.</td></tr>`;
+            } else if (tipo === 'aulas') {
+                titulo.textContent = `Aulas Computadas (${aulasLista.length})`;
+                subtitulo.textContent = 'Registros de chamada lançados no diário de classe';
+                thead.innerHTML = `
+                    <tr>
+                        <th class="py-3 px-4">Data</th>
+                        <th class="py-3 px-4">Disciplina</th>
+                        <th class="py-3 px-4">Turma</th>
+                        <th class="py-3 px-4 text-center">Chamadas</th>
+                    </tr>
+                `;
+                tbody.innerHTML = aulasLista.length > 0
+                    ? aulasLista.map(au => `
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-3 px-4 font-mono font-bold text-slate-900">${au.data}</td>
+                            <td class="py-3 px-4 font-bold text-slate-800">${au.disciplina}</td>
+                            <td class="py-3 px-4 text-slate-600">${au.turma}</td>
+                            <td class="py-3 px-4 text-center font-bold text-blue-900">${au.registros}</td>
+                        </tr>
+                    `).join('')
+                    : `<tr><td colspan="4" class="py-6 text-center text-slate-400">Nenhuma aula computada ainda.</td></tr>`;
+            }
+
+            lucide.createIcons();
+            painel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
         function renderizarDashboard() {
             const isAdmin = ['diretor', 'secretario', 'coordenador', 'admin_ti'].includes(usuarioLogado.role);
             const isProf = usuarioLogado.role === 'professor';
@@ -1385,26 +1592,9 @@
             document.getElementById('painel-professor-disciplinas').classList.toggle('hidden', !isProf);
             document.getElementById('painel-aluno-resumo').classList.toggle('hidden', !isAluno);
 
-            const alunosAno = db.alunos.filter(a => (a.anoLetivo || '2026') === db.anoAtual);
-            const ativos = alunosAno.filter(a => a.situacao === 'Ativo');
+            const { alunosAno, ativos, adimplentes, inadimplentes } = obterListasFinanceirasAno();
             const desistentes = alunosAno.filter(a => ['Desistente', 'Trancado'].includes(a.situacao));
             const disciplinasAno = db.disciplinas.filter(d => (d.anoLetivo || '2026') === db.anoAtual);
-
-            const mesAtualIdx = new Date().getMonth();
-            let adimplentesCount = 0;
-            let inadimplentesCount = 0;
-            ativos.forEach(al => {
-                const fin = (db.financeiro && db.financeiro[`${db.anoAtual}_${al.id}`]) || {};
-                let temPendencia = false;
-                for (let m = 0; m <= mesAtualIdx; m++) {
-                    if (!fin[MESES_KEYS[m]]) {
-                        temPendencia = true;
-                        break;
-                    }
-                }
-                if (temPendencia) inadimplentesCount++;
-                else adimplentesCount++;
-            });
 
             const datasUnicas = new Set();
             Object.keys(db.frequencias).forEach(chave => {
@@ -1416,8 +1606,8 @@
             document.getElementById('stat-professores-ativos').textContent = db.professores.length;
             document.getElementById('stat-disciplinas-grade').textContent = disciplinasAno.length;
             document.getElementById('stat-aulas-computadas').textContent = datasUnicas.size;
-            document.getElementById('stat-adimplentes').textContent = adimplentesCount;
-            document.getElementById('stat-inadimplentes').textContent = inadimplentesCount;
+            document.getElementById('stat-adimplentes').textContent = adimplentes.length;
+            document.getElementById('stat-inadimplentes').textContent = inadimplentes.length;
             document.getElementById('stat-desistentes').textContent = desistentes.length;
 
             if (isAdmin) {
@@ -1451,7 +1641,7 @@
                 container.innerHTML = `
                     <div class="col-span-full p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-300">
                         <p class="text-sm font-bold text-slate-600">Nenhuma disciplina atribuída ao seu perfil neste ano letivo (${db.anoAtual}).</p>
-                        <p class="text-xs text-slate-400 mt-1">Entre em contacto com a Secretaria ou Coordenação Acadêmica.</p>
+                        <p class="text-xs text-slate-400 mt-1">Entre em contato com a Secretaria ou Coordenação Acadêmica.</p>
                     </div>
                 `;
                 return;
@@ -1499,7 +1689,7 @@
             const disciplinasTurma = db.disciplinas.filter(d => d.turma === aluno.turma && (d.anoLetivo || '2026') === (aluno.anoLetivo || db.anoAtual));
             const tbody = document.getElementById('tabela-aluno-boletim-dash');
             if (disciplinasTurma.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-400">Nenhuma disciplina cadastrada para a sua turma.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-400">Nenhuma disciplina cadastrada para sua turma.</td></tr>`;
                 return;
             }
 
@@ -1554,7 +1744,7 @@
             const freqPerc = totalAulas > 0 ? Math.round((presencas / totalAulas) * 100) : 100;
             const freqTexto = totalAulas > 0 ? `${freqPerc}%` : '100%';
 
-            let status = 'A frequentar';
+            let status = 'Cursando';
             let badgeClass = 'bg-slate-100 text-slate-700';
             if (media !== null) {
                 if (media >= 7 && freqPerc >= 75) {
@@ -1986,7 +2176,7 @@
             const p = db.professores.find(x => x.id === profId);
             if (!p) return;
             const tel = (p.telefone || '').replace(/\D/g, '');
-            const msg = `Olá Prof(a). ${p.nome}! Seguem os seus dados de acesso ao Portal Acadêmico ITQ:\nLink: ${URL_PORTAL_PUBLICO}\nPerfil: Docente / Professor\nE-mail: ${p.email}\nSenha: ${p.senha || 'itq2026'}`;
+            const msg = `Olá Prof(a). ${p.nome}! Seguem seus dados de acesso ao Portal Acadêmico ITQ:\nLink: ${URL_PORTAL_PUBLICO}\nPerfil: Docente / Professor\nE-mail: ${p.email}\nSenha: ${p.senha || 'itq2026'}`;
             window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 

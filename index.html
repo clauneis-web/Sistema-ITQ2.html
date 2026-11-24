@@ -65,8 +65,8 @@
     <script>
         const URL_PORTAL_PUBLICO = window.location.origin && !window.location.origin.startsWith('file') && !window.location.origin.includes('localhost')
             ? window.location.origin + window.location.pathname
-            : 'https://sistema-academico-itq.vercel.app/';
-        const API_URL_NUVEM = 'https://script.google.com/macros/s/AKfycbz8Q87r8p_4t1Z3J9z5L5h0C3iB-7qH32H757P-hM5w9o5O0K0V1H3Q9n1m8Y1t1z8G/exec';
+            : 'https://sistema-itq-alagoas.vercel.app/';
+        const API_URL_NUVEM = 'https://script.google.com/macros/s/AKfycbxFXSboXKgcZ8szM-zhSh8AXatrapJHKv1USEaQYR-saomjkTH0qysb41MxJVxmURot/exec';
     </script>
 
     <!-- TELA PÚBLICA DE VALIDAÇÃO DE CARTEIRA ESTUDANTIL (?validar=MATRICULA) -->
@@ -237,7 +237,7 @@
                     <div>
                         <h2 class="text-sm font-bold text-white leading-tight">ITQ Acadêmico</h2>
                         <span id="badge-nuvem" class="text-[10px] font-semibold text-emerald-400 flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Conectado
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Conectando...
                         </span>
                     </div>
                 </div>
@@ -1013,6 +1013,46 @@
             verificarSessaoSalva();
         });
 
+        function mesclarDadosNuvem(dadosNuvem) {
+            if (!dadosNuvem || typeof dadosNuvem !== 'object') return false;
+            let recebeuAlgo = false;
+
+            if (Array.isArray(dadosNuvem.anosLetivos) && dadosNuvem.anosLetivos.length > 0) {
+                db.anosLetivos = dadosNuvem.anosLetivos;
+            }
+            if (dadosNuvem.anoAtual) {
+                db.anoAtual = dadosNuvem.anoAtual;
+            }
+            if (Array.isArray(dadosNuvem.alunos)) {
+                if (dadosNuvem.alunos.length > 0) {
+                    db.alunos = dadosNuvem.alunos;
+                }
+                recebeuAlgo = true;
+            }
+            if (Array.isArray(dadosNuvem.professores) && dadosNuvem.professores.length > 0) {
+                db.professores = dadosNuvem.professores;
+                recebeuAlgo = true;
+            }
+            if (Array.isArray(dadosNuvem.disciplinas) && dadosNuvem.disciplinas.length > 0) {
+                db.disciplinas = dadosNuvem.disciplinas;
+                recebeuAlgo = true;
+            }
+            if (dadosNuvem.notas && typeof dadosNuvem.notas === 'object') {
+                db.notas = dadosNuvem.notas;
+            } else if (dadosNuvem.boletim && typeof dadosNuvem.boletim === 'object') {
+                db.notas = dadosNuvem.boletim;
+            }
+            if (dadosNuvem.frequencias && typeof dadosNuvem.frequencias === 'object') {
+                db.frequencias = dadosNuvem.frequencias;
+            } else if (dadosNuvem.diarioDatas && typeof dadosNuvem.diarioDatas === 'object') {
+                db.frequencias = dadosNuvem.diarioDatas;
+            }
+            if (dadosNuvem.financeiro && typeof dadosNuvem.financeiro === 'object') {
+                db.financeiro = dadosNuvem.financeiro;
+            }
+            return recebeuAlgo;
+        }
+
         async function iniciarModoValidacaoPublica(matricula) {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-container').classList.add('hidden');
@@ -1022,11 +1062,10 @@
             document.getElementById('validacao-resultado').classList.add('hidden');
 
             try {
-                const resp = await fetch(`${API_URL_NUVEM}?t=${Date.now()}`);
+                const resp = await fetch(`${API_URL_NUVEM}?action=lerTudo&t=${Date.now()}`);
                 if (resp.ok) {
                     const dadosNuvem = await resp.json();
-                    if (dadosNuvem && Array.isArray(dadosNuvem.alunos)) {
-                        db = { ...db, ...dadosNuvem };
+                    if (mesclarDadosNuvem(dadosNuvem)) {
                         salvarDadosLocais();
                     }
                 }
@@ -1135,31 +1174,39 @@
         async function sincronizarComNuvem(mostrarAlerta = false) {
             const badge = document.getElementById('badge-nuvem');
             try {
-                const resp = await fetch(`${API_URL_NUVEM}?t=${Date.now()}`);
-                if (resp.ok) {
-                    const dados = await resp.json();
-                    if (dados && Array.isArray(dados.alunos) && dados.alunos.length > 0) {
-                        db = { ...db, ...dados };
-                        if (!db.financeiro) db.financeiro = {};
-                        salvarDadosLocais();
-                    }
-                    if (badge) badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Nuvem Sincronizada`;
-                    if (mostrarAlerta) alert('Dados sincronizados com a nuvem com sucesso!');
-                    if (usuarioLogado) atualizarInterfaceGeral();
+                const resp = await fetch(`${API_URL_NUVEM}?action=lerTudo&t=${Date.now()}`);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const dados = await resp.json();
+                if (mesclarDadosNuvem(dados)) {
+                    salvarDadosLocais();
                 }
+                if (badge) {
+                    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Nuvem Sincronizada`;
+                }
+                if (mostrarAlerta) alert('Dados sincronizados com a nuvem com sucesso!');
+                if (usuarioLogado) atualizarInterfaceGeral();
             } catch (e) {
-                if (badge) badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Modo Offline`;
+                console.warn('Erro na sincronização com Google Apps Script:', e);
+                if (badge) {
+                    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Modo Offline`;
+                }
+                if (mostrarAlerta) alert('Não foi possível conectar à nuvem. Verifique se a implantação do Apps Script está publicada para "Qualquer pessoa".');
             }
         }
 
         async function salvarNaNuvem() {
             salvarDadosLocais();
+            const payload = {
+                ...db,
+                boletim: db.notas,
+                diarioDatas: db.frequencias
+            };
             try {
                 await fetch(API_URL_NUVEM, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(db)
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
                 });
             } catch (e) {
                 console.warn('Erro ao enviar backup para nuvem:', e);
@@ -1201,7 +1248,7 @@
                     return;
                 }
             } else if (role === 'aluno') {
-                const aluno = db.alunos.find(a => (a.matricula.toLowerCase() === user || (a.email && a.email.toLowerCase() === user)) && (a.senha || a.cpf.replace(/\D/g, '').slice(0, 6)) === pass);
+                const aluno = db.alunos.find(a => (String(a.matricula).toLowerCase() === user || (a.email && a.email.toLowerCase() === user)) && (a.senha || String(a.cpf || '').replace(/\D/g, '').slice(0, 6)) === pass);
                 if (aluno) {
                     iniciarSessao({ role: 'aluno', nome: aluno.nome, id: aluno.id, matricula: aluno.matricula });
                     return;
@@ -1256,7 +1303,7 @@
             }
 
             if (role === 'aluno') {
-                const idx = db.alunos.findIndex(a => a.matricula.toLowerCase() === ident || (a.email && a.email.toLowerCase() === ident));
+                const idx = db.alunos.findIndex(a => String(a.matricula).toLowerCase() === ident || (a.email && a.email.toLowerCase() === ident));
                 if (idx === -1) { alert('Aluno não encontrado.'); return; }
                 db.alunos[idx].senha = nova;
             } else if (role === 'professor') {
@@ -1397,7 +1444,7 @@
         }
 
         function obterListasFinanceirasAno() {
-            const alunosAno = db.alunos.filter(a => (a.anoLetivo || '2026') === db.anoAtual);
+            const alunosAno = db.alunos.filter(a => String(a.anoLetivo || '2026') === String(db.anoAtual));
             const ativos = alunosAno.filter(a => a.situacao === 'Ativo');
             const mesAtualIdx = new Date().getMonth();
             const adimplentes = [];
@@ -1434,7 +1481,7 @@
 
             const { alunosAno, ativos, adimplentes, inadimplentes } = obterListasFinanceirasAno();
             const desistentes = alunosAno.filter(a => ['Desistente', 'Trancado'].includes(a.situacao));
-            const disciplinasAno = db.disciplinas.filter(d => (d.anoLetivo || '2026') === db.anoAtual);
+            const disciplinasAno = db.disciplinas.filter(d => String(d.anoLetivo || '2026') === String(db.anoAtual));
 
             const mapaAulas = new Map();
             Object.entries(db.frequencias || {}).forEach(([chave, val]) => {
@@ -1594,7 +1641,7 @@
 
             const { alunosAno, ativos, adimplentes, inadimplentes } = obterListasFinanceirasAno();
             const desistentes = alunosAno.filter(a => ['Desistente', 'Trancado'].includes(a.situacao));
-            const disciplinasAno = db.disciplinas.filter(d => (d.anoLetivo || '2026') === db.anoAtual);
+            const disciplinasAno = db.disciplinas.filter(d => String(d.anoLetivo || '2026') === String(db.anoAtual));
 
             const datasUnicas = new Set();
             Object.keys(db.frequencias).forEach(chave => {
@@ -1633,7 +1680,7 @@
         }
 
         function renderizarPainelProfessor() {
-            const minhasDisciplinas = db.disciplinas.filter(d => d.professorId === usuarioLogado.id && (d.anoLetivo || '2026') === db.anoAtual);
+            const minhasDisciplinas = db.disciplinas.filter(d => d.professorId === usuarioLogado.id && String(d.anoLetivo || '2026') === String(db.anoAtual));
             const container = document.getElementById('lista-disciplinas-professor');
             document.getElementById('prof-total-disc-badge').textContent = `${minhasDisciplinas.length} disciplina(s)`;
 
@@ -1649,7 +1696,7 @@
 
             container.innerHTML = minhasDisciplinas.map(d => {
                 const modalidade = d.turma.includes('EAD') ? 'EAD (Ensino a Distância)' : 'Presencial';
-                const qtdAlunos = db.alunos.filter(a => a.turma === d.turma && a.situacao === 'Ativo' && (a.anoLetivo || '2026') === db.anoAtual).length;
+                const qtdAlunos = db.alunos.filter(a => a.turma === d.turma && a.situacao === 'Ativo' && String(a.anoLetivo || '2026') === String(db.anoAtual)).length;
                 return `
                     <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-white hover:border-blue-400 hover:shadow-md transition-all flex flex-col justify-between gap-4">
                         <div class="space-y-2">
@@ -1686,7 +1733,7 @@
             document.getElementById('aluno-dash-nome').textContent = aluno.nome;
             document.getElementById('aluno-dash-info').textContent = `Matrícula: ${aluno.matricula} • Turma: ${aluno.turma} • Ano Letivo: ${aluno.anoLetivo || db.anoAtual}`;
 
-            const disciplinasTurma = db.disciplinas.filter(d => d.turma === aluno.turma && (d.anoLetivo || '2026') === (aluno.anoLetivo || db.anoAtual));
+            const disciplinasTurma = db.disciplinas.filter(d => d.turma === aluno.turma && String(d.anoLetivo || '2026') === String(aluno.anoLetivo || db.anoAtual));
             const tbody = document.getElementById('tabela-aluno-boletim-dash');
             if (disciplinasTurma.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-400">Nenhuma disciplina cadastrada para sua turma.</td></tr>`;
@@ -1772,9 +1819,9 @@
             const busca = document.getElementById('busca-aluno').value.toLowerCase();
             const filtroTurma = document.getElementById('filtro-turma-aluno').value;
             const filtrados = db.alunos.filter(a => {
-                const matchAno = (a.anoLetivo || '2026') === db.anoAtual;
+                const matchAno = String(a.anoLetivo || '2026') === String(db.anoAtual);
                 const matchTurma = filtroTurma === 'todas' || a.turma === filtroTurma;
-                const matchBusca = a.nome.toLowerCase().includes(busca) || a.matricula.toLowerCase().includes(busca) || a.cpf.includes(busca);
+                const matchBusca = String(a.nome || '').toLowerCase().includes(busca) || String(a.matricula || '').toLowerCase().includes(busca) || String(a.cpf || '').includes(busca);
                 return matchAno && matchTurma && matchBusca;
             });
 
@@ -1867,7 +1914,7 @@
         function atualizarSelectDisciplinasDiario() {
             const turma = document.getElementById('diario-turma').value;
             const selDisc = document.getElementById('diario-disciplina');
-            let discs = db.disciplinas.filter(d => d.turma === turma && (d.anoLetivo || '2026') === db.anoAtual);
+            let discs = db.disciplinas.filter(d => d.turma === turma && String(d.anoLetivo || '2026') === String(db.anoAtual));
             if (usuarioLogado.role === 'professor') {
                 discs = discs.filter(d => d.professorId === usuarioLogado.id);
             }
@@ -1894,7 +1941,7 @@
                 return;
             }
 
-            const alunosTurma = db.alunos.filter(a => a.turma === turma && a.situacao === 'Ativo' && (a.anoLetivo || '2026') === db.anoAtual);
+            const alunosTurma = db.alunos.filter(a => a.turma === turma && a.situacao === 'Ativo' && String(a.anoLetivo || '2026') === String(db.anoAtual));
             tbody.innerHTML = alunosTurma.map(a => {
                 const freqVal = db.frequencias[`${discId}_${data}_${a.id}`] || '';
                 const n = db.notas[`${a.id}_${discId}`] || {};
@@ -1947,7 +1994,7 @@
                 if (selectId === 'boletim-select-aluno') document.getElementById('boletim-filtro-admin').classList.add('hidden');
                 if (selectId === 'carteirinha-select-aluno') document.getElementById('carteirinha-filtro-admin').classList.add('hidden');
             } else {
-                const alunosAno = db.alunos.filter(a => (a.anoLetivo || '2026') === db.anoAtual);
+                const alunosAno = db.alunos.filter(a => String(a.anoLetivo || '2026') === String(db.anoAtual));
                 sel.innerHTML = alunosAno.map(a => `<option value="${a.id}">${a.nome} - ${a.matricula} (${a.turma})</option>`).join('');
             }
             callback();
@@ -1960,7 +2007,7 @@
             document.getElementById('boletim-aluno-nome').textContent = aluno.nome;
             document.getElementById('boletim-aluno-detalhes').textContent = `Matrícula: ${aluno.matricula} • Turma: ${aluno.turma} • Situação: ${aluno.situacao}`;
 
-            const disciplinas = db.disciplinas.filter(d => d.turma === aluno.turma && (d.anoLetivo || '2026') === (aluno.anoLetivo || db.anoAtual));
+            const disciplinas = db.disciplinas.filter(d => d.turma === aluno.turma && String(d.anoLetivo || '2026') === String(aluno.anoLetivo || db.anoAtual));
             const tbody = document.getElementById('tabela-boletim-body');
             tbody.innerHTML = disciplinas.map(d => {
                 const prof = db.professores.find(p => p.id === d.professorId);
@@ -2054,7 +2101,7 @@
 
         function renderizarRelacaoAlunos() {
             const filtro = document.getElementById('relacao-filtro-turma').value;
-            const lista = db.alunos.filter(a => (a.anoLetivo || '2026') === db.anoAtual && (filtro === 'todas' || a.turma === filtro));
+            const lista = db.alunos.filter(a => String(a.anoLetivo || '2026') === String(db.anoAtual) && (filtro === 'todas' || a.turma === filtro));
             document.getElementById('relacao-subtitulo').textContent = `Ano Letivo: ${db.anoAtual} • Filtro: ${filtro === 'todas' ? 'Todas as Turmas' : filtro}`;
             document.getElementById('relacao-total-badge').textContent = `${lista.length} estudante(s)`;
             document.getElementById('tabela-relacao-body').innerHTML = lista.map((a, idx) => `
@@ -2076,7 +2123,7 @@
         }
 
         function renderizarFinanceiro() {
-            const alunosAno = db.alunos.filter(a => (a.anoLetivo || '2026') === db.anoAtual && a.situacao === 'Ativo');
+            const alunosAno = db.alunos.filter(a => String(a.anoLetivo || '2026') === String(db.anoAtual) && a.situacao === 'Ativo');
             const tbody = document.getElementById('tabela-financeiro-body');
             tbody.innerHTML = alunosAno.map(a => {
                 const fin = (db.financeiro && db.financeiro[`${db.anoAtual}_${a.id}`]) || {};
@@ -2124,7 +2171,7 @@
             `).join('');
 
             const listaDisc = document.getElementById('lista-disciplinas-grade');
-            const discsAno = db.disciplinas.filter(d => (d.anoLetivo || '2026') === db.anoAtual);
+            const discsAno = db.disciplinas.filter(d => String(d.anoLetivo || '2026') === String(db.anoAtual));
             listaDisc.innerHTML = discsAno.map(d => {
                 const prof = db.professores.find(p => p.id === d.professorId);
                 return `

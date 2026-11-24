@@ -80,6 +80,33 @@
                 width: 100% !important; box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important;
             }
 
+            body.printing-resumo #painel-resumo-aulas,
+            body.printing-resumo #painel-resumo-aulas * { visibility: visible !important; }
+            body.printing-resumo #painel-resumo-aulas {
+                position: absolute !important; left: 0 !important; top: 0 !important;
+                width: 100% !important; max-width: 100% !important;
+                box-shadow: none !important; border: none !important;
+                padding: 4mm !important; margin: 0 !important;
+            }
+
+            body.printing-boletim #boletim-print-area,
+            body.printing-boletim #boletim-print-area * { visibility: visible !important; }
+            body.printing-boletim #boletim-print-area {
+                position: absolute !important; left: 0 !important; top: 0 !important;
+                width: 100% !important; max-width: 100% !important;
+                box-shadow: none !important; border: none !important;
+                padding: 4mm !important; margin: 0 !important;
+            }
+
+            body.printing-financeiro #financeiro-print-area,
+            body.printing-financeiro #financeiro-print-area * { visibility: visible !important; }
+            body.printing-financeiro #financeiro-print-area {
+                position: absolute !important; left: 0 !important; top: 0 !important;
+                width: 100% !important; max-width: 100% !important;
+                box-shadow: none !important; border: none !important;
+                padding: 4mm !important; margin: 0 !important;
+            }
+
             .no-print { display: none !important; }
         }
     </style>
@@ -309,7 +336,7 @@
 
                 <!-- VIEW: DASHBOARD -->
                 <section id="view-dashboard" class="space-y-6 fade-in">
-                    <div id="dashboard-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div id="dashboard-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
                         <button type="button" onclick="abrirListaCardDashboard('alunos_ativos')" class="text-left bg-white p-5 rounded-2xl border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all shadow-sm flex items-start justify-between gap-3 cursor-pointer">
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-slate-600 uppercase tracking-wide break-words">Alunos Ativos</p>
@@ -389,7 +416,7 @@
                     </div>
 
                     <!-- PAINEL EXPANSÍVEL AO CLICAR EM UM CARD DO DASHBOARD -->
-                    <div id="painel-lista-card-dashboard" class="hidden bg-white rounded-2xl border border-blue-200 shadow-sm overflow-hidden fade-in">
+                    <div id="painel-lista-card-dashboard" class="hidden bg-white rounded-2xl border border-blue-200 shadow-sm overflow-hidden fade-in no-print">
                         <div class="px-6 py-4 bg-blue-950 text-white flex flex-wrap items-center justify-between gap-3">
                             <div>
                                 <h3 id="card-detalhe-titulo" class="text-sm font-extrabold uppercase tracking-wide">Registros Cadastrados</h3>
@@ -407,7 +434,7 @@
                         </div>
                     </div>
 
-                    <div id="painel-professor-disciplinas" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div id="painel-professor-disciplinas" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden no-print">
                         <div class="px-6 py-4 bg-blue-950 text-white flex flex-wrap items-center justify-between gap-2">
                             <div class="flex items-center gap-2.5">
                                 <i data-lucide="book-marked" class="w-5 h-5 text-amber-400 shrink-0"></i>
@@ -421,7 +448,7 @@
                         <div id="lista-disciplinas-professor" class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                     </div>
 
-                    <!-- RESUMO DAS AULAS EDITÁVEL -->
+                    <!-- RESUMO DAS AULAS EDITÁVEL (COM IMPRIMIR / PDF) -->
                     <div id="painel-resumo-aulas" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
                         <div class="flex flex-wrap items-center justify-between gap-3">
                             <div>
@@ -430,14 +457,19 @@
                                 </h3>
                                 <p class="text-xs text-slate-500">Registre e edite os conteúdos lecionados, datas e observações pedagógicas</p>
                             </div>
-                            <button type="button" onclick="abrirModalResumoAula()" class="px-3.5 py-2 bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold rounded-xl flex items-center gap-1.5">
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Novo Resumo de Aula
-                            </button>
+                            <div class="flex flex-wrap items-center gap-2 no-print">
+                                <button type="button" onclick="imprimirResumoAulas()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl flex items-center gap-1.5">
+                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i> Imprimir / PDF
+                                </button>
+                                <button type="button" onclick="abrirModalResumoAula()" class="px-3.5 py-2 bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold rounded-xl flex items-center gap-1.5">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Novo Resumo de Aula
+                                </button>
+                            </div>
                         </div>
                         <div id="lista-resumo-aulas" class="space-y-3"></div>
                     </div>
 
-                    <div id="painel-aluno-resumo" class="hidden space-y-6">
+                    <div id="painel-aluno-resumo" class="hidden space-y-6 no-print">
                         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-wrap items-center justify-between gap-4">
                             <div>
                                 <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-[11px] font-bold rounded-full uppercase">Estudante Regular</span>
@@ -475,7 +507,7 @@
                         </div>
                     </div>
 
-                    <div id="painel-admin-turmas" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                    <div id="painel-admin-turmas" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 no-print">
                         <h3 class="text-sm font-extrabold text-slate-800 uppercase mb-4 flex items-center gap-2">
                             <i data-lucide="layers" class="w-4 h-4 text-blue-800"></i> Distribuição de Alunos por Turma e Modalidade
                         </h3>
@@ -579,39 +611,70 @@
                     </div>
                 </section>
 
-                <!-- VIEW: BOLETIM INDIVIDUAL -->
+                <!-- VIEW: BOLETIM INDIVIDUAL (COM IMPRIMIR / PDF) -->
                 <section id="view-boletim" class="hidden space-y-6 fade-in">
-                    <div id="boletim-filtro-admin" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center gap-4">
+                    <div id="boletim-filtro-admin" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-end justify-between gap-4 no-print">
                         <div class="flex-1 min-w-[250px]">
                             <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Selecione o Estudante</label>
                             <select id="boletim-select-aluno" onchange="renderizarBoletim()" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800"></select>
                         </div>
+                        <button type="button" onclick="imprimirBoletim()" class="px-4 py-2.5 bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold rounded-xl shadow-sm flex items-center gap-2">
+                            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir / PDF
+                        </button>
                     </div>
 
-                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="p-5 bg-slate-900 text-white flex flex-wrap items-center justify-between gap-4">
-                            <div>
-                                <h3 id="boletim-aluno-nome" class="text-base font-extrabold uppercase break-words">--</h3>
-                                <p id="boletim-aluno-detalhes" class="text-xs text-slate-300 mt-0.5 break-words">Matrícula: -- • Turma: --</p>
+                    <div id="boletim-print-area" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 max-w-[210mm] mx-auto">
+                        <div class="flex items-center justify-between border-b-2 border-slate-900 pb-3 gap-3">
+                            <div class="w-12 h-12 rounded-lg border border-slate-300 p-1 flex items-center justify-center shrink-0 bg-white overflow-hidden">
+                                <img src="logo-itq.png" alt="Logo ITQ" class="w-full h-full object-contain">
+                            </div>
+                            <div class="text-center flex-1 leading-tight">
+                                <p class="text-[9px] font-extrabold uppercase tracking-wide text-slate-800">Secretaria Geral de Educação e Cultura da Igreja do Evangelho Quadrangular</p>
+                                <h2 class="text-[11px] font-extrabold uppercase text-blue-950 mt-0.5">Instituto Teológico Quadrangular ITQ/AL/001</h2>
+                                <p class="text-[8.5px] font-semibold text-slate-700">Rua Professor Virgílio Guedes - Lado Par, 1254 • CEP: 57.014-002 • Maceió-AL</p>
+                                <p class="text-[8.5px] font-semibold text-slate-700">Boletim Escolar Individual do Estudante</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg border border-slate-300 flex items-center justify-center shrink-0 bg-slate-200 overflow-hidden">
+                                <img src="logo-sgec.jpg" alt="Logo SGEC Quadrangular" class="w-full h-full object-cover">
                             </div>
                         </div>
+
+                        <div class="p-4 bg-slate-900 text-white rounded-xl flex flex-wrap items-center justify-between gap-4">
+                            <div>
+                                <h3 id="boletim-aluno-nome" class="text-sm font-extrabold uppercase break-words">--</h3>
+                                <p id="boletim-aluno-detalhes" class="text-xs text-slate-300 mt-0.5 break-words">Matrícula: -- • Turma: --</p>
+                            </div>
+                            <span id="boletim-ano-badge" class="px-3 py-1 bg-white/15 rounded-lg text-xs font-bold">Ano Letivo: 2026</span>
+                        </div>
+
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
+                            <table class="w-full text-left border-collapse border border-slate-300 text-xs">
                                 <thead>
-                                    <tr class="bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold text-slate-600 uppercase">
-                                        <th class="py-3 px-4">Disciplina e Professor(a)</th>
-                                        <th class="py-3 px-3 text-center">CH</th>
-                                        <th class="py-3 px-3 text-center">Freq.</th>
-                                        <th class="py-3 px-3 text-center">Auto</th>
-                                        <th class="py-3 px-3 text-center">Som.</th>
-                                        <th class="py-3 px-3 text-center">Conc.</th>
-                                        <th class="py-3 px-3 text-center">Rec.</th>
-                                        <th class="py-3 px-3 text-center">Média</th>
-                                        <th class="py-3 px-4 text-center">Resultado</th>
+                                    <tr class="bg-slate-100 border-b border-slate-300 text-[11px] font-extrabold text-slate-700 uppercase">
+                                        <th class="border border-slate-300 py-2.5 px-3">Disciplina e Professor(a)</th>
+                                        <th class="border border-slate-300 py-2.5 px-2 text-center">CH</th>
+                                        <th class="border border-slate-300 py-2.5 px-2 text-center">Freq.</th>
+                                        <th class="border border-slate-300 py-2.5 px-2 text-center">Auto</th>
+                                        <th class="border border-slate-300 py-2.5 px-2 text-center">Som.</th>
+                                        <th class="border border-slate-300 py-2.5 px-2 text-center">Conc.</th>
+                                        <th class="border border-slate-300 py-2.5 px-2 text-center">Rec.</th>
+                                        <th class="border border-slate-300 py-2.5 px-2 text-center">Média</th>
+                                        <th class="border border-slate-300 py-2.5 px-3 text-center">Resultado</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabela-boletim-body" class="divide-y divide-slate-200 text-xs"></tbody>
                             </table>
+                        </div>
+
+                        <div class="pt-4 grid grid-cols-2 gap-8 text-center text-xs text-slate-700">
+                            <div>
+                                <div class="border-t border-slate-700 pt-1.5 font-bold">Secretaria Acadêmica</div>
+                                <p class="text-[10px] text-slate-500">ITQ/AL-001 • Maceió/AL</p>
+                            </div>
+                            <div>
+                                <div class="border-t border-slate-700 pt-1.5 font-bold">Diretoria Geral</div>
+                                <p class="text-[10px] text-slate-500">Instituto Teológico Quadrangular</p>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -858,36 +921,100 @@
                     </div>
                 </section>
 
-                <!-- VIEW: FINANCEIRO -->
+                <!-- VIEW: FINANCEIRO (FICHA FINANCEIRA ANUAL POR ALUNO COM IMPRIMIR / PDF) -->
                 <section id="view-financeiro" class="hidden space-y-6 fade-in">
-                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="p-5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
-                            <div>
-                                <h3 class="text-sm font-extrabold text-slate-900 uppercase">Controle de Mensalidades (Jan - Dez)</h3>
-                                <p class="text-xs text-slate-500">Clique sobre o mês para alternar entre Pago e Pendente</p>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-end justify-between gap-4 no-print">
+                        <div class="flex-1 min-w-[250px]">
+                            <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Selecionar Estudante para Ficha Financeira Anual</label>
+                            <select id="financeiro-select-aluno" onchange="renderizarFinanceiro()" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800"></select>
+                        </div>
+                        <button type="button" onclick="imprimirFinanceiro()" class="px-4 py-2.5 bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold rounded-xl shadow-sm flex items-center gap-2">
+                            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Ficha / PDF
+                        </button>
+                    </div>
+
+                    <div id="financeiro-print-area" class="bg-white p-6 rounded-2xl border border-slate-300 shadow-sm space-y-5 max-w-[210mm] mx-auto text-slate-900">
+                        <!-- CABEÇALHO COMPLETO DA INSTITUIÇÃO -->
+                        <div class="flex items-center justify-between border-b-2 border-slate-900 pb-3 gap-3">
+                            <div class="w-12 h-12 rounded-lg border border-slate-300 p-1 flex items-center justify-center shrink-0 bg-white overflow-hidden">
+                                <img src="logo-itq.png" alt="Logo ITQ" class="w-full h-full object-contain">
+                            </div>
+                            <div class="text-center flex-1 leading-tight">
+                                <p class="text-[9px] font-extrabold uppercase tracking-wide text-slate-800">Secretaria Geral de Educação e Cultura da Igreja do Evangelho Quadrangular</p>
+                                <h2 class="text-[11px] font-extrabold uppercase text-blue-950 mt-0.5">Instituto Teológico Quadrangular ITQ/AL/001</h2>
+                                <p class="text-[8.5px] font-semibold text-slate-700">Rua Professor Virgílio Guedes - Lado Par, 1254 • CEP: 57.014-002 • Maceió-AL • Região Eclesiástica: 253 SGEC</p>
+                                <p class="text-[8.5px] font-semibold text-slate-700">Fone: (82) 99999-9999 • E-Mail: itq253al@hotmail.com</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg border border-slate-300 flex items-center justify-center shrink-0 bg-slate-200 overflow-hidden">
+                                <img src="logo-sgec.jpg" alt="Logo SGEC Quadrangular" class="w-full h-full object-cover">
                             </div>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-slate-100 border-b border-slate-200 text-[10px] font-extrabold text-slate-600 uppercase">
-                                        <th class="py-3 px-4">Aluno(a)</th>
-                                        <th class="py-3 px-2 text-center">Jan</th>
-                                        <th class="py-3 px-2 text-center">Fev</th>
-                                        <th class="py-3 px-2 text-center">Mar</th>
-                                        <th class="py-3 px-2 text-center">Abr</th>
-                                        <th class="py-3 px-2 text-center">Mai</th>
-                                        <th class="py-3 px-2 text-center">Jun</th>
-                                        <th class="py-3 px-2 text-center">Jul</th>
-                                        <th class="py-3 px-2 text-center">Ago</th>
-                                        <th class="py-3 px-2 text-center">Set</th>
-                                        <th class="py-3 px-2 text-center">Out</th>
-                                        <th class="py-3 px-2 text-center">Nov</th>
-                                        <th class="py-3 px-2 text-center">Dez</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabela-financeiro-body" class="divide-y divide-slate-200 text-xs"></tbody>
-                            </table>
+
+                        <div class="text-center">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider underline">Ficha Financeira Anual de Mensalidades</h3>
+                        </div>
+
+                        <!-- DADOS DO ALUNO -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-300 text-xs">
+                            <div><span class="font-bold text-slate-600">ALUNO(A):</span> <span id="fin-aluno-nome" class="font-extrabold uppercase text-slate-900">--</span></div>
+                            <div><span class="font-bold text-slate-600">MATRÍCULA:</span> <span id="fin-aluno-matricula" class="font-mono font-bold text-blue-900">--</span></div>
+                            <div><span class="font-bold text-slate-600">TURMA / MODALIDADE:</span> <span id="fin-aluno-turma" class="font-bold text-slate-800">--</span></div>
+                            <div><span class="font-bold text-slate-600">ANO LETIVO:</span> <span id="fin-ano-letivo" class="font-extrabold text-slate-900">2026</span></div>
+                        </div>
+
+                        <!-- GRADE MENSAL (JAN - DEZ) -->
+                        <div>
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                <p class="text-xs font-extrabold text-slate-800 uppercase">Demonstrativo Anual (Clique sobre o mês para alternar Pago / Pendente)</p>
+                                <span id="fin-resumo-meses" class="text-xs font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-lg">0 / 12 meses pagos</span>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse border border-slate-800 text-xs">
+                                    <thead>
+                                        <tr class="bg-slate-200 text-slate-900 text-[10px] font-extrabold uppercase">
+                                            <th class="border border-slate-800 py-2 px-2 text-center">Jan</th>
+                                            <th class="border border-slate-800 py-2 px-2 text-center">Fev</th>
+                                            <th class="border border-slate-800 py-2 px-2 text-center">Mar</th>
+                                            <th class="border border-slate-800 py-2 px-2 text-center">Abr</th>
+                                            <th class="border border-slate-800 py-2 px-2 text-center">Mai</th>
+                                            <th class="border border-slate-800 py-2 px-2 text-center">Jun</th>
+                                            <th class="border border-slate-800 py-2 px-2 text-center">Jul</th>
+                                            <th class="border border-slate-800 py-2 px-2 text-center">Ago</th>
+                                            <th class="border border-slate-800 py-2 px-2 text-center">Set</th>
+                                            <th class="border border-slate-800 py-2 px-2 text-center">Out</th>
+                                            <th class="border border-slate-800 py-2 px-2 text-center">Nov</th>
+                                            <th class="border border-slate-800 py-2 px-2 text-center">Dez</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabela-financeiro-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ASSINATURAS DA DIRETORIA E SECRETARIA -->
+                        <div class="pt-6 space-y-4 text-xs text-slate-800">
+                            <p class="font-semibold">Maceió-AL, <span id="fin-data-emissao">24 de Novembro de 2026</span>.</p>
+
+                            <div class="grid grid-cols-3 gap-4 items-end pt-4">
+                                <div class="text-center">
+                                    <div class="border-t border-slate-800 pt-1.5">
+                                        <p class="font-bold uppercase text-[11px]">Secretário(a)</p>
+                                        <p class="text-[10px] text-slate-600">Secretaria Acadêmica / Financeira</p>
+                                    </div>
+                                </div>
+
+                                <div class="h-14 border border-dashed border-slate-400 rounded flex flex-col items-center justify-center text-center px-2 bg-slate-50/60">
+                                    <span class="text-[8px] font-bold uppercase text-slate-500">Carimbo Oficial</span>
+                                    <span class="text-[7px] text-slate-400">ITQ/AL-001 • Maceió-AL</span>
+                                </div>
+
+                                <div class="text-center">
+                                    <div class="border-t border-slate-800 pt-1.5">
+                                        <p class="font-bold uppercase text-[11px]">Diretor(a)</p>
+                                        <p class="text-[10px] text-slate-600">Diretoria Geral ITQ</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -1335,7 +1462,7 @@
         }
 
         function carregarDadosLocais() {
-            const salvo = localStorage.getItem('itq_sistema_db_v22');
+            const salvo = localStorage.getItem('itq_sistema_db_v23');
             if (salvo) {
                 try {
                     const parsed = JSON.parse(salvo);
@@ -1353,7 +1480,7 @@
         }
 
         function salvarDadosLocais() {
-            localStorage.setItem('itq_sistema_db_v22', JSON.stringify(db));
+            localStorage.setItem('itq_sistema_db_v23', JSON.stringify(db));
         }
 
         function popularDadosIniciaisExemplo() {
@@ -1470,7 +1597,7 @@
 
         function iniciarSessao(usuario) {
             usuarioLogado = usuario;
-            sessionStorage.setItem('itq_sessao_v22', JSON.stringify(usuario));
+            sessionStorage.setItem('itq_sessao_v23', JSON.stringify(usuario));
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
             configurarPermissoesInterface();
@@ -1478,7 +1605,7 @@
         }
 
         function verificarSessaoSalva() {
-            const sessao = sessionStorage.getItem('itq_sessao_v22');
+            const sessao = sessionStorage.getItem('itq_sessao_v23');
             if (sessao) {
                 iniciarSessao(JSON.parse(sessao));
             }
@@ -1486,7 +1613,7 @@
 
         function logout() {
             usuarioLogado = null;
-            sessionStorage.removeItem('itq_sessao_v22');
+            sessionStorage.removeItem('itq_sessao_v23');
             document.getElementById('app-container').classList.add('hidden');
             document.getElementById('login-screen').classList.remove('hidden');
         }
@@ -1611,7 +1738,7 @@
                 carteirinha: 'Carteira de Identificação Estudantil',
                 historico: 'Histórico Escolar Oficial (A4)',
                 relacao: 'Relação de Alunos por Ano Letivo',
-                financeiro: 'Controle Financeiro Mensal',
+                financeiro: 'Ficha Financeira Anual e Controle de Mensalidades',
                 docentes: 'Corpo Docente e Grade Curricular'
             };
             document.getElementById('page-title').textContent = titulos[viewId] || 'Sistema ITQ';
@@ -1623,7 +1750,7 @@
             if (viewId === 'carteirinha') popularSelectAlunos('carteirinha-select-aluno', renderizarCarteirinha);
             if (viewId === 'historico') popularSelectAlunos('historico-select-aluno', renderizarHistorico);
             if (viewId === 'relacao') renderizarRelacaoAlunos();
-            if (viewId === 'financeiro') renderizarFinanceiro();
+            if (viewId === 'financeiro') popularSelectAlunos('financeiro-select-aluno', renderizarFinanceiro);
             if (viewId === 'docentes') renderizarDocentesEGrade();
         }
 
@@ -1638,6 +1765,9 @@
             salvarDadosLocais();
             renderizarDashboard();
             if (tipoCardAtivo) abrirListaCardDashboard(tipoCardAtivo);
+            if (!document.getElementById('view-financeiro').classList.contains('hidden')) {
+                popularSelectAlunos('financeiro-select-aluno', renderizarFinanceiro);
+            }
         }
 
         function adicionarNovoAnoLetivo() {
@@ -1882,6 +2012,12 @@
             lucide.createIcons();
         }
 
+        function imprimirResumoAulas() {
+            document.body.classList.add('printing-resumo');
+            window.print();
+            document.body.classList.remove('printing-resumo');
+        }
+
         function renderizarResumosAula() {
             const lista = document.getElementById('lista-resumo-aulas');
             const resumos = db.resumosAula || [];
@@ -1899,7 +2035,7 @@
                         </div>
                         <p class="text-xs text-slate-700 whitespace-pre-line">${r.conteudo || ''}</p>
                     </div>
-                    <div class="flex items-center gap-1 shrink-0">
+                    <div class="flex items-center gap-1 shrink-0 no-print">
                         <button type="button" onclick="editarResumoAula('${r.id}')" class="p-1.5 text-blue-700 hover:bg-blue-100 rounded-lg" title="Editar resumo"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
                         <button type="button" onclick="excluirResumoAula('${r.id}')" class="p-1.5 text-rose-700 hover:bg-rose-100 rounded-lg" title="Excluir resumo"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </div>
@@ -2286,43 +2422,59 @@
                 if (selectId === 'carteirinha-select-aluno') document.getElementById('carteirinha-filtro-admin').classList.add('hidden');
             } else {
                 const alunosAno = db.alunos.filter(a => String(a.anoLetivo || '2026') === String(db.anoAtual));
-                sel.innerHTML = alunosAno.map(a => `<option value="${a.id}">${a.nome} - ${a.matricula} (${a.turma})</option>`).join('');
+                sel.innerHTML = alunosAno.length > 0
+                    ? alunosAno.map(a => `<option value="${a.id}">${a.nome} - ${a.matricula} (${a.turma})</option>`).join('')
+                    : `<option value="">Nenhum aluno cadastrado em ${db.anoAtual}</option>`;
             }
             callback();
+        }
+
+        function imprimirBoletim() {
+            document.body.classList.add('printing-boletim');
+            window.print();
+            document.body.classList.remove('printing-boletim');
         }
 
         function renderizarBoletim() {
             const alunoId = document.getElementById('boletim-select-aluno').value;
             const aluno = db.alunos.find(a => a.id === alunoId);
-            if (!aluno) return;
+            const tbody = document.getElementById('tabela-boletim-body');
+            if (!aluno) {
+                document.getElementById('boletim-aluno-nome').textContent = 'Nenhum estudante selecionado';
+                document.getElementById('boletim-aluno-detalhes').textContent = 'Matrícula: -- • Turma: --';
+                tbody.innerHTML = `<tr><td colspan="9" class="py-6 text-center text-slate-400">Selecione um estudante para exibir o boletim.</td></tr>`;
+                return;
+            }
             document.getElementById('boletim-aluno-nome').textContent = aluno.nome;
             document.getElementById('boletim-aluno-detalhes').textContent = `Matrícula: ${aluno.matricula} • Turma: ${aluno.turma} • Situação: ${aluno.situacao}`;
+            document.getElementById('boletim-ano-badge').textContent = `Ano Letivo: ${aluno.anoLetivo || db.anoAtual}`;
 
             const disciplinas = db.disciplinas.filter(d => d.turma === aluno.turma && String(d.anoLetivo || '2026') === String(aluno.anoLetivo || db.anoAtual));
-            const tbody = document.getElementById('tabela-boletim-body');
-            tbody.innerHTML = disciplinas.map(d => {
-                const prof = db.professores.find(p => p.id === d.professorId);
-                const nomeProf = prof ? prof.nome : 'Docente não atribuído';
-                const s = calcularDesempenhoAluno(aluno.id, d.id);
-                return `
-                    <tr class="hover:bg-slate-50">
-                        <td class="py-3 px-4">
-                            <div class="font-extrabold text-slate-900 break-words">${d.nome}</div>
-                            <div class="text-[11px] text-slate-500 mt-0.5 break-words">
-                                <span class="font-bold text-slate-700">${d.anoCurso || 1}º Ano</span> • Professor(a): <strong class="text-blue-900">${nomeProf}</strong>
-                            </div>
-                        </td>
-                        <td class="py-3 px-3 text-center">${d.ch}h</td>
-                        <td class="py-3 px-3 text-center font-semibold">${s.freqTexto}</td>
-                        <td class="py-3 px-3 text-center">${s.auto}</td>
-                        <td class="py-3 px-3 text-center">${s.som}</td>
-                        <td class="py-3 px-3 text-center">${s.conc}</td>
-                        <td class="py-3 px-3 text-center">${s.rec}</td>
-                        <td class="py-3 px-3 text-center font-extrabold text-slate-900">${s.mediaFinal}</td>
-                        <td class="py-3 px-4 text-center"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${s.badgeClass}">${s.status}</span></td>
-                    </tr>
-                `;
-            }).join('');
+            tbody.innerHTML = disciplinas.length > 0
+                ? disciplinas.map(d => {
+                    const prof = db.professores.find(p => p.id === d.professorId);
+                    const nomeProf = prof ? prof.nome : 'Docente não atribuído';
+                    const s = calcularDesempenhoAluno(aluno.id, d.id);
+                    return `
+                        <tr class="hover:bg-slate-50">
+                            <td class="border border-slate-300 py-2.5 px-3">
+                                <div class="font-extrabold text-slate-900 break-words">${d.nome}</div>
+                                <div class="text-[11px] text-slate-500 mt-0.5 break-words">
+                                    <span class="font-bold text-slate-700">${d.anoCurso || 1}º Ano</span> • Professor(a): <strong class="text-blue-900">${nomeProf}</strong>
+                                </div>
+                            </td>
+                            <td class="border border-slate-300 py-2.5 px-2 text-center">${d.ch}h</td>
+                            <td class="border border-slate-300 py-2.5 px-2 text-center font-semibold">${s.freqTexto}</td>
+                            <td class="border border-slate-300 py-2.5 px-2 text-center">${s.auto}</td>
+                            <td class="border border-slate-300 py-2.5 px-2 text-center">${s.som}</td>
+                            <td class="border border-slate-300 py-2.5 px-2 text-center">${s.conc}</td>
+                            <td class="border border-slate-300 py-2.5 px-2 text-center">${s.rec}</td>
+                            <td class="border border-slate-300 py-2.5 px-2 text-center font-extrabold text-slate-900">${s.mediaFinal}</td>
+                            <td class="border border-slate-300 py-2.5 px-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${s.badgeClass}">${s.status}</span></td>
+                        </tr>
+                    `;
+                }).join('')
+                : `<tr><td colspan="9" class="py-6 text-center text-slate-400">Nenhuma disciplina registrada para a turma deste estudante.</td></tr>`;
         }
 
         function gerarUrlValidacaoAluno(matricula) {
@@ -2470,37 +2622,62 @@
             document.body.classList.remove('printing-relacao');
         }
 
+        function imprimirFinanceiro() {
+            document.body.classList.add('printing-financeiro');
+            window.print();
+            document.body.classList.remove('printing-financeiro');
+        }
+
         function renderizarFinanceiro() {
-            const alunosAno = db.alunos.filter(a => String(a.anoLetivo || '2026') === String(db.anoAtual) && a.situacao === 'Ativo');
+            const alunoId = document.getElementById('financeiro-select-aluno').value;
+            const aluno = db.alunos.find(a => a.id === alunoId);
             const tbody = document.getElementById('tabela-financeiro-body');
-            tbody.innerHTML = alunosAno.map(a => {
-                const fin = (db.financeiro && db.financeiro[`${db.anoAtual}_${a.id}`]) || {};
-                const colunasMeses = MESES_KEYS.map(m => {
-                    const pago = !!fin[m];
-                    return `
-                        <td class="py-2.5 px-2 text-center">
-                            <button onclick="alternarMensalidade('${a.id}', '${m}')" class="w-7 h-7 rounded-lg font-extrabold text-[10px] transition-colors ${pago ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-50 text-rose-700 border border-rose-200'}">
-                                ${pago ? 'OK' : 'X'}
-                            </button>
-                        </td>
-                    `;
-                }).join('');
+
+            if (!aluno) {
+                document.getElementById('fin-aluno-nome').textContent = '--';
+                document.getElementById('fin-aluno-matricula').textContent = '--';
+                document.getElementById('fin-aluno-turma').textContent = '--';
+                document.getElementById('fin-ano-letivo').textContent = db.anoAtual;
+                document.getElementById('fin-resumo-meses').textContent = '0 / 12 meses pagos';
+                tbody.innerHTML = `<tr><td colspan="12" class="border border-slate-800 py-6 text-center text-slate-400">Nenhum estudante selecionado.</td></tr>`;
+                return;
+            }
+
+            const anoRef = aluno.anoLetivo || db.anoAtual;
+            document.getElementById('fin-aluno-nome').textContent = aluno.nome;
+            document.getElementById('fin-aluno-matricula').textContent = aluno.matricula;
+            document.getElementById('fin-aluno-turma').textContent = aluno.turma;
+            document.getElementById('fin-ano-letivo').textContent = anoRef;
+
+            const fin = (db.financeiro && db.financeiro[`${anoRef}_${aluno.id}`]) || {};
+            let totalPagos = 0;
+
+            const colunasMeses = MESES_KEYS.map(m => {
+                const pago = !!fin[m];
+                if (pago) totalPagos++;
                 return `
-                    <tr class="hover:bg-slate-50">
-                        <td class="py-2.5 px-4 font-bold text-slate-900">${a.nome} <span class="block text-[10px] text-slate-400">${a.turma}</span></td>
-                        ${colunasMeses}
-                    </tr>
+                    <td class="border border-slate-800 py-3 px-1.5 text-center">
+                        <button type="button" onclick="alternarMensalidade('${aluno.id}', '${m}')" class="px-2 py-1 rounded-lg font-extrabold text-[10px] transition-colors cursor-pointer ${pago ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-50 text-rose-700 border border-rose-200'}">
+                            ${pago ? 'PAGO' : 'PEND.'}
+                        </button>
+                    </td>
                 `;
             }).join('');
+
+            document.getElementById('fin-resumo-meses').textContent = `${totalPagos} / 12 meses pagos`;
+            tbody.innerHTML = `<tr>${colunasMeses}</tr>`;
         }
 
         async function alternarMensalidade(alunoId, mes) {
-            const chave = `${db.anoAtual}_${alunoId}`;
+            const aluno = db.alunos.find(a => a.id === alunoId);
+            const anoRef = (aluno && aluno.anoLetivo) || db.anoAtual;
+            const chave = `${anoRef}_${alunoId}`;
             if (!db.financeiro) db.financeiro = {};
             if (!db.financeiro[chave]) db.financeiro[chave] = {};
             db.financeiro[chave][mes] = !db.financeiro[chave][mes];
             await salvarNaNuvem();
             renderizarFinanceiro();
+            renderizarDashboard();
         }
 
         function renderizarDocentesEGrade() {

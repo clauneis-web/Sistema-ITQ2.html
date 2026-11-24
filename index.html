@@ -572,7 +572,7 @@
                     </div>
                 </section>
 
-                <!-- VIEW: CARTEIRA ESTUDANTIL DIGITAL (SEM CAMPO DE FOTO) -->
+                <!-- VIEW: CARTEIRA ESTUDANTIL DIGITAL -->
                 <section id="view-carteirinha" class="hidden space-y-6 fade-in">
                     <div id="carteirinha-filtro-admin" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4 no-print">
                         <div class="flex-1 min-w-[250px]">
@@ -1013,28 +1013,73 @@
             verificarSessaoSalva();
         });
 
+        function normalizarListaAlunos(lista) {
+            if (!Array.isArray(lista)) return [];
+            return lista.map((a, idx) => {
+                const mat = String(a.matricula || a.Matricula || `${db.anoAtual}${String(idx + 1).padStart(4, '0')}`);
+                return {
+                    ...a,
+                    id: a.id ? String(a.id) : `alu_${mat}_${idx}`,
+                    matricula: mat,
+                    nome: a.nome || a.Nome || 'Estudante Sem Nome',
+                    cpf: a.cpf || a.CPF || '',
+                    turma: a.turma || a.Turma || a.curso || a.Curso || '1º Ano - Presencial',
+                    situacao: a.situacao || a.Situacao || a.status || a.Status || 'Ativo',
+                    telefone: a.telefone || a.Telefone || a.whatsapp || '',
+                    email: a.email || a.Email || '',
+                    anoLetivo: String(a.anoLetivo || a.ano || db.anoAtual)
+                };
+            });
+        }
+
+        function normalizarListaProfessores(lista) {
+            if (!Array.isArray(lista)) return [];
+            return lista.map((p, idx) => ({
+                ...p,
+                id: p.id ? String(p.id) : `prof_${idx + 1}`,
+                nome: p.nome || p.Nome || 'Docente',
+                email: p.email || p.Email || `docente${idx + 1}@itq.edu.br`,
+                telefone: p.telefone || p.Telefone || '',
+                senha: p.senha || 'itq2026'
+            }));
+        }
+
+        function normalizarListaDisciplinas(lista) {
+            if (!Array.isArray(lista)) return [];
+            return lista.map((d, idx) => ({
+                ...d,
+                id: d.id ? String(d.id) : `disc_${idx + 1}`,
+                nome: d.nome || d.Nome || 'Disciplina',
+                modulo: d.modulo || d.Modulo || 'Módulo 1',
+                ch: parseInt(d.ch || d.CH) || 40,
+                turma: d.turma || d.Turma || '1º Ano - Presencial',
+                professorId: d.professorId ? String(d.professorId) : '',
+                anoLetivo: String(d.anoLetivo || d.ano || db.anoAtual)
+            }));
+        }
+
         function mesclarDadosNuvem(dadosNuvem) {
             if (!dadosNuvem || typeof dadosNuvem !== 'object') return false;
             let recebeuAlgo = false;
 
             if (Array.isArray(dadosNuvem.anosLetivos) && dadosNuvem.anosLetivos.length > 0) {
-                db.anosLetivos = dadosNuvem.anosLetivos;
+                db.anosLetivos = dadosNuvem.anosLetivos.map(String);
             }
             if (dadosNuvem.anoAtual) {
-                db.anoAtual = dadosNuvem.anoAtual;
+                db.anoAtual = String(dadosNuvem.anoAtual);
             }
             if (Array.isArray(dadosNuvem.alunos)) {
                 if (dadosNuvem.alunos.length > 0) {
-                    db.alunos = dadosNuvem.alunos;
+                    db.alunos = normalizarListaAlunos(dadosNuvem.alunos);
                 }
                 recebeuAlgo = true;
             }
             if (Array.isArray(dadosNuvem.professores) && dadosNuvem.professores.length > 0) {
-                db.professores = dadosNuvem.professores;
+                db.professores = normalizarListaProfessores(dadosNuvem.professores);
                 recebeuAlgo = true;
             }
             if (Array.isArray(dadosNuvem.disciplinas) && dadosNuvem.disciplinas.length > 0) {
-                db.disciplinas = dadosNuvem.disciplinas;
+                db.disciplinas = normalizarListaDisciplinas(dadosNuvem.disciplinas);
                 recebeuAlgo = true;
             }
             if (dadosNuvem.notas && typeof dadosNuvem.notas === 'object') {
@@ -1142,7 +1187,11 @@
             const salvo = localStorage.getItem('itq_sistema_db_v21');
             if (salvo) {
                 try {
-                    db = { ...db, ...JSON.parse(salvo) };
+                    const parsed = JSON.parse(salvo);
+                    db = { ...db, ...parsed };
+                    db.alunos = normalizarListaAlunos(db.alunos);
+                    db.professores = normalizarListaProfessores(db.professores);
+                    db.disciplinas = normalizarListaDisciplinas(db.disciplinas);
                     if (!db.financeiro) db.financeiro = {};
                 } catch (e) {}
             } else {
@@ -1184,7 +1233,10 @@
                     badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Nuvem Sincronizada`;
                 }
                 if (mostrarAlerta) alert('Dados sincronizados com a nuvem com sucesso!');
-                if (usuarioLogado) atualizarInterfaceGeral();
+                if (usuarioLogado) {
+                    atualizarInterfaceGeral();
+                    renderizarTabelaAlunos();
+                }
             } catch (e) {
                 console.warn('Erro na sincronização com Google Apps Script:', e);
                 if (badge) {
@@ -1826,21 +1878,31 @@
             });
 
             const tbody = document.getElementById('tabela-alunos-body');
-            tbody.innerHTML = filtrados.map(a => `
-                <tr class="hover:bg-slate-50">
-                    <td class="py-3 px-4 font-mono font-bold text-blue-900">${a.matricula}</td>
-                    <td class="py-3 px-4 font-bold text-slate-900">${a.nome}</td>
-                    <td class="py-3 px-4 text-slate-600">${a.turma}</td>
-                    <td class="py-3 px-4 text-slate-600">${a.telefone || '-'}</td>
-                    <td class="py-3 px-4 text-center">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${a.situacao === 'Ativo' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${a.situacao}</span>
-                    </td>
-                    <td class="py-3 px-4 text-right space-x-1">
-                        <button onclick="editarAluno('${a.id}')" class="p-1.5 text-blue-700 hover:bg-blue-50 rounded-lg" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-                        <button onclick="excluirAluno('${a.id}')" class="p-1.5 text-rose-700 hover:bg-rose-50 rounded-lg" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    </td>
-                </tr>
-            `).join('');
+            if (filtrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">Nenhum estudante encontrado para o filtro selecionado.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtrados.map((a, idx) => {
+                const chaveEdicao = a.id || a.matricula || String(idx);
+                const turmaExibir = a.turma || '1º Ano - Presencial';
+                const sitExibir = a.situacao || 'Ativo';
+                return `
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-3 px-4 font-mono font-bold text-blue-900">${a.matricula || '-'}</td>
+                        <td class="py-3 px-4 font-bold text-slate-900">${a.nome || '-'}</td>
+                        <td class="py-3 px-4 text-slate-600">${turmaExibir}</td>
+                        <td class="py-3 px-4 text-slate-600">${a.telefone || a.email || '-'}</td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${sitExibir === 'Ativo' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${sitExibir}</span>
+                        </td>
+                        <td class="py-3 px-4 text-right space-x-1">
+                            <button type="button" onclick="editarAluno('${chaveEdicao}')" class="p-1.5 text-blue-700 hover:bg-blue-50 rounded-lg cursor-pointer" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                            <button type="button" onclick="excluirAluno('${chaveEdicao}')" class="p-1.5 text-rose-700 hover:bg-rose-50 rounded-lg cursor-pointer" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
             lucide.createIcons();
         }
 
@@ -1860,9 +1922,10 @@
         document.getElementById('form-aluno').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('aluno-id').value;
+            const matricula = document.getElementById('aluno-matricula').value.trim();
             const dados = {
                 id: id || `alu_${Date.now()}`,
-                matricula: document.getElementById('aluno-matricula').value,
+                matricula: matricula,
                 nome: document.getElementById('aluno-nome').value.trim(),
                 cpf: document.getElementById('aluno-cpf').value.trim(),
                 turma: document.getElementById('aluno-turma').value,
@@ -1872,12 +1935,10 @@
                 anoLetivo: db.anoAtual
             };
 
-            if (id) {
-                const idx = db.alunos.findIndex(a => a.id === id);
-                if (idx !== -1) {
-                    dados.senha = db.alunos[idx].senha;
-                    db.alunos[idx] = dados;
-                }
+            const idx = db.alunos.findIndex(a => (id && String(a.id) === String(id)) || (matricula && String(a.matricula) === String(matricula)));
+            if (idx !== -1) {
+                dados.senha = db.alunos[idx].senha;
+                db.alunos[idx] = { ...db.alunos[idx], ...dados };
             } else {
                 db.alunos.push(dados);
             }
@@ -1888,24 +1949,25 @@
             renderizarDashboard();
         });
 
-        function editarAluno(id) {
-            const a = db.alunos.find(x => x.id === id);
+        function editarAluno(chave) {
+            const a = db.alunos.find(x => String(x.id) === String(chave) || String(x.matricula) === String(chave));
             if (!a) return;
+            if (!a.id) a.id = `alu_${a.matricula || Date.now()}`;
             document.getElementById('aluno-id').value = a.id;
-            document.getElementById('aluno-matricula').value = a.matricula;
-            document.getElementById('aluno-nome').value = a.nome;
-            document.getElementById('aluno-cpf').value = a.cpf;
-            document.getElementById('aluno-turma').value = a.turma;
-            document.getElementById('aluno-situacao').value = a.situacao;
+            document.getElementById('aluno-matricula').value = a.matricula || '';
+            document.getElementById('aluno-nome').value = a.nome || '';
+            document.getElementById('aluno-cpf').value = a.cpf || '';
+            document.getElementById('aluno-turma').value = a.turma || '1º Ano - Presencial';
+            document.getElementById('aluno-situacao').value = a.situacao || 'Ativo';
             document.getElementById('aluno-telefone').value = a.telefone || '';
             document.getElementById('aluno-email').value = a.email || '';
             document.getElementById('modal-aluno-titulo').textContent = 'Editar Cadastro do Estudante';
             document.getElementById('modal-aluno').classList.remove('hidden');
         }
 
-        async function excluirAluno(id) {
+        async function excluirAluno(chave) {
             if (!confirm('Deseja realmente remover este aluno?')) return;
-            db.alunos = db.alunos.filter(a => a.id !== id);
+            db.alunos = db.alunos.filter(a => String(a.id) !== String(chave) && String(a.matricula) !== String(chave));
             await salvarNaNuvem();
             renderizarTabelaAlunos();
             renderizarDashboard();
@@ -2045,7 +2107,7 @@
             if (!aluno) return;
             document.getElementById('card-nome').textContent = aluno.nome;
             document.getElementById('card-matricula').textContent = aluno.matricula;
-            document.getElementById('card-cpf').textContent = aluno.cpf;
+            document.getElementById('card-cpf').textContent = aluno.cpf || '-';
             document.getElementById('card-curso').textContent = `Teologia - ${aluno.turma}`;
             document.getElementById('card-ano').textContent = aluno.anoLetivo || db.anoAtual;
 
@@ -2073,7 +2135,7 @@
             if (!aluno) return;
             document.getElementById('hist-nome').textContent = aluno.nome;
             document.getElementById('hist-matricula').textContent = aluno.matricula;
-            document.getElementById('hist-cpf').textContent = aluno.cpf;
+            document.getElementById('hist-cpf').textContent = aluno.cpf || '-';
             document.getElementById('hist-turma').textContent = `${aluno.turma} (${aluno.anoLetivo || db.anoAtual})`;
             document.getElementById('hist-situacao').textContent = aluno.situacao;
 

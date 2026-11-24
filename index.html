@@ -106,8 +106,8 @@
 
             <div id="validacao-loading" class="p-8 text-center">
                 <div class="w-10 h-10 border-4 border-blue-800 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p class="text-sm font-bold text-slate-700">Consultando base acadêmica na nuvem...</p>
-                <p class="text-xs text-slate-400 mt-1">Verificando autenticidade da matrícula</p>
+                <p class="text-sm font-bold text-slate-700">A consultar a base académica na nuvem...</p>
+                <p class="text-xs text-slate-400 mt-1">A verificar a autenticidade da matrícula</p>
             </div>
 
             <div id="validacao-resultado" class="hidden p-6 space-y-5">
@@ -142,7 +142,7 @@
                 <div class="text-center pt-1">
                     <p class="text-[11px] text-slate-400">Consulta realizada em <span id="val-timestamp" class="font-semibold text-slate-600">--</span></p>
                     <button onclick="sairModoValidacao()" class="mt-4 w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
-                        <i data-lucide="log-in" class="w-4 h-4"></i> Acessar Portal Acadêmico
+                        <i data-lucide="log-in" class="w-4 h-4"></i> Aceder ao Portal Académico
                     </button>
                 </div>
             </div>
@@ -157,7 +157,7 @@
                     <img src="logo-itq.png" alt="Logo Instituto Teológico Quadrangular" class="w-full h-full object-contain">
                 </div>
                 <h1 class="text-xl font-bold tracking-tight">Instituto Teológico Quadrangular</h1>
-                <p class="text-xs text-blue-200 mt-1 font-medium">Portal de Gestão Acadêmica e Pedagógica</p>
+                <p class="text-xs text-blue-200 mt-1 font-medium">Portal de Gestão Académica e Pedagógica</p>
             </div>
 
             <form id="login-form" class="p-7 space-y-4">
@@ -184,16 +184,16 @@
                 </div>
 
                 <div>
-                    <label id="login-user-label" class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Usuário ou E-mail</label>
+                    <label id="login-user-label" class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Utilizador ou E-mail</label>
                     <div class="relative">
                         <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
-                        <input type="text" id="login-user" required placeholder="Digite seu usuário ou e-mail" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-800 outline-none">
+                        <input type="text" id="login-user" required placeholder="Digite o seu utilizador ou e-mail" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-800 outline-none">
                     </div>
                 </div>
 
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-xs font-bold text-slate-600 uppercase">Senha de Acesso</label>
+                        <label class="block text-xs font-bold text-slate-600 uppercase">Palavra-passe / Senha</label>
                         <button type="button" onclick="abrirModalPrimeiroAcesso()" class="text-[11px] font-bold text-blue-800 hover:underline">Primeiro acesso / Esqueci a senha</button>
                     </div>
                     <div class="relative">
@@ -203,7 +203,7 @@
                 </div>
 
                 <button type="submit" id="btn-login-submit" class="w-full py-3 bg-blue-800 hover:bg-blue-900 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
-                    <i data-lucide="log-in" class="w-4 h-4"></i> Acessar Portal Acadêmico
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Aceder ao Portal Académico
                 </button>
             </form>
         </div>
@@ -217,7 +217,7 @@
                 <button onclick="fecharModalPrimeiroAcesso()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <form id="form-primeiro-acesso" class="p-6 space-y-4">
-                <p class="text-xs text-slate-600 leading-relaxed">Informe seu <strong>E-mail cadastrado</strong> ou número de <strong>Matrícula</strong> para validar seu cadastro e criar sua senha pessoal.</p>
+                <p class="text-xs text-slate-600 leading-relaxed">Informe o seu <strong>E-mail cadastrado</strong> ou número de <strong>Matrícula</strong> para validar o seu registo e criar a sua senha pessoal.</p>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Perfil</label>
                     <select id="pa-role" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm">
@@ -242,7 +242,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="fecharModalPrimeiroAcesso()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-blue-800 hover:bg-blue-900 rounded-lg">Salvar Nova Senha</button>
+                    <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-blue-800 hover:bg-blue-900 rounded-lg">Guardar Nova Senha</button>
                 </div>
             </form>
         </div>
@@ -259,16 +259,16 @@
                         <img src="logo-itq.png" alt="Logo ITQ" class="w-full h-full object-contain">
                     </div>
                     <div>
-                        <h2 class="text-sm font-bold text-white leading-tight">ITQ Acadêmico</h2>
+                        <h2 class="text-sm font-bold text-white leading-tight">ITQ Académico</h2>
                         <span id="badge-nuvem" class="text-[10px] font-semibold text-emerald-400 flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Conectando...
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> A ligar...
                         </span>
                     </div>
                 </div>
             </div>
 
             <div class="p-4 mx-3 mt-4 bg-slate-800/80 rounded-xl border border-slate-700/80">
-                <p id="user-display-name" class="text-xs font-bold text-white break-words">Usuário</p>
+                <p id="user-display-name" class="text-xs font-bold text-white break-words">Utilizador</p>
                 <p id="user-display-role" class="text-[11px] text-amber-400 font-semibold uppercase mt-0.5 break-words">Perfil</p>
             </div>
 
@@ -310,7 +310,7 @@
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-slate-600 uppercase tracking-wide break-words">Alunos Ativos</p>
                                 <h3 id="stat-alunos-ativos" class="text-3xl font-extrabold text-slate-900 mt-1.5 break-words">0</h3>
-                                <p id="stat-alunos-sub" class="text-xs font-medium text-blue-700 mt-1 break-words">Clique para ver todos os cadastrados</p>
+                                <p id="stat-alunos-sub" class="text-xs font-medium text-blue-700 mt-1 break-words">Clique para ver todos os registos</p>
                             </div>
                             <div class="w-11 h-11 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
                                 <i data-lucide="users" class="w-5 h-5"></i>
@@ -343,7 +343,7 @@
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-slate-600 uppercase tracking-wide break-words">Aulas Computadas</p>
                                 <h3 id="stat-aulas-computadas" class="text-3xl font-extrabold text-slate-900 mt-1.5 break-words">0</h3>
-                                <p class="text-xs font-medium text-amber-700 mt-1 break-words">Clique para ver datas registradas</p>
+                                <p class="text-xs font-medium text-amber-700 mt-1 break-words">Clique para ver datas registadas</p>
                             </div>
                             <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
                                 <i data-lucide="calendar-check" class="w-5 h-5"></i>
@@ -388,7 +388,7 @@
                     <div id="painel-lista-card-dashboard" class="hidden bg-white rounded-2xl border border-blue-200 shadow-sm overflow-hidden fade-in">
                         <div class="px-6 py-4 bg-blue-950 text-white flex flex-wrap items-center justify-between gap-3">
                             <div>
-                                <h3 id="card-detalhe-titulo" class="text-sm font-extrabold uppercase tracking-wide">Registros Cadastrados</h3>
+                                <h3 id="card-detalhe-titulo" class="text-sm font-extrabold uppercase tracking-wide">Registos Cadastrados</h3>
                                 <p id="card-detalhe-subtitulo" class="text-xs text-blue-200 mt-0.5">Listagem completa do ano letivo</p>
                             </div>
                             <button type="button" onclick="fecharListaCardDashboard()" class="px-3 py-1.5 bg-white/15 hover:bg-white/25 text-white text-xs font-bold rounded-lg flex items-center gap-1.5">
@@ -409,7 +409,7 @@
                                 <i data-lucide="book-marked" class="w-5 h-5 text-amber-400 shrink-0"></i>
                                 <div>
                                     <h3 class="text-sm font-bold uppercase tracking-wide break-words">Minhas Disciplinas Atribuídas</h3>
-                                    <p class="text-xs text-blue-200 break-words">Clique em uma disciplina para abrir o Diário de Classe e Lançamento de Notas</p>
+                                    <p class="text-xs text-blue-200 break-words">Clique numa disciplina para abrir o Diário de Classe e Lançamento de Notas</p>
                                 </div>
                             </div>
                             <span id="prof-total-disc-badge" class="px-3 py-1 bg-white/15 rounded-full text-xs font-bold">0 disciplinas</span>
@@ -424,7 +424,7 @@
                                 <h3 class="text-sm font-extrabold text-slate-800 uppercase flex items-center gap-2">
                                     <i data-lucide="file-text" class="w-4 h-4 text-blue-800"></i> Resumo das Aulas (Editável)
                                 </h3>
-                                <p class="text-xs text-slate-500">Registre e edite os conteúdos ministrados, datas e observações pedagógicas</p>
+                                <p class="text-xs text-slate-500">Registe e edite os conteúdos lecionados, datas e observações pedagógicas</p>
                             </div>
                             <button type="button" onclick="abrirModalResumoAula()" class="px-3.5 py-2 bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold rounded-xl flex items-center gap-1.5">
                                 <i data-lucide="plus" class="w-3.5 h-3.5"></i> Novo Resumo de Aula
@@ -441,14 +441,14 @@
                                 <p id="aluno-dash-info" class="text-xs text-slate-600 font-medium break-words">Matrícula: -- • Curso: --</p>
                             </div>
                             <button onclick="navegarPara('carteirinha')" class="px-4 py-2.5 bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold rounded-xl shadow-sm flex items-center gap-2 transition-colors">
-                                <i data-lucide="id-card" class="w-4 h-4"></i> Ver Minha Carteira Digital
+                                <i data-lucide="id-card" class="w-4 h-4"></i> Ver a Minha Carteira Digital
                             </button>
                         </div>
 
                         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                             <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
                                 <h3 class="text-sm font-extrabold text-slate-800 uppercase flex items-center gap-2">
-                                    <i data-lucide="graduation-cap" class="w-4 h-4 text-blue-800"></i> Minhas Disciplinas, Professores e Notas
+                                    <i data-lucide="graduation-cap" class="w-4 h-4 text-blue-800"></i> As Minhas Disciplinas, Professores e Notas
                                 </h3>
                             </div>
                             <div class="overflow-x-auto">
@@ -485,7 +485,7 @@
                         <div class="flex flex-wrap items-center gap-3 flex-1">
                             <div class="relative flex-1 min-w-[220px]">
                                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5"></i>
-                                <input type="text" id="busca-aluno" onkeyup="renderizarTabelaAlunos()" placeholder="Buscar por nome, matrícula ou CPF..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-800 outline-none">
+                                <input type="text" id="busca-aluno" onkeyup="renderizarTabelaAlunos()" placeholder="Pesquisar por nome, matrícula ou CPF..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-800 outline-none">
                             </div>
                             <select id="filtro-turma-aluno" onchange="renderizarTabelaAlunos()" class="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-700">
                                 <option value="todas">Todas as Turmas</option>
@@ -510,7 +510,7 @@
                                         <th class="py-3.5 px-4">Matrícula</th>
                                         <th class="py-3.5 px-4">Estudante</th>
                                         <th class="py-3.5 px-4">Turma / Modalidade</th>
-                                        <th class="py-3.5 px-4">Contato</th>
+                                        <th class="py-3.5 px-4">Contacto</th>
                                         <th class="py-3.5 px-4 text-center">Situação</th>
                                         <th class="py-3.5 px-4 text-right">Ações</th>
                                     </tr>
@@ -566,7 +566,7 @@
                                         <th class="py-3 px-2 text-center w-20">Conclus.</th>
                                         <th class="py-3 px-2 text-center w-20">Recup.</th>
                                         <th class="py-3 px-3 text-center">Média</th>
-                                        <th class="py-3 px-4 text-center">Status</th>
+                                        <th class="py-3 px-4 text-center">Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabela-diario-body" class="divide-y divide-slate-200 text-xs"></tbody>
@@ -631,15 +631,18 @@
 
                     <div id="carteirinha-print-wrapper" class="flex flex-col lg:flex-row items-center justify-center gap-8 py-4">
                         <div class="id-card-box w-[340px] h-[215px] rounded-2xl bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 text-white p-5 shadow-xl relative overflow-hidden flex flex-col justify-between border border-blue-700/50">
-                            <div class="flex items-center justify-between border-b border-white/15 pb-2.5">
-                                <div class="flex items-center gap-2.5">
+                            <div class="flex items-center justify-between border-b border-white/15 pb-2 gap-2">
+                                <div class="flex items-center gap-2 min-w-0">
                                     <div class="w-9 h-9 rounded-lg bg-white p-1 flex items-center justify-center shrink-0 overflow-hidden">
                                         <img src="logo-itq.png" alt="Logo ITQ" class="w-full h-full object-contain">
                                     </div>
-                                    <div>
-                                        <h4 class="text-[11px] font-extrabold uppercase tracking-wider leading-tight">Instituto Teológico Quadrangular</h4>
-                                        <p class="text-[9px] text-amber-300 font-semibold uppercase">Identidade Estudantil</p>
+                                    <div class="min-w-0">
+                                        <h4 class="text-[10.5px] font-extrabold uppercase tracking-wider leading-tight truncate">Instituto Teológico Quadrangular</h4>
+                                        <p class="text-[8.5px] text-amber-300 font-semibold uppercase">Identidade Estudantil</p>
                                     </div>
+                                </div>
+                                <div class="w-9 h-9 rounded-lg bg-slate-200 flex items-center justify-center shrink-0 overflow-hidden border border-white/30" title="SGEC Quadrangular">
+                                    <img src="logo-sgec.jpg" alt="Logo SGEC" class="w-full h-full object-cover">
                                 </div>
                             </div>
 
@@ -671,9 +674,12 @@
                         </div>
 
                         <div class="id-card-box w-[340px] h-[215px] rounded-2xl bg-white text-slate-800 p-5 shadow-xl relative overflow-hidden flex flex-col justify-between border border-slate-300">
-                            <div class="border-b border-slate-200 pb-2">
-                                <p class="text-[9px] font-extrabold text-blue-950 uppercase">Validação Digital On-line</p>
-                                <p class="text-[9px] text-slate-500 leading-tight mt-0.5">Aponte a câmera do celular para o QR Code ao lado para verificar a autenticidade e situação cadastral em tempo real.</p>
+                            <div class="border-b border-slate-200 pb-2 flex items-start justify-between gap-2">
+                                <div>
+                                    <p class="text-[9px] font-extrabold text-blue-950 uppercase">Validação Digital On-line</p>
+                                    <p class="text-[9px] text-slate-500 leading-tight mt-0.5">Aponte a câmara do telemóvel para o QR Code ao lado para verificar a autenticidade e situação cadastral em tempo real.</p>
+                                </div>
+                                <img src="logo-sgec.jpg" alt="Logo SGEC" class="w-8 h-8 rounded object-cover shrink-0 border border-slate-200">
                             </div>
 
                             <div class="flex items-center gap-4 my-auto">
@@ -686,7 +692,7 @@
                                         <p id="card-url-texto" class="font-mono text-[8px] text-blue-800 break-all leading-tight">--</p>
                                     </div>
                                     <div>
-                                        <p class="font-bold text-slate-400 uppercase">Diretoria Acadêmica</p>
+                                        <p class="font-bold text-slate-400 uppercase">Diretoria Académica</p>
                                         <div class="h-5 border-b border-slate-400 w-32 mt-1"></div>
                                         <p class="text-[8px] text-slate-500">Assinatura Autorizada - ITQ</p>
                                     </div>
@@ -694,7 +700,7 @@
                             </div>
 
                             <div class="text-[8px] text-slate-400 text-center border-t border-slate-200 pt-1.5">
-                                Documento pessoal e intransferível • Uso exclusivo para identificação estudantil.
+                                Documento pessoal e intransmissível • Uso exclusivo para identificação estudantil.
                             </div>
                         </div>
                     </div>
@@ -709,7 +715,7 @@
                         </div>
                         <div class="flex items-center gap-2">
                             <button onclick="salvarEdicoesHistorico()" class="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl shadow-sm flex items-center gap-2">
-                                <i data-lucide="save" class="w-4 h-4"></i> Salvar Edições
+                                <i data-lucide="save" class="w-4 h-4"></i> Guardar Edições
                             </button>
                             <button onclick="imprimirHistorico()" class="px-4 py-2.5 bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold rounded-xl shadow-sm flex items-center gap-2">
                                 <i data-lucide="printer" class="w-4 h-4"></i> Imprimir A4
@@ -720,7 +726,7 @@
                     <div id="historico-print-area" class="bg-white p-5 rounded-xl border border-slate-300 shadow-sm max-w-[210mm] mx-auto text-slate-900 space-y-2">
                         <!-- CABEÇALHO COM LOGOS -->
                         <div class="flex items-center justify-between border-b-2 border-slate-900 pb-2 gap-3">
-                            <div class="w-12 h-12 rounded-lg border border-slate-300 p-1 flex items-center justify-center shrink-0 bg-white">
+                            <div class="w-12 h-12 rounded-lg border border-slate-300 p-1 flex items-center justify-center shrink-0 bg-white overflow-hidden">
                                 <img src="logo-itq.png" alt="Logo ITQ" class="w-full h-full object-contain">
                             </div>
                             <div class="text-center flex-1 leading-tight">
@@ -729,8 +735,8 @@
                                 <p class="text-[8.5px] font-semibold text-slate-700">Rua Professor Virgílio Guedes - Lado Par, 1254 CEP: 57.014-002 Maceió-AL Região Eclesiástica: 253 SGEC</p>
                                 <p class="text-[8.5px] font-semibold text-slate-700">Fone: <span id="hist-fone" contenteditable="true" class="hist-editable">(82) 99999-9999</span> • E-Mail: <span id="hist-email" contenteditable="true" class="hist-editable">itq253al@hotmail.com</span></p>
                             </div>
-                            <div class="w-12 h-12 rounded-lg border border-slate-300 p-1 flex items-center justify-center shrink-0 bg-blue-950 text-white">
-                                <i data-lucide="award" class="w-7 h-7 text-amber-400"></i>
+                            <div class="w-12 h-12 rounded-lg border border-slate-300 flex items-center justify-center shrink-0 bg-slate-200 overflow-hidden">
+                                <img src="logo-sgec.jpg" alt="Logo SGEC Quadrangular" class="w-full h-full object-cover">
                             </div>
                         </div>
 
@@ -853,7 +859,7 @@
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                         <div class="p-5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
                             <div>
-                                <h3 class="text-sm font-extrabold text-slate-900 uppercase">Controle de Mensalidades (Jan - Dez)</h3>
+                                <h3 class="text-sm font-extrabold text-slate-900 uppercase">Controlo de Mensalidades (Jan - Dez)</h3>
                                 <p class="text-xs text-slate-500">Clique sobre o mês para alternar entre Pago e Pendente</p>
                             </div>
                         </div>
@@ -946,12 +952,12 @@
                     <input type="text" id="resumo-disciplina" required placeholder="Ex: Bibliologia - Inspiração das Escrituras" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Resumo do Conteúdo Ministrado</label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Resumo do Conteúdo Lecionado</label>
                     <textarea id="resumo-conteudo" rows="4" required placeholder="Descreva o resumo da aula, pontos tratados e observações..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm"></textarea>
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="fecharModalResumoAula()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-800 rounded-lg">Salvar Resumo</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-800 rounded-lg">Guardar Resumo</button>
                 </div>
             </form>
         </div>
@@ -1010,7 +1016,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
                     <button type="button" onclick="fecharModalAluno()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-800 hover:bg-blue-900 rounded-lg">Salvar Estudante</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-800 hover:bg-blue-900 rounded-lg">Guardar Estudante</button>
                 </div>
             </form>
         </div>
@@ -1043,7 +1049,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="fecharModalProfessor()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-800 rounded-lg">Salvar Docente</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-800 rounded-lg">Guardar Docente</button>
                 </div>
             </form>
         </div>
@@ -1099,7 +1105,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="fecharModalDisciplina()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-emerald-700 rounded-lg">Salvar Disciplina</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-emerald-700 rounded-lg">Guardar Disciplina</button>
                 </div>
             </form>
         </div>
@@ -1122,7 +1128,7 @@
         let tipoCardAtivo = null;
         const CREDENCIAIS_ADMIN = {
             diretor: { user: 'diretor@itq.edu.br', pass: 'itq2026', nome: 'Diretoria Geral ITQ' },
-            secretario: { user: 'secretaria@itq.edu.br', pass: 'itq2026', nome: 'Secretaria Acadêmica' },
+            secretario: { user: 'secretaria@itq.edu.br', pass: 'itq2026', nome: 'Secretaria Académica' },
             coordenador: { user: 'coordenacao@itq.edu.br', pass: 'itq2026', nome: 'Coordenação Pedagógica' },
             admin_ti: { user: 'admin@itq.edu.br', pass: 'admin123', nome: 'Suporte TI ITQ' }
         };
@@ -1290,7 +1296,7 @@
                     <i data-lucide="alert-triangle" class="w-7 h-7 text-amber-600 shrink-0"></i>
                     <div>
                         <p class="text-xs font-extrabold uppercase">Matrícula Inativa / Irregular</p>
-                        <p class="text-[11px] text-amber-800 font-medium">Consta registro, porém a situação atual é: <strong>${aluno.situacao}</strong>.</p>
+                        <p class="text-[11px] text-amber-800 font-medium">Consta registo, porém a situação atual é: <strong>${aluno.situacao}</strong>.</p>
                     </div>
                 `;
                 dadosBox.classList.remove('hidden');
@@ -1307,7 +1313,7 @@
                 banner.innerHTML = `
                     <i data-lucide="x-circle" class="w-7 h-7 text-rose-600 shrink-0"></i>
                     <div>
-                        <p class="text-xs font-extrabold uppercase">Registro Não Localizado</p>
+                        <p class="text-xs font-extrabold uppercase">Registo Não Localizado</p>
                         <p class="text-[11px] text-rose-700 font-medium">A matrícula <strong>${matricula}</strong> não foi encontrada na base oficial.</p>
                     </div>
                 `;
@@ -1389,7 +1395,7 @@
                 if (badge) {
                     badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Modo Offline`;
                 }
-                if (mostrarAlerta) alert('Não foi possível conectar à nuvem. Verifique se a implantação do Apps Script está publicada para "Qualquer pessoa".');
+                if (mostrarAlerta) alert('Não foi possível ligar à nuvem. Verifique se a implantação do Apps Script está publicada para "Qualquer pessoa".');
             }
         }
 
@@ -1408,7 +1414,7 @@
                     body: JSON.stringify(payload)
                 });
             } catch (e) {
-                console.warn('Erro ao enviar backup para nuvem:', e);
+                console.warn('Erro ao enviar cópia de segurança para a nuvem:', e);
             }
         }
 
@@ -1420,8 +1426,8 @@
                 label.textContent = 'Matrícula ou E-mail';
                 input.placeholder = 'Ex: 20260001 ou seu@email.com';
             } else {
-                label.textContent = 'Usuário ou E-mail';
-                input.placeholder = 'Digite seu e-mail institucional';
+                label.textContent = 'Utilizador ou E-mail';
+                input.placeholder = 'Digite o seu e-mail institucional';
             }
         }
 
@@ -1455,7 +1461,7 @@
             }
 
             errBox.classList.remove('hidden');
-            document.getElementById('login-error-text').textContent = 'Usuário, matrícula ou senha incorretos.';
+            document.getElementById('login-error-text').textContent = 'Utilizador, matrícula ou senha incorretos.';
         });
 
         function iniciarSessao(usuario) {
@@ -1497,7 +1503,7 @@
             const conf = document.getElementById('pa-confirma-senha').value.trim();
 
             if (nova !== conf) {
-                alert('As senhas digitadas não conferem.');
+                alert('As senhas introduzidas não coincidem.');
                 return;
             }
 
@@ -1517,13 +1523,13 @@
             fecharModalPrimeiroAcesso();
             const info = document.getElementById('login-info');
             info.classList.remove('hidden');
-            document.getElementById('login-info-text').textContent = 'Senha definida com sucesso! Faça login.';
+            document.getElementById('login-info-text').textContent = 'Senha definida com sucesso! Efetue o login.';
         });
 
         function configurarPermissoesInterface() {
             const roleLabels = {
                 diretor: 'Diretor(a) Geral',
-                secretario: 'Secretário(a) Acadêmico(a)',
+                secretario: 'Secretário(a) Académico(a)',
                 coordenador: 'Coordenador(a) Pedagógico(a)',
                 admin_ti: 'Administrador TI',
                 professor: 'Docente / Professor',
@@ -1550,20 +1556,20 @@
                     { id: 'carteirinha', label: 'Carteira Digital', icon: 'id-card' },
                     { id: 'historico', label: 'Histórico Escolar', icon: 'scroll-text' },
                     { id: 'relacao', label: 'Relação por Ano', icon: 'list-ordered' },
-                    { id: 'financeiro', label: 'Controle Financeiro', icon: 'wallet' },
+                    { id: 'financeiro', label: 'Controlo Financeiro', icon: 'wallet' },
                     { id: 'docentes', label: 'Docentes & Grade', icon: 'book-open' }
                 ];
             } else if (isProf) {
                 itensMenu = [
-                    { id: 'dashboard', label: 'Minhas Disciplinas', icon: 'book-marked' },
+                    { id: 'dashboard', label: 'As Minhas Disciplinas', icon: 'book-marked' },
                     { id: 'diario', label: 'Diário & Notas', icon: 'clipboard-check' },
                     { id: 'boletim', label: 'Consultar Boletins', icon: 'file-spreadsheet' }
                 ];
             } else if (isAluno) {
                 itensMenu = [
-                    { id: 'dashboard', label: 'Meu Painel & Notas', icon: 'graduation-cap' },
+                    { id: 'dashboard', label: 'O Meu Painel & Notas', icon: 'graduation-cap' },
                     { id: 'boletim', label: 'Boletim Detalhado', icon: 'file-spreadsheet' },
-                    { id: 'carteirinha', label: 'Minha Carteira Digital', icon: 'id-card' }
+                    { id: 'carteirinha', label: 'A Minha Carteira Digital', icon: 'id-card' }
                 ];
             }
 
@@ -1594,14 +1600,14 @@
             });
 
             const titulos = {
-                dashboard: 'Painel Acadêmico',
+                dashboard: 'Painel Académico',
                 alunos: 'Gestão de Alunos e Matrículas',
                 diario: 'Diário de Classe, Frequência e Notas',
                 boletim: 'Boletim Individual do Estudante',
                 carteirinha: 'Carteira de Identificação Estudantil',
                 historico: 'Histórico Escolar Oficial (A4)',
                 relacao: 'Relação de Alunos por Ano Letivo',
-                financeiro: 'Controle Financeiro Mensal',
+                financeiro: 'Controlo Financeiro Mensal',
                 docentes: 'Corpo Docente e Grade Curricular'
             };
             document.getElementById('page-title').textContent = titulos[viewId] || 'Sistema ITQ';
@@ -1723,7 +1729,7 @@
                         <th class="py-3 px-4">Matrícula</th>
                         <th class="py-3 px-4">Nome Completo</th>
                         <th class="py-3 px-4">Turma / Modalidade</th>
-                        <th class="py-3 px-4">Contato</th>
+                        <th class="py-3 px-4">Contacto</th>
                         <th class="py-3 px-4 text-center">Situação</th>
                     </tr>
                 `;
@@ -1737,10 +1743,10 @@
                             <td class="py-3 px-4 text-center"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${a.situacao === 'Ativo' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${a.situacao}</span></td>
                         </tr>
                     `).join('')
-                    : `<tr><td colspan="5" class="py-6 text-center text-slate-400">Nenhum registro encontrado nesta categoria.</td></tr>`;
+                    : `<tr><td colspan="5" class="py-6 text-center text-slate-400">Nenhum registo encontrado nesta categoria.</td></tr>`;
             } else if (tipo === 'professores') {
                 titulo.textContent = `Professores Cadastrados (${db.professores.length})`;
-                subtitulo.textContent = 'Corpo docente completo cadastrado no sistema';
+                subtitulo.textContent = 'Corpo docente completo registado no sistema';
                 thead.innerHTML = `
                     <tr>
                         <th class="py-3 px-4">Nome do Docente</th>
@@ -1761,7 +1767,7 @@
                             </tr>
                         `;
                     }).join('')
-                    : `<tr><td colspan="4" class="py-6 text-center text-slate-400">Nenhum professor cadastrado.</td></tr>`;
+                    : `<tr><td colspan="4" class="py-6 text-center text-slate-400">Nenhum professor registado.</td></tr>`;
             } else if (tipo === 'disciplinas') {
                 titulo.textContent = `Disciplinas na Grade (${disciplinasAno.length})`;
                 subtitulo.textContent = `Matriz curricular do ano letivo ${db.anoAtual}`;
@@ -1787,10 +1793,10 @@
                             </tr>
                         `;
                     }).join('')
-                    : `<tr><td colspan="5" class="py-6 text-center text-slate-400">Nenhuma disciplina cadastrada neste ano.</td></tr>`;
+                    : `<tr><td colspan="5" class="py-6 text-center text-slate-400">Nenhuma disciplina registada neste ano.</td></tr>`;
             } else if (tipo === 'aulas') {
                 titulo.textContent = `Aulas Computadas (${aulasLista.length})`;
-                subtitulo.textContent = 'Registros de chamada lançados no diário de classe';
+                subtitulo.textContent = 'Registos de chamada lançados no diário de classe';
                 thead.innerHTML = `
                     <tr>
                         <th class="py-3 px-4">Data</th>
@@ -1876,7 +1882,7 @@
             const lista = document.getElementById('lista-resumo-aulas');
             const resumos = db.resumosAula || [];
             if (resumos.length === 0) {
-                lista.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Nenhum resumo de aula registrado ainda.</p>`;
+                lista.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Nenhum resumo de aula registado ainda.</p>`;
                 return;
             }
             lista.innerHTML = resumos.map(r => `
@@ -1891,7 +1897,7 @@
                     </div>
                     <div class="flex items-center gap-1 shrink-0">
                         <button type="button" onclick="editarResumoAula('${r.id}')" class="p-1.5 text-blue-700 hover:bg-blue-100 rounded-lg" title="Editar resumo"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-                        <button type="button" onclick="excluirResumoAula('${r.id}')" class="p-1.5 text-rose-700 hover:bg-rose-100 rounded-lg" title="Excluir resumo"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        <button type="button" onclick="excluirResumoAula('${r.id}')" class="p-1.5 text-rose-700 hover:bg-rose-100 rounded-lg" title="Eliminar resumo"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </div>
                 </div>
             `).join('');
@@ -1923,7 +1929,7 @@
         }
 
         async function excluirResumoAula(id) {
-            if (!confirm('Deseja excluir este resumo de aula?')) return;
+            if (!confirm('Deseja eliminar este resumo de aula?')) return;
             db.resumosAula = (db.resumosAula || []).filter(r => r.id !== id);
             await salvarNaNuvem();
             renderizarResumosAula();
@@ -1958,7 +1964,7 @@
                 container.innerHTML = `
                     <div class="col-span-full p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-300">
                         <p class="text-sm font-bold text-slate-600">Nenhuma disciplina atribuída ao seu perfil neste ano letivo (${db.anoAtual}).</p>
-                        <p class="text-xs text-slate-400 mt-1">Entre em contato com a Secretaria ou Coordenação Acadêmica.</p>
+                        <p class="text-xs text-slate-400 mt-1">Entre em contacto com a Secretaria ou Coordenação Académica.</p>
                     </div>
                 `;
                 return;
@@ -2006,7 +2012,7 @@
             const disciplinasTurma = db.disciplinas.filter(d => d.turma === aluno.turma && String(d.anoLetivo || '2026') === String(aluno.anoLetivo || db.anoAtual));
             const tbody = document.getElementById('tabela-aluno-boletim-dash');
             if (disciplinasTurma.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-400">Nenhuma disciplina cadastrada para sua turma.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-400">Nenhuma disciplina registada para a sua turma.</td></tr>`;
                 return;
             }
 
@@ -2061,7 +2067,7 @@
             const freqPerc = totalAulas > 0 ? Math.round((presencas / totalAulas) * 100) : 100;
             const freqTexto = totalAulas > 0 ? `${freqPerc}%` : 'F/S';
 
-            let status = 'Cursando';
+            let status = 'A cursar';
             let badgeClass = 'bg-slate-100 text-slate-700';
             if (media !== null) {
                 if (media >= 7 && freqPerc >= 75) {
@@ -2117,7 +2123,7 @@
                         </td>
                         <td class="py-3 px-4 text-right space-x-1">
                             <button type="button" onclick="editarAluno('${chaveEdicao}')" class="p-1.5 text-blue-700 hover:bg-blue-50 rounded-lg cursor-pointer" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-                            <button type="button" onclick="excluirAluno('${chaveEdicao}')" class="p-1.5 text-rose-700 hover:bg-rose-50 rounded-lg cursor-pointer" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <button type="button" onclick="excluirAluno('${chaveEdicao}')" class="p-1.5 text-rose-700 hover:bg-rose-50 rounded-lg cursor-pointer" title="Eliminar"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
                     </tr>
                 `;
@@ -2180,7 +2186,7 @@
             document.getElementById('aluno-situacao').value = a.situacao || 'Ativo';
             document.getElementById('aluno-telefone').value = a.telefone || '';
             document.getElementById('aluno-email').value = a.email || '';
-            document.getElementById('modal-aluno-titulo').textContent = 'Editar Cadastro do Estudante';
+            document.getElementById('modal-aluno-titulo').textContent = 'Editar Registo do Estudante';
             document.getElementById('modal-aluno').classList.remove('hidden');
         }
 
@@ -2428,7 +2434,7 @@
                 dirRg: document.getElementById('hist-dir-rg').textContent.trim()
             };
             await salvarNaNuvem();
-            alert('Alterações do Histórico Escolar salvas!');
+            alert('Alterações do Histórico Escolar guardadas!');
         }
 
         function imprimirHistorico() {
@@ -2561,7 +2567,7 @@
             const p = db.professores.find(x => x.id === profId);
             if (!p) return;
             const tel = (p.telefone || '').replace(/\D/g, '');
-            const msg = `Olá Prof(a). ${p.nome}! Seguem seus dados de acesso ao Portal Acadêmico ITQ:\nLink: ${URL_PORTAL_PUBLICO}\nPerfil: Docente / Professor\nE-mail: ${p.email}\nSenha: ${p.senha || 'itq2026'}`;
+            const msg = `Olá Prof(a). ${p.nome}! Seguem os seus dados de acesso ao Portal Académico ITQ:\nLink: ${URL_PORTAL_PUBLICO}\nPerfil: Docente / Professor\nE-mail: ${p.email}\nSenha: ${p.senha || 'itq2026'}`;
             window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 

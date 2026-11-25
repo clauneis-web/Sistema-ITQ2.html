@@ -199,7 +199,7 @@
                 <p class="text-xs text-blue-200 mt-1 font-medium">Portal de Gestão Acadêmica e Pedagógica</p>
             </div>
 
-            <form id="login-form" class="p-7 space-y-4">
+            <form id="login-form" autocomplete="off" class="p-7 space-y-4">
                 <div id="login-error" class="hidden p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold rounded-lg flex items-center gap-2">
                     <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
                     <span id="login-error-text">Credenciais inválidas.</span>
@@ -226,7 +226,7 @@
                     <label id="login-user-label" class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Usuário ou E-mail</label>
                     <div class="relative">
                         <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
-                        <input type="text" id="login-user" required placeholder="Digite o seu usuário ou e-mail" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-800 outline-none">
+                        <input type="text" id="login-user" name="itq_login_user" autocomplete="off" required placeholder="Digite o seu usuário ou e-mail" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-800 outline-none">
                     </div>
                 </div>
 
@@ -237,7 +237,7 @@
                     </div>
                     <div class="relative">
                         <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
-                        <input type="password" id="login-pass" required placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-800 outline-none">
+                        <input type="password" id="login-pass" name="itq_login_pass" autocomplete="new-password" required placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-800 outline-none">
                     </div>
                 </div>
 
@@ -1710,6 +1710,20 @@
         function logout() {
             usuarioLogado = null;
             sessionStorage.removeItem('itq_sessao_v23');
+
+            const formLogin = document.getElementById('login-form');
+            if (formLogin) formLogin.reset();
+            const userInput = document.getElementById('login-user');
+            const passInput = document.getElementById('login-pass');
+            if (userInput) userInput.value = '';
+            if (passInput) passInput.value = '';
+            ajustarPlaceholderLogin();
+
+            document.getElementById('login-error').classList.add('hidden');
+            document.getElementById('login-info').classList.add('hidden');
+            document.getElementById('user-display-name').textContent = '';
+            document.getElementById('user-display-role').textContent = '';
+
             document.getElementById('app-container').classList.add('hidden');
             document.getElementById('login-screen').classList.remove('hidden');
         }

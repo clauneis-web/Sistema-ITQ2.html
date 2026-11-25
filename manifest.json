@@ -1,0 +1,25 @@
+{
+  "name": "Instituto Teológico Quadrangular - ITQ Acadêmico",
+  "short_name": "ITQ Acadêmico",
+  "description": "Portal de Gestão Acadêmica e Pedagógica do Instituto Teológico Quadrangular",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#1e3a8a",
+  "icons": [
+    {
+      "src": "logo-itq.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo-itq.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

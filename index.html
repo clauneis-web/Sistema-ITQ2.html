@@ -6,9 +6,9 @@
     <title>Sistema Acadêmico - ITQ</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="logo-itq.png">
-<link rel="apple-touch-icon" href="logo-itq.png">
-<meta name="apple-mobile-web-app-title" content="ITQ Acadêmico">
-<meta name="theme-color" content="#1e3a8a">
+    <link rel="apple-touch-icon" href="logo-itq.png">
+    <meta name="apple-mobile-web-app-title" content="ITQ Acadêmico">
+    <meta name="theme-color" content="#1e3a8a">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -167,6 +167,10 @@
                         <div class="bg-white p-2.5 rounded-lg border border-slate-200">
                             <p class="text-[10px] font-bold text-slate-400 uppercase">Situação Cadastral</p>
                             <p id="val-situacao" class="font-extrabold mt-0.5 break-words">--</p>
+                        </div>
+                        <div class="col-span-2 bg-white p-2.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Validade da Carteira</p>
+                            <p id="val-validade" class="font-extrabold text-blue-900">--</p>
                         </div>
                     </div>
                 </div>
@@ -586,12 +590,20 @@
                         </div>
                     </div>
 
-                    <div id="diario-info-banner" class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div id="diario-info-banner" class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 text-xs">
                         <div>
                             <span class="font-bold text-blue-950" id="diario-disc-titulo">Disciplina Selecionada</span>
                             <span class="text-blue-700 ml-2" id="diario-disc-prof">Docente: --</span>
+                            <p class="text-[11px] text-slate-600 mt-1">
+                                Legenda: <strong class="text-emerald-700">Presença (P)</strong> • <strong class="text-rose-700">Falta (F)</strong> • <strong class="text-amber-700">Falta Justificada (FJ)</strong> <span class="text-slate-500">(não é computada como falta)</span>
+                            </p>
                         </div>
-                        <span class="font-semibold text-blue-800" id="diario-disc-ch">Carga Horária: --</span>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="font-semibold text-blue-800" id="diario-disc-ch">Carga Horária: --</span>
+                            <button type="button" id="btn-marcar-todos-presentes" onclick="marcarTodosPresentes()" class="hidden px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors">
+                                <i data-lucide="check-check" class="w-3.5 h-3.5"></i> Marcar Todos Presentes
+                            </button>
+                        </div>
                     </div>
 
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -718,7 +730,7 @@
                                 </div>
                             </div>
 
-                            <div class="my-auto py-1 space-y-2">
+                            <div class="my-auto py-1 space-y-1.5">
                                 <div>
                                     <p class="text-[8px] text-blue-300 uppercase font-bold">Nome do Aluno(a)</p>
                                     <p id="card-nome" class="text-sm font-extrabold uppercase truncate">--</p>
@@ -733,9 +745,15 @@
                                         <p id="card-cpf" class="text-xs font-semibold">--</p>
                                     </div>
                                 </div>
-                                <div>
-                                    <p class="text-[8px] text-blue-300 uppercase font-bold">Curso / Turma</p>
-                                    <p id="card-curso" class="text-xs font-bold truncate">--</p>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div class="col-span-2">
+                                        <p class="text-[8px] text-blue-300 uppercase font-bold">Curso / Turma</p>
+                                        <p id="card-curso" class="text-xs font-bold truncate">--</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[8px] text-blue-300 uppercase font-bold">Validade</p>
+                                        <p id="card-validade" class="text-xs font-extrabold text-amber-300">--</p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -772,7 +790,7 @@
                             </div>
 
                             <div class="text-[8px] text-slate-400 text-center border-t border-slate-200 pt-1.5">
-                                Documento pessoal e intransferível • Uso exclusivo para identificação estudantil.
+                                Documento pessoal e intransferível • Válido até <strong id="card-verso-validade" class="text-slate-600">--</strong>.
                             </div>
                         </div>
                     </div>
@@ -1142,10 +1160,14 @@
                         </select>
                     </div>
                     <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Validade da Carteira</label>
+                        <input type="text" id="aluno-validade" placeholder="Ex: 31/12/2026" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold">
+                    </div>
+                    <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Telefone / WhatsApp</label>
                         <input type="text" id="aluno-telefone" placeholder="(82) 99999-9999" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm">
                     </div>
-                    <div>
+                    <div class="sm:col-span-2">
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">E-mail</label>
                         <input type="email" id="aluno-email" placeholder="aluno@email.com" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm">
                     </div>
@@ -1285,10 +1307,19 @@
             verificarSessaoSalva();
         });
 
+        function obterValidadeCarteira(aluno) {
+            if (aluno && aluno.validade && String(aluno.validade).trim() !== '') {
+                return String(aluno.validade).trim();
+            }
+            const ano = (aluno && aluno.anoLetivo) || db.anoAtual || '2026';
+            return `31/12/${ano}`;
+        }
+
         function normalizarListaAlunos(lista) {
             if (!Array.isArray(lista)) return [];
             return lista.map((a, idx) => {
                 const mat = String(a.matricula || a.Matricula || `${db.anoAtual}${String(idx + 1).padStart(4, '0')}`);
+                const anoAl = String(a.anoLetivo || a.ano || db.anoAtual);
                 return {
                     ...a,
                     id: a.id ? String(a.id) : `alu_${mat}_${idx}`,
@@ -1299,7 +1330,8 @@
                     situacao: a.situacao || a.Situacao || a.status || a.Status || 'Ativo',
                     telefone: a.telefone || a.Telefone || a.whatsapp || '',
                     email: a.email || a.Email || '',
-                    anoLetivo: String(a.anoLetivo || a.ano || db.anoAtual)
+                    validade: a.validade || a.Validade || `31/12/${anoAl}`,
+                    anoLetivo: anoAl
                 };
             });
         }
@@ -1423,6 +1455,7 @@
                 document.getElementById('val-curso').textContent = `Teologia (${aluno.turma.includes('EAD') ? 'EAD' : 'Presencial'})`;
                 document.getElementById('val-ano').textContent = aluno.anoLetivo || db.anoAtual;
                 document.getElementById('val-turma').textContent = aluno.turma;
+                document.getElementById('val-validade').textContent = obterValidadeCarteira(aluno);
                 const sitEl = document.getElementById('val-situacao');
                 sitEl.textContent = aluno.situacao.toUpperCase();
                 sitEl.className = 'font-extrabold mt-0.5 text-emerald-700';
@@ -1441,6 +1474,7 @@
                 document.getElementById('val-curso').textContent = `Teologia (${aluno.turma.includes('EAD') ? 'EAD' : 'Presencial'})`;
                 document.getElementById('val-ano').textContent = aluno.anoLetivo || db.anoAtual;
                 document.getElementById('val-turma').textContent = aluno.turma;
+                document.getElementById('val-validade').textContent = obterValidadeCarteira(aluno);
                 const sitEl = document.getElementById('val-situacao');
                 sitEl.textContent = aluno.situacao.toUpperCase();
                 sitEl.className = 'font-extrabold mt-0.5 text-rose-700';
@@ -1500,8 +1534,8 @@
                 { id: 'disc_4', nome: 'TEOLOGIA SISTEMÁTICA 2', anoCurso: '3', creditos: 4, ch: 72, turma: '3º Ano - Presencial', professorId: 'prof_2', anoLetivo: '2026' }
             ];
             db.alunos = [
-                { id: 'alu_1', matricula: '20260001', nome: 'João Pedro da Silva', cpf: '123.456.789-00', turma: '1º Ano - Presencial', situacao: 'Ativo', telefone: '(82) 98888-1111', email: 'joao@aluno.itq.br', senha: '123', anoLetivo: '2026' },
-                { id: 'alu_2', matricula: '20260002', nome: 'Maria Clara Oliveira', cpf: '234.567.890-11', turma: '1º Ano - EAD', situacao: 'Ativo', telefone: '(82) 98888-2222', email: 'maria@aluno.itq.br', senha: '123', anoLetivo: '2026' }
+                { id: 'alu_1', matricula: '20260001', nome: 'João Pedro da Silva', cpf: '123.456.789-00', turma: '1º Ano - Presencial', situacao: 'Ativo', validade: '31/12/2026', telefone: '(82) 98888-1111', email: 'joao@aluno.itq.br', senha: '123', anoLetivo: '2026' },
+                { id: 'alu_2', matricula: '20260002', nome: 'Maria Clara Oliveira', cpf: '234.567.890-11', turma: '1º Ano - EAD', situacao: 'Ativo', validade: '31/12/2026', telefone: '(82) 98888-2222', email: 'maria@aluno.itq.br', senha: '123', anoLetivo: '2026' }
             ];
             db.resumosAula = [
                 { id: 'res_1', data: '2026-11-20', turma: '1º Ano - Presencial', disciplina: 'BIBLIOLOGIA', conteudo: 'Estudo sobre revelação geral e especial, inspiração plenária e verbal das Escrituras.' }
@@ -2152,7 +2186,7 @@
             const aluno = db.alunos.find(a => a.id === usuarioLogado.id);
             if (!aluno) return;
             document.getElementById('aluno-dash-nome').textContent = aluno.nome;
-            document.getElementById('aluno-dash-info').textContent = `Matrícula: ${aluno.matricula} • Turma: ${aluno.turma} • Ano Letivo: ${aluno.anoLetivo || db.anoAtual}`;
+            document.getElementById('aluno-dash-info').textContent = `Matrícula: ${aluno.matricula} • Turma: ${aluno.turma} • Validade: ${obterValidadeCarteira(aluno)}`;
 
             const disciplinasTurma = db.disciplinas.filter(d => d.turma === aluno.turma && String(d.anoLetivo || '2026') === String(aluno.anoLetivo || db.anoAtual));
             const tbody = document.getElementById('tabela-aluno-boletim-dash');
@@ -2203,10 +2237,20 @@
 
             let totalAulas = 0;
             let presencas = 0;
+            let faltas = 0;
+            let justificadas = 0;
             Object.entries(db.frequencias).forEach(([k, val]) => {
                 if (k.startsWith(`${discId}_`) && k.endsWith(`_${alunoId}`)) {
                     totalAulas++;
-                    if (val === 'P' || val === 'J') presencas++;
+                    if (val === 'P') {
+                        presencas++;
+                    } else if (val === 'FJ' || val === 'J') {
+                        // Falta Justificada não é considerada falta
+                        presencas++;
+                        justificadas++;
+                    } else if (val === 'F') {
+                        faltas++;
+                    }
                 }
             });
             const freqPerc = totalAulas > 0 ? Math.round((presencas / totalAulas) * 100) : 100;
@@ -2231,6 +2275,9 @@
                 rec: isNaN(rec) ? '-' : rec.toFixed(1),
                 mediaFinal: media === null ? '-' : media.toFixed(2),
                 freqTexto,
+                totalAulas,
+                faltas,
+                justificadas,
                 freqSuficiente: freqPerc >= 75,
                 status,
                 badgeClass
@@ -2282,6 +2329,7 @@
             document.getElementById('modal-aluno-titulo').textContent = 'Matricular Novo Estudante';
             const seq = String(db.alunos.length + 1).padStart(4, '0');
             document.getElementById('aluno-matricula').value = `${db.anoAtual}${seq}`;
+            document.getElementById('aluno-validade').value = `31/12/${db.anoAtual}`;
             document.getElementById('modal-aluno').classList.remove('hidden');
         }
 
@@ -2293,6 +2341,7 @@
             e.preventDefault();
             const id = document.getElementById('aluno-id').value;
             const matricula = document.getElementById('aluno-matricula').value.trim();
+            const validadeDigitada = document.getElementById('aluno-validade').value.trim() || `31/12/${db.anoAtual}`;
             const dados = {
                 id: id || `alu_${Date.now()}`,
                 matricula: matricula,
@@ -2300,6 +2349,7 @@
                 cpf: document.getElementById('aluno-cpf').value.trim(),
                 turma: document.getElementById('aluno-turma').value,
                 situacao: document.getElementById('aluno-situacao').value,
+                validade: validadeDigitada,
                 telefone: document.getElementById('aluno-telefone').value.trim(),
                 email: document.getElementById('aluno-email').value.trim(),
                 anoLetivo: db.anoAtual
@@ -2329,6 +2379,7 @@
             document.getElementById('aluno-cpf').value = a.cpf || '';
             document.getElementById('aluno-turma').value = a.turma || '1º Ano - Presencial';
             document.getElementById('aluno-situacao').value = a.situacao || 'Ativo';
+            document.getElementById('aluno-validade').value = obterValidadeCarteira(a);
             document.getElementById('aluno-telefone').value = a.telefone || '';
             document.getElementById('aluno-email').value = a.email || '';
             document.getElementById('modal-aluno-titulo').textContent = 'Editar Registro do Estudante';
@@ -2361,6 +2412,7 @@
             const discId = document.getElementById('diario-disciplina').value;
             const data = document.getElementById('diario-data').value;
             const tbody = document.getElementById('tabela-diario-body');
+            const btnTodosPresentes = document.getElementById('btn-marcar-todos-presentes');
 
             const disc = db.disciplinas.find(d => d.id === discId);
             const prof = disc ? db.professores.find(p => p.id === disc.professorId) : null;
@@ -2369,27 +2421,50 @@
             document.getElementById('diario-disc-ch').textContent = disc ? `Carga Horária: ${disc.ch}h` : '';
 
             if (!discId) {
+                if (btnTodosPresentes) btnTodosPresentes.classList.add('hidden');
                 tbody.innerHTML = `<tr><td colspan="9" class="py-8 text-center text-slate-400">Selecione uma turma e disciplina para lançar frequência e notas.</td></tr>`;
                 return;
             }
 
             const alunosTurma = db.alunos.filter(a => a.turma === turma && a.situacao === 'Ativo' && String(a.anoLetivo || '2026') === String(db.anoAtual));
+            if (btnTodosPresentes) btnTodosPresentes.classList.toggle('hidden', alunosTurma.length === 0);
+
+            if (alunosTurma.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="py-8 text-center text-slate-400">Nenhum aluno ativo matriculado nesta turma.</td></tr>`;
+                return;
+            }
+
             tbody.innerHTML = alunosTurma.map(a => {
-                const freqVal = db.frequencias[`${discId}_${data}_${a.id}`] || '';
+                const rawVal = db.frequencias[`${discId}_${data}_${a.id}`] || '';
+                const freqVal = rawVal === 'J' ? 'FJ' : rawVal;
                 const n = db.notas[`${a.id}_${discId}`] || {};
                 const stats = calcularDesempenhoAluno(a.id, discId);
+
+                const btnPClass = freqVal === 'P'
+                    ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
+                    : 'bg-white text-slate-600 border-slate-300 hover:bg-emerald-50 hover:text-emerald-700';
+                const btnFClass = freqVal === 'F'
+                    ? 'bg-rose-600 text-white border-rose-700 shadow-sm'
+                    : 'bg-white text-slate-600 border-slate-300 hover:bg-rose-50 hover:text-rose-700';
+                const btnFJClass = freqVal === 'FJ'
+                    ? 'bg-amber-500 text-white border-amber-600 shadow-sm'
+                    : 'bg-white text-slate-600 border-slate-300 hover:bg-amber-50 hover:text-amber-700';
+
+                const resumoFaltas = stats.totalAulas > 0
+                    ? `<span class="block text-[9.5px] font-normal text-slate-500">${stats.faltas}F • ${stats.justificadas}FJ</span>`
+                    : '';
+
                 return `
                     <tr class="hover:bg-slate-50">
                         <td class="py-2.5 px-4 font-bold text-slate-900">${a.nome} <span class="block text-[10px] font-mono text-slate-400">${a.matricula}</span></td>
                         <td class="py-2.5 px-3 text-center">
-                            <select onchange="registrarFrequencia('${discId}', '${data}', '${a.id}', this.value)" class="px-2 py-1 rounded-lg border border-slate-300 text-xs font-bold ${freqVal === 'P' ? 'bg-emerald-50 text-emerald-800' : freqVal === 'F' ? 'bg-rose-50 text-rose-800' : 'bg-white'}">
-                                <option value="">--</option>
-                                <option value="P" ${freqVal === 'P' ? 'selected' : ''}>P (Presente)</option>
-                                <option value="F" ${freqVal === 'F' ? 'selected' : ''}>F (Falta)</option>
-                                <option value="J" ${freqVal === 'J' ? 'selected' : ''}>J (Justificada)</option>
-                            </select>
+                            <div class="inline-flex items-center gap-1" role="group" aria-label="Chamada">
+                                <button type="button" onclick="alternarFrequencia('${discId}', '${data}', '${a.id}', 'P')" title="Presença" class="px-2 py-1 rounded-lg border text-[11px] font-extrabold transition-colors cursor-pointer ${btnPClass}">Presença</button>
+                                <button type="button" onclick="alternarFrequencia('${discId}', '${data}', '${a.id}', 'F')" title="Falta" class="px-2 py-1 rounded-lg border text-[11px] font-extrabold transition-colors cursor-pointer ${btnFClass}">Falta</button>
+                                <button type="button" onclick="alternarFrequencia('${discId}', '${data}', '${a.id}', 'FJ')" title="Falta Justificada (não conta como falta)" class="px-2 py-1 rounded-lg border text-[11px] font-extrabold transition-colors cursor-pointer ${btnFJClass}">Falta Justificada</button>
+                            </div>
                         </td>
-                        <td class="py-2.5 px-3 text-center font-bold">${stats.freqTexto}</td>
+                        <td class="py-2.5 px-3 text-center font-bold">${stats.freqTexto}${resumoFaltas}</td>
                         <td class="py-2.5 px-2 text-center"><input type="number" step="0.1" min="0" max="10" value="${n.auto ?? ''}" onchange="salvarNota('${a.id}', '${discId}', 'auto', this.value)" class="w-16 px-2 py-1 border border-slate-300 rounded text-center text-xs font-bold"></td>
                         <td class="py-2.5 px-2 text-center"><input type="number" step="0.1" min="0" max="10" value="${n.som ?? ''}" onchange="salvarNota('${a.id}', '${discId}', 'som', this.value)" class="w-16 px-2 py-1 border border-slate-300 rounded text-center text-xs font-bold"></td>
                         <td class="py-2.5 px-2 text-center"><input type="number" step="0.1" min="0" max="10" value="${n.conc ?? ''}" onchange="salvarNota('${a.id}', '${discId}', 'conc', this.value)" class="w-16 px-2 py-1 border border-slate-300 rounded text-center text-xs font-bold"></td>
@@ -2399,12 +2474,31 @@
                     </tr>
                 `;
             }).join('');
+            lucide.createIcons();
         }
 
-        async function registrarFrequencia(discId, data, alunoId, valor) {
+        async function alternarFrequencia(discId, data, alunoId, valor) {
             const chave = `${discId}_${data}_${alunoId}`;
-            if (valor) db.frequencias[chave] = valor;
-            else delete db.frequencias[chave];
+            const atual = db.frequencias[chave] === 'J' ? 'FJ' : db.frequencias[chave];
+            if (atual === valor) {
+                delete db.frequencias[chave];
+            } else {
+                db.frequencias[chave] = valor;
+            }
+            await salvarNaNuvem();
+            renderizarDiario();
+        }
+
+        async function marcarTodosPresentes() {
+            const turma = document.getElementById('diario-turma').value;
+            const discId = document.getElementById('diario-disciplina').value;
+            const data = document.getElementById('diario-data').value;
+            if (!discId || !data) return;
+
+            const alunosTurma = db.alunos.filter(a => a.turma === turma && a.situacao === 'Ativo' && String(a.anoLetivo || '2026') === String(db.anoAtual));
+            alunosTurma.forEach(a => {
+                db.frequencias[`${discId}_${data}_${a.id}`] = 'P';
+            });
             await salvarNaNuvem();
             renderizarDiario();
         }
@@ -2491,10 +2585,13 @@
             const alunoId = document.getElementById('carteirinha-select-aluno').value;
             const aluno = db.alunos.find(a => a.id === alunoId);
             if (!aluno) return;
+            const validadeTexto = obterValidadeCarteira(aluno);
             document.getElementById('card-nome').textContent = aluno.nome;
             document.getElementById('card-matricula').textContent = aluno.matricula;
             document.getElementById('card-cpf').textContent = aluno.cpf || '-';
             document.getElementById('card-curso').textContent = `Teologia - ${aluno.turma}`;
+            document.getElementById('card-validade').textContent = validadeTexto;
+            document.getElementById('card-verso-validade').textContent = validadeTexto;
             document.getElementById('card-ano').textContent = aluno.anoLetivo || db.anoAtual;
 
             const urlValidacao = gerarUrlValidacaoAluno(aluno.matricula);

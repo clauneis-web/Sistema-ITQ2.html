@@ -43,6 +43,8 @@
             outline: none;
         }
 
+        .print-only { display: none; }
+
         @media print {
             @page { size: A4 portrait; margin: 6mm; }
             body * { visibility: hidden !important; }
@@ -111,6 +113,7 @@
                 box-shadow: none !important; border: none !important;
                 padding: 4mm !important; margin: 0 !important;
             }
+            body.printing-financeiro .print-only { display: block !important; }
 
             .no-print { display: none !important; }
         }
@@ -842,7 +845,7 @@
                             <div><span class="font-bold">DATA DE CONCLUSÃO:</span> <span id="hist-data-conclusao" contenteditable="true" class="hist-editable font-semibold">20/12/2026</span></div>
                         </div>
 
-                        <!-- TABELA 1º, 2º E 3º ANOS (SEM MÓDULOS) -->
+                        <!-- TABELA 1º, 2º E 3º ANOS -->
                         <table class="w-full text-left border-collapse border border-slate-800 text-[8.5px]">
                             <thead>
                                 <tr class="bg-slate-200 text-slate-900 font-extrabold uppercase text-[8px]">
@@ -944,16 +947,25 @@
                     </div>
                 </section>
 
-                <!-- VIEW: FINANCEIRO (FICHA FINANCEIRA ANUAL POR ALUNO COM IMPRIMIR / PDF) -->
+                <!-- VIEW: FINANCEIRO (FICHA FINANCEIRA ANUAL POR ALUNO COM VALOR E DATA EDITÁVEIS) -->
                 <section id="view-financeiro" class="hidden space-y-6 fade-in">
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-end justify-between gap-4 no-print">
-                        <div class="flex-1 min-w-[250px]">
+                        <div class="flex-1 min-w-[220px]">
                             <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Selecionar Estudante para Ficha Financeira Anual</label>
                             <select id="financeiro-select-aluno" onchange="renderizarFinanceiro()" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800"></select>
                         </div>
-                        <button type="button" onclick="imprimirFinanceiro()" class="px-4 py-2.5 bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold rounded-xl shadow-sm flex items-center gap-2">
-                            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Ficha / PDF
-                        </button>
+                        <div class="flex flex-wrap items-end gap-2">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Valor Padrão (R$)</label>
+                                <input type="number" step="0.01" min="0" id="financeiro-valor-padrao" value="80.00" onchange="atualizarValorPadraoFinanceiro(this.value)" class="w-28 px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-extrabold text-slate-800">
+                            </div>
+                            <button type="button" onclick="aplicarValorPadraoTodosMeses()" title="Aplicar este valor aos 12 meses deste aluno" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs font-bold rounded-xl">
+                                Aplicar aos 12 Meses
+                            </button>
+                            <button type="button" onclick="imprimirFinanceiro()" class="px-4 py-2 bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold rounded-xl shadow-sm flex items-center gap-2">
+                                <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Ficha / PDF
+                            </button>
+                        </div>
                     </div>
 
                     <div id="financeiro-print-area" class="bg-white p-6 rounded-2xl border border-slate-300 shadow-sm space-y-5 max-w-[210mm] mx-auto text-slate-900">
@@ -985,38 +997,31 @@
                             <div><span class="font-bold text-slate-600">ANO LETIVO:</span> <span id="fin-ano-letivo" class="font-extrabold text-slate-900">2026</span></div>
                         </div>
 
-                        <!-- GRADE MENSAL (JAN - DEZ) -->
+                        <!-- TOTALIZADORES FINANCEIROS -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                                <span class="font-bold text-slate-600 uppercase text-[10px]">Parcelas Pagas</span>
+                                <span id="fin-resumo-meses" class="font-extrabold text-slate-900">0 / 12 meses</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between">
+                                <span class="font-bold text-emerald-800 uppercase text-[10px]">Total Pago no Ano</span>
+                                <span id="fin-total-pago" class="font-extrabold text-emerald-800">R$ 0,00</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-between">
+                                <span class="font-bold text-rose-800 uppercase text-[10px]">Total Pendente</span>
+                                <span id="fin-total-pendente" class="font-extrabold text-rose-800">R$ 0,00</span>
+                            </div>
+                        </div>
+
+                        <!-- GRADE MENSAL EDITÁVEL (JAN - DEZ) -->
                         <div>
-                            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                                <p class="text-xs font-extrabold text-slate-800 uppercase">Demonstrativo Anual (Clique sobre o mês para alternar Pago / Pendente)</p>
-                                <span id="fin-resumo-meses" class="text-xs font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-lg">0 / 12 meses pagos</span>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left border-collapse border border-slate-800 text-xs">
-                                    <thead>
-                                        <tr class="bg-slate-200 text-slate-900 text-[10px] font-extrabold uppercase">
-                                            <th class="border border-slate-800 py-2 px-2 text-center">Jan</th>
-                                            <th class="border border-slate-800 py-2 px-2 text-center">Fev</th>
-                                            <th class="border border-slate-800 py-2 px-2 text-center">Mar</th>
-                                            <th class="border border-slate-800 py-2 px-2 text-center">Abr</th>
-                                            <th class="border border-slate-800 py-2 px-2 text-center">Mai</th>
-                                            <th class="border border-slate-800 py-2 px-2 text-center">Jun</th>
-                                            <th class="border border-slate-800 py-2 px-2 text-center">Jul</th>
-                                            <th class="border border-slate-800 py-2 px-2 text-center">Ago</th>
-                                            <th class="border border-slate-800 py-2 px-2 text-center">Set</th>
-                                            <th class="border border-slate-800 py-2 px-2 text-center">Out</th>
-                                            <th class="border border-slate-800 py-2 px-2 text-center">Nov</th>
-                                            <th class="border border-slate-800 py-2 px-2 text-center">Dez</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tabela-financeiro-body"></tbody>
-                                </table>
-                            </div>
+                            <p class="text-[11px] font-bold text-slate-600 uppercase mb-2 no-print">Clique no status para alternar Pago / Pendente e edite o valor ou a data de pagamento de cada mês:</p>
+                            <div id="grid-financeiro-meses" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5"></div>
                         </div>
 
                         <!-- ASSINATURAS DA DIRETORIA E SECRETARIA -->
                         <div class="pt-6 space-y-4 text-xs text-slate-800">
-                            <p class="font-semibold">Maceió-AL, <span id="fin-data-emissao">24 de Novembro de 2026</span>.</p>
+                            <p class="font-semibold">Maceió-AL, <span id="fin-data-emissao">25 de Novembro de 2026</span>.</p>
 
                             <div class="grid grid-cols-3 gap-4 items-end pt-4">
                                 <div class="text-center">
@@ -1279,6 +1284,7 @@
             notas: {},
             frequencias: {},
             financeiro: {},
+            valorMensalidadePadrao: 80,
             resumosAula: [],
             configHistorico: {}
         };
@@ -1290,7 +1296,21 @@
             coordenador: { user: 'coordenacao@itq.edu.br', pass: 'itq2026', nome: 'Coordenação Pedagógica' },
             admin_ti: { user: 'admin@itq.edu.br', pass: 'admin123', nome: 'Suporte TI ITQ' }
         };
-        const MESES_KEYS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+        const MESES_CONFIG = [
+            { key: 'jan', label: 'Janeiro' },
+            { key: 'fev', label: 'Fevereiro' },
+            { key: 'mar', label: 'Março' },
+            { key: 'abr', label: 'Abril' },
+            { key: 'mai', label: 'Maio' },
+            { key: 'jun', label: 'Junho' },
+            { key: 'jul', label: 'Julho' },
+            { key: 'ago', label: 'Agosto' },
+            { key: 'set', label: 'Setembro' },
+            { key: 'out', label: 'Outubro' },
+            { key: 'nov', label: 'Novembro' },
+            { key: 'dez', label: 'Dezembro' }
+        ];
+        const MESES_KEYS = MESES_CONFIG.map(m => m.key);
 
         document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
@@ -1306,6 +1326,39 @@
             await sincronizarComNuvem(false);
             verificarSessaoSalva();
         });
+
+        function formatarMoeda(valor) {
+            const num = parseFloat(valor);
+            const v = isNaN(num) ? 0 : num;
+            return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function formatarDataBR(isoDate) {
+            if (!isoDate || typeof isoDate !== 'string') return '';
+            const partes = isoDate.split('-');
+            if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
+            return isoDate;
+        }
+
+        function obterRegistroMesFinanceiro(finAluno, mesKey) {
+            const raw = finAluno ? finAluno[mesKey] : null;
+            const padrao = parseFloat(db.valorMensalidadePadrao);
+            const valorBase = isNaN(padrao) ? 80 : padrao;
+
+            if (raw && typeof raw === 'object') {
+                const v = parseFloat(raw.valor);
+                return {
+                    pago: !!raw.pago,
+                    valor: isNaN(v) ? valorBase : v,
+                    data: raw.data || ''
+                };
+            }
+            return {
+                pago: !!raw,
+                valor: valorBase,
+                data: ''
+            };
+        }
 
         function obterValidadeCarteira(aluno) {
             if (aluno && aluno.validade && String(aluno.validade).trim() !== '') {
@@ -1403,6 +1456,9 @@
             }
             if (dadosNuvem.financeiro && typeof dadosNuvem.financeiro === 'object') {
                 db.financeiro = dadosNuvem.financeiro;
+            }
+            if (typeof dadosNuvem.valorMensalidadePadrao === 'number') {
+                db.valorMensalidadePadrao = dadosNuvem.valorMensalidadePadrao;
             }
             if (Array.isArray(dadosNuvem.resumosAula)) {
                 db.resumosAula = dadosNuvem.resumosAula;
@@ -1510,6 +1566,7 @@
                     db.professores = normalizarListaProfessores(db.professores);
                     db.disciplinas = normalizarListaDisciplinas(db.disciplinas);
                     if (!db.financeiro) db.financeiro = {};
+                    if (typeof db.valorMensalidadePadrao !== 'number') db.valorMensalidadePadrao = 80;
                     if (!Array.isArray(db.resumosAula)) db.resumosAula = [];
                     if (!db.configHistorico) db.configHistorico = {};
                 } catch (e) {}
@@ -1789,7 +1846,10 @@
             if (viewId === 'carteirinha') popularSelectAlunos('carteirinha-select-aluno', renderizarCarteirinha);
             if (viewId === 'historico') popularSelectAlunos('historico-select-aluno', renderizarHistorico);
             if (viewId === 'relacao') renderizarRelacaoAlunos();
-            if (viewId === 'financeiro') popularSelectAlunos('financeiro-select-aluno', renderizarFinanceiro);
+            if (viewId === 'financeiro') {
+                document.getElementById('financeiro-valor-padrao').value = (parseFloat(db.valorMensalidadePadrao) || 80).toFixed(2);
+                popularSelectAlunos('financeiro-select-aluno', renderizarFinanceiro);
+            }
             if (viewId === 'docentes') renderizarDocentesEGrade();
         }
 
@@ -1832,7 +1892,8 @@
                 const fin = (db.financeiro && db.financeiro[`${db.anoAtual}_${al.id}`]) || {};
                 let temPendencia = false;
                 for (let m = 0; m <= mesAtualIdx; m++) {
-                    if (!fin[MESES_KEYS[m]]) {
+                    const reg = obterRegistroMesFinanceiro(fin, MESES_KEYS[m]);
+                    if (!reg.pago) {
                         temPendencia = true;
                         break;
                     }
@@ -2245,7 +2306,6 @@
                     if (val === 'P') {
                         presencas++;
                     } else if (val === 'FJ' || val === 'J') {
-                        // Falta Justificada não é considerada falta
                         presencas++;
                         justificadas++;
                     } else if (val === 'F') {
@@ -2621,7 +2681,7 @@
             document.getElementById('hist-cpf').textContent = cfg.cpf || (aluno ? aluno.cpf : '') || '-';
             document.getElementById('hist-data-inicio').textContent = cfg.dataInicio || '16/02/2024';
             document.getElementById('hist-data-conclusao').textContent = cfg.dataConclusao || '20/12/2026';
-            document.getElementById('hist-expedicao').textContent = cfg.expedicao || 'Maceió, 24 de Novembro de 2026';
+            document.getElementById('hist-expedicao').textContent = cfg.expedicao || 'Maceió, 25 de Novembro de 2026';
             if (cfg.fone) document.getElementById('hist-fone').textContent = cfg.fone;
             if (cfg.email) document.getElementById('hist-email').textContent = cfg.email;
             if (cfg.secNome) document.getElementById('hist-sec-nome').textContent = cfg.secNome;
@@ -2730,18 +2790,54 @@
             document.body.classList.remove('printing-financeiro');
         }
 
+        async function atualizarValorPadraoFinanceiro(novoValor) {
+            const v = parseFloat(novoValor);
+            if (isNaN(v) || v < 0) return;
+            db.valorMensalidadePadrao = v;
+            await salvarNaNuvem();
+            renderizarFinanceiro();
+        }
+
+        async function aplicarValorPadraoTodosMeses() {
+            const alunoId = document.getElementById('financeiro-select-aluno').value;
+            const aluno = db.alunos.find(a => a.id === alunoId);
+            if (!aluno) return;
+            const v = parseFloat(document.getElementById('financeiro-valor-padrao').value);
+            if (isNaN(v) || v < 0) return;
+
+            db.valorMensalidadePadrao = v;
+            const anoRef = aluno.anoLetivo || db.anoAtual;
+            const chave = `${anoRef}_${aluno.id}`;
+            if (!db.financeiro) db.financeiro = {};
+            if (!db.financeiro[chave]) db.financeiro[chave] = {};
+
+            MESES_KEYS.forEach(m => {
+                const atual = obterRegistroMesFinanceiro(db.financeiro[chave], m);
+                db.financeiro[chave][m] = {
+                    pago: atual.pago,
+                    valor: v,
+                    data: atual.data
+                };
+            });
+
+            await salvarNaNuvem();
+            renderizarFinanceiro();
+        }
+
         function renderizarFinanceiro() {
             const alunoId = document.getElementById('financeiro-select-aluno').value;
             const aluno = db.alunos.find(a => a.id === alunoId);
-            const tbody = document.getElementById('tabela-financeiro-body');
+            const grid = document.getElementById('grid-financeiro-meses');
 
             if (!aluno) {
                 document.getElementById('fin-aluno-nome').textContent = '--';
                 document.getElementById('fin-aluno-matricula').textContent = '--';
                 document.getElementById('fin-aluno-turma').textContent = '--';
                 document.getElementById('fin-ano-letivo').textContent = db.anoAtual;
-                document.getElementById('fin-resumo-meses').textContent = '0 / 12 meses pagos';
-                tbody.innerHTML = `<tr><td colspan="12" class="border border-slate-800 py-6 text-center text-slate-400">Nenhum estudante selecionado.</td></tr>`;
+                document.getElementById('fin-resumo-meses').textContent = '0 / 12 meses';
+                document.getElementById('fin-total-pago').textContent = 'R$ 0,00';
+                document.getElementById('fin-total-pendente').textContent = 'R$ 0,00';
+                grid.innerHTML = `<p class="col-span-full py-6 text-center text-xs text-slate-400">Nenhum estudante selecionado.</p>`;
                 return;
             }
 
@@ -2753,21 +2849,54 @@
 
             const fin = (db.financeiro && db.financeiro[`${anoRef}_${aluno.id}`]) || {};
             let totalPagos = 0;
+            let somaPago = 0;
+            let somaPendente = 0;
 
-            const colunasMeses = MESES_KEYS.map(m => {
-                const pago = !!fin[m];
-                if (pago) totalPagos++;
+            grid.innerHTML = MESES_CONFIG.map(mes => {
+                const reg = obterRegistroMesFinanceiro(fin, mes.key);
+                if (reg.pago) {
+                    totalPagos++;
+                    somaPago += reg.valor;
+                } else {
+                    somaPendente += reg.valor;
+                }
+
+                const cardBorder = reg.pago ? 'border-emerald-300 bg-emerald-50/50' : 'border-slate-300 bg-white';
+                const btnStatusClass = reg.pago
+                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                    : 'bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300';
+
                 return `
-                    <td class="border border-slate-800 py-3 px-1.5 text-center">
-                        <button type="button" onclick="alternarMensalidade('${aluno.id}', '${m}')" class="px-2 py-1 rounded-lg font-extrabold text-[10px] transition-colors cursor-pointer ${pago ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-50 text-rose-700 border border-rose-200'}">
-                            ${pago ? 'PAGO' : 'PEND.'}
-                        </button>
-                    </td>
+                    <div class="p-2.5 rounded-xl border ${cardBorder} space-y-2">
+                        <div class="flex items-center justify-between gap-1">
+                            <span class="text-xs font-extrabold text-slate-900 uppercase">${mes.label}</span>
+                            <button type="button" onclick="alternarMensalidade('${aluno.id}', '${mes.key}')" class="px-2 py-0.5 rounded-md font-extrabold text-[10px] transition-colors cursor-pointer ${btnStatusClass}">
+                                ${reg.pago ? 'PAGO' : 'PEND.'}
+                            </button>
+                        </div>
+
+                        <div class="space-y-1.5 no-print">
+                            <div>
+                                <label class="block text-[9px] font-bold text-slate-500 uppercase">Valor (R$)</label>
+                                <input type="number" step="0.01" min="0" value="${reg.valor.toFixed(2)}" onchange="atualizarDetalhesMensalidade('${aluno.id}', '${mes.key}', 'valor', this.value)" class="w-full px-2 py-1 bg-white border border-slate-300 rounded text-xs font-bold text-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-bold text-slate-500 uppercase">Data Pagamento</label>
+                                <input type="date" value="${reg.data}" onchange="atualizarDetalhesMensalidade('${aluno.id}', '${mes.key}', 'data', this.value)" class="w-full px-2 py-1 bg-white border border-slate-300 rounded text-[11px] font-semibold text-slate-700">
+                            </div>
+                        </div>
+
+                        <div class="print-only text-[10px] leading-snug text-slate-800 border-t border-slate-200 pt-1">
+                            <p>Valor: <strong>${formatarMoeda(reg.valor)}</strong></p>
+                            <p>Pgto: <strong>${reg.data ? formatarDataBR(reg.data) : (reg.pago ? 'Quitado' : '-')}</strong></p>
+                        </div>
+                    </div>
                 `;
             }).join('');
 
-            document.getElementById('fin-resumo-meses').textContent = `${totalPagos} / 12 meses pagos`;
-            tbody.innerHTML = `<tr>${colunasMeses}</tr>`;
+            document.getElementById('fin-resumo-meses').textContent = `${totalPagos} / 12 meses`;
+            document.getElementById('fin-total-pago').textContent = formatarMoeda(somaPago);
+            document.getElementById('fin-total-pendente').textContent = formatarMoeda(somaPendente);
         }
 
         async function alternarMensalidade(alunoId, mes) {
@@ -2776,10 +2905,40 @@
             const chave = `${anoRef}_${alunoId}`;
             if (!db.financeiro) db.financeiro = {};
             if (!db.financeiro[chave]) db.financeiro[chave] = {};
-            db.financeiro[chave][mes] = !db.financeiro[chave][mes];
+
+            const atual = obterRegistroMesFinanceiro(db.financeiro[chave], mes);
+            const novoPago = !atual.pago;
+            const hojeISO = new Date().toISOString().slice(0, 10);
+
+            db.financeiro[chave][mes] = {
+                pago: novoPago,
+                valor: atual.valor,
+                data: novoPago ? (atual.data || hojeISO) : atual.data
+            };
+
             await salvarNaNuvem();
             renderizarFinanceiro();
             renderizarDashboard();
+        }
+
+        async function atualizarDetalhesMensalidade(alunoId, mes, campo, valor) {
+            const aluno = db.alunos.find(a => a.id === alunoId);
+            const anoRef = (aluno && aluno.anoLetivo) || db.anoAtual;
+            const chave = `${anoRef}_${alunoId}`;
+            if (!db.financeiro) db.financeiro = {};
+            if (!db.financeiro[chave]) db.financeiro[chave] = {};
+
+            const atual = obterRegistroMesFinanceiro(db.financeiro[chave], mes);
+            if (campo === 'valor') {
+                const v = parseFloat(valor);
+                atual.valor = isNaN(v) || v < 0 ? 0 : v;
+            } else if (campo === 'data') {
+                atual.data = valor || '';
+            }
+
+            db.financeiro[chave][mes] = atual;
+            await salvarNaNuvem();
+            renderizarFinanceiro();
         }
 
         function renderizarDocentesEGrade() {

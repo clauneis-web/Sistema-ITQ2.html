@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Acadêmico - ITQ</title>
+    <title>Sistema Acadêmico - ITQ | Alagoas - Brasil</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="logo-itq.png">
     <link rel="apple-touch-icon" href="logo-itq.png">
@@ -136,6 +136,7 @@
                     <img src="logo-itq.png" alt="Logo ITQ" class="w-full h-full object-contain">
                 </div>
                 <h1 class="text-lg font-extrabold tracking-tight uppercase break-words">Instituto Teológico Quadrangular</h1>
+                <p class="text-[11px] text-amber-300 font-extrabold uppercase tracking-widest mt-0.5">ALAGOAS - BRASIL</p>
                 <p class="text-xs text-blue-200 font-medium mt-1">Validação Oficial de Carteira Estudantil</p>
             </div>
 
@@ -196,6 +197,7 @@
                     <img src="logo-itq.png" alt="Logo Instituto Teológico Quadrangular" class="w-full h-full object-contain">
                 </div>
                 <h1 class="text-xl font-bold tracking-tight">Instituto Teológico Quadrangular</h1>
+                <p class="text-[11px] text-amber-300 font-extrabold uppercase tracking-widest mt-1">ALAGOAS - BRASIL</p>
                 <p class="text-xs text-blue-200 mt-1 font-medium">Portal de Gestão Acadêmica e Pedagógica</p>
             </div>
 
@@ -299,7 +301,8 @@
                     </div>
                     <div class="min-w-0">
                         <h2 class="text-sm font-bold text-white leading-tight truncate">ITQ Acadêmico</h2>
-                        <span id="badge-nuvem" class="text-[10px] font-semibold text-emerald-400 flex items-center gap-1">
+                        <p class="text-[10px] font-extrabold text-amber-400 uppercase tracking-wider leading-tight truncate">ALAGOAS - BRASIL</p>
+                        <span id="badge-nuvem" class="text-[10px] font-semibold text-emerald-400 flex items-center gap-1 mt-0.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Conectando...
                         </span>
                     </div>
@@ -332,7 +335,7 @@
             <header class="bg-white border-b border-slate-200 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4 no-print">
                 <div>
                     <h1 id="page-title" class="text-lg font-extrabold text-slate-900 break-words">Painel Acadêmico</h1>
-                    <p id="page-subtitle" class="text-xs text-slate-500 font-medium break-words">Instituto Teológico Quadrangular</p>
+                    <p id="page-subtitle" class="text-xs text-slate-500 font-medium break-words">Instituto Teológico Quadrangular • ALAGOAS - BRASIL</p>
                 </div>
                 <div id="global-filters" class="flex flex-wrap items-center gap-2">
                     <select id="select-ano-letivo" onchange="mudarContextoTurma()" class="px-3 py-1.5 bg-slate-100 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-800">
@@ -725,7 +728,7 @@
                                     </div>
                                     <div class="min-w-0">
                                         <h4 class="text-[10.5px] font-extrabold uppercase tracking-wider leading-tight truncate">Instituto Teológico Quadrangular</h4>
-                                        <p class="text-[8.5px] text-amber-300 font-semibold uppercase">Identidade Estudantil</p>
+                                        <p class="text-[8.5px] text-amber-300 font-semibold uppercase">Identidade Estudantil • ALAGOAS - BRASIL</p>
                                     </div>
                                 </div>
                                 <div class="w-9 h-9 rounded-lg bg-slate-200 flex items-center justify-center shrink-0 overflow-hidden border border-white/30" title="SGEC Quadrangular">
@@ -2695,7 +2698,7 @@
             document.getElementById('hist-cpf').textContent = cfg.cpf || (aluno ? aluno.cpf : '') || '-';
             document.getElementById('hist-data-inicio').textContent = cfg.dataInicio || '16/02/2024';
             document.getElementById('hist-data-conclusao').textContent = cfg.dataConclusao || '20/12/2026';
-            document.getElementById('hist-expedicao').textContent = cfg.expedicao || 'Maceió, 25 de Novembro de 2026';
+            document.getElementById('hist-expedicao').textContent = cfg.expedicao || 'Maceió, 24 de Novembro de 2026';
             if (cfg.fone) document.getElementById('hist-fone').textContent = cfg.fone;
             if (cfg.email) document.getElementById('hist-email').textContent = cfg.email;
             if (cfg.secNome) document.getElementById('hist-sec-nome').textContent = cfg.secNome;
@@ -3023,7 +3026,7 @@
             const p = db.professores.find(x => x.id === profId);
             if (!p) return;
             const tel = (p.telefone || '').replace(/\D/g, '');
-            const msg = `Olá Prof(a). ${p.nome}! Seguem os seus dados de acesso ao Portal Acadêmico ITQ:\nLink: ${URL_PORTAL_PUBLICO}\nPerfil: Docente / Professor\nE-mail: ${p.email}\nSenha: ${p.senha || 'itq2026'}`;
+            const msg = `Olá Prof(a). ${p.nome}! Seguem os seus dados de acesso ao Portal Acadêmico ITQ (Alagoas - Brasil):\nLink: ${URL_PORTAL_PUBLICO}\nPerfil: Docente / Professor\nE-mail: ${p.email}\nSenha: ${p.senha || 'itq2026'}`;
             window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
